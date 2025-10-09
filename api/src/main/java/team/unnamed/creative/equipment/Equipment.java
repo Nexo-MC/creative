@@ -325,6 +325,32 @@ public interface Equipment extends ResourcePackPart, Keyed, Examinable {
         default @NotNull Builder addHappyGhastHarness(@NotNull EquipmentLayer layer) {
             return addLayer(EquipmentLayerType.HAPPY_GHAST_BODY, layer);
         }
+
+        /**
+         * Adds a nautilus body layer to the equipment.
+         *
+         * @param layer The layer to add
+         * @return This builder
+         * @since 1.11.1
+         * @sinceMinecraft 1.21.11
+         */
+        @Contract("_ -> this")
+        default @NotNull Builder addNautilusBodyLayer(@NotNull EquipmentLayer layer) {
+            return addLayer(EquipmentLayerType.NAUTILUS_BODY, layer);
+        }
+
+        /**
+         * Adds a nautilus saddle layer to the equipment.
+         *
+         * @param layer The layer to add
+         * @return This builder
+         * @since 1.10.1
+         * @sinceMinecraft 1.21.11
+         */
+        @Contract("_ -> this")
+        default @NotNull Builder addNautilusSaddle(@NotNull EquipmentLayer layer) {
+            return addLayer(EquipmentLayerType.NAUTILUS_SADDLE, layer);
+        }
         //#endregion
 
         /**
