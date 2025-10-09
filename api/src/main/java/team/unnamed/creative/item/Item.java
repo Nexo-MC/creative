@@ -48,6 +48,9 @@ public interface Item extends Keyed, ResourcePackPart, Examinable {
     @ApiStatus.Internal
     boolean DEFAULT_OVERSIZED_IN_GUI = false;
 
+    @ApiStatus.Internal
+    float DEFAULT_SWAP_ANIMATION_SCALE = 1.0f;
+
     /**
      * Describes if down-and-up animation should be played in first-person view
      * when item stack is changed (either type, count or components).
@@ -68,6 +71,16 @@ public interface Item extends Keyed, ResourcePackPart, Examinable {
      */
     boolean oversizedInGui();
 
+    /**
+     * Determines how fast the item moves up and down when swapping items in hotbar
+     * Large speeds can allow items that take more of the screen space to fully duck before swapped into the next item
+     *
+     * @return The swap animation scale
+     * @sinceMinecraft 1.21.11
+     * @since 1.10.1
+     */
+    float swapAnimationScale();
+
     @NotNull ItemModel model();
 
     @Override
@@ -82,12 +95,28 @@ public interface Item extends Keyed, ResourcePackPart, Examinable {
      * @param model The item model
      * @param handAnimationOnSwap If hand animation should be played
      * @param oversizedInGui If item clipping should not be applied
+     * @param swapAnimationScale The swap animation scale
+     * @return The item
+     * @since 1.10.1
+     */
+    @Contract(value = "_, _, _, _ -> new", pure = true)
+    static @NotNull Item item(final @NotNull Key key, final @NotNull ItemModel model, final boolean handAnimationOnSwap, final boolean oversizedInGui, final float swapAnimationScale) {
+        return new ItemImpl(key, model, handAnimationOnSwap, oversizedInGui, swapAnimationScale);
+    }
+
+    /**
+     * Creates a new {@link Item} instance with the given key, model and hand animation on swap.
+     *
+     * @param key The item key
+     * @param model The item model
+     * @param handAnimationOnSwap If hand animation should be played
+     * @param oversizedInGui If item clipping should not be applied
      * @return The item
      * @since 1.9.1
      */
     @Contract(value = "_, _, _, _ -> new", pure = true)
     static @NotNull Item item(final @NotNull Key key, final @NotNull ItemModel model, final boolean handAnimationOnSwap, final boolean oversizedInGui) {
-        return new ItemImpl(key, model, handAnimationOnSwap, oversizedInGui);
+        return new ItemImpl(key, model, handAnimationOnSwap, oversizedInGui, DEFAULT_SWAP_ANIMATION_SCALE);
     }
 
     /**
@@ -101,7 +130,7 @@ public interface Item extends Keyed, ResourcePackPart, Examinable {
      */
     @Contract(value = "_, _, _ -> new", pure = true)
     static @NotNull Item item(final @NotNull Key key, final @NotNull ItemModel model, final boolean handAnimationOnSwap) {
-        return new ItemImpl(key, model, handAnimationOnSwap, DEFAULT_OVERSIZED_IN_GUI);
+        return new ItemImpl(key, model, handAnimationOnSwap, DEFAULT_OVERSIZED_IN_GUI, DEFAULT_SWAP_ANIMATION_SCALE);
     }
 
     /**

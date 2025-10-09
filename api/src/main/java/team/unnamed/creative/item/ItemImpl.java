@@ -32,12 +32,13 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
-record ItemImpl(Key key, ItemModel model, boolean handAnimationOnSwap, boolean oversizedInGui) implements Item {
-    ItemImpl(final @NotNull Key key, final @NotNull ItemModel model, final boolean handAnimationOnSwap, final boolean oversizedInGui) {
+record ItemImpl(Key key, ItemModel model, boolean handAnimationOnSwap, boolean oversizedInGui, float swapAnimationScale) implements Item {
+    ItemImpl(final @NotNull Key key, final @NotNull ItemModel model, final boolean handAnimationOnSwap, final boolean oversizedInGui, final float swapAnimationScale) {
         this.key = requireNonNull(key, "key");
         this.model = requireNonNull(model, "model");
         this.handAnimationOnSwap = handAnimationOnSwap;
         this.oversizedInGui = oversizedInGui;
+        this.swapAnimationScale = swapAnimationScale;
     }
 
     @Override
@@ -56,7 +57,8 @@ record ItemImpl(Key key, ItemModel model, boolean handAnimationOnSwap, boolean o
                 ExaminableProperty.of("key", key),
                 ExaminableProperty.of("model", model),
                 ExaminableProperty.of("handAnimationOnSwap", handAnimationOnSwap),
-                ExaminableProperty.of("oversized_in_gui", oversizedInGui)
+                ExaminableProperty.of("oversized_in_gui", oversizedInGui),
+                ExaminableProperty.of("swap_animation_scale", swapAnimationScale)
         );
     }
 
@@ -67,7 +69,8 @@ record ItemImpl(Key key, ItemModel model, boolean handAnimationOnSwap, boolean o
         return key.equals(item.key)
                 && model.equals(item.model)
                 && handAnimationOnSwap == item.handAnimationOnSwap
-                && oversizedInGui == item.oversizedInGui;
+                && oversizedInGui == item.oversizedInGui
+                && swapAnimationScale == item.swapAnimationScale;
     }
 
     @Override

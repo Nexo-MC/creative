@@ -131,6 +131,11 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
             writer.name("oversized_in_gui").value(oversizedInGui);
         }
 
+        float swapAnimationScale = item.swapAnimationScale();
+        if (swapAnimationScale != Item.DEFAULT_SWAP_ANIMATION_SCALE) {
+            writer.name("swap_animation_scale").value(swapAnimationScale);
+        }
+
         writer.endObject();
     }
 
@@ -144,7 +149,10 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
         boolean oversizedInGui = jsonObject.has("oversized_in_gui")
                 ? jsonObject.get("oversized_in_gui").getAsBoolean()
                 : Item.DEFAULT_OVERSIZED_IN_GUI;
-        return Item.item(key, model, handAnimationOnSwap, oversizedInGui);
+        float swapAnimationScale = jsonObject.has("swap_animation_scale")
+                ? jsonObject.get("swap_animation_scale").getAsFloat()
+                : Item.DEFAULT_SWAP_ANIMATION_SCALE;
+        return Item.item(key, model, handAnimationOnSwap, oversizedInGui, swapAnimationScale);
     }
 
     private void writeReference(final @NotNull JsonWriter writer, final @NotNull ReferenceItemModel model) throws IOException {
