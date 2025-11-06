@@ -45,10 +45,10 @@ import static team.unnamed.creative.util.MoreCollections.immutableMapOf;
  */
 public class SpaceFontProvider implements FontProvider {
 
-    private final Map<String, Integer> advances;
+    private final Map<String, Double> advances;
 
     protected SpaceFontProvider(
-            Map<String, Integer> advances
+            Map<String, Double> advances
     ) {
         requireNonNull(advances, "advances");
         this.advances = immutableMapOf(advances);
@@ -56,19 +56,19 @@ public class SpaceFontProvider implements FontProvider {
     }
 
     private void validate() {
-        for (Map.Entry<String, Integer> entry : advances.entrySet()) {
+        for (Map.Entry<String, Double> entry : advances.entrySet()) {
             String character = entry.getKey();
-            Integer offset = entry.getValue();
+            Double offset = entry.getValue();
             requireNonNull(character, "A key from the 'advances' map is null");
             requireNonNull(offset, "The advanced pixels value for '" + character + "' character is null");
         }
     }
 
-    public Map<String, Integer> advances() {
+    public Map<String, Double> advances() {
         return advances;
     }
 
-    public SpaceFontProvider advances(Map<String, Integer> advances) {
+    public SpaceFontProvider advances(Map<String, Double> advances) {
         return toBuilder().advances(advances).build();
     }
 
@@ -108,18 +108,18 @@ public class SpaceFontProvider implements FontProvider {
      */
     public static class Builder {
 
-        private Map<String, Integer> advances;
+        private Map<String, Double> advances;
 
         protected Builder() {
         }
 
-        public Builder advances(Map<String, Integer> entries) {
+        public Builder advances(Map<String, Double> entries) {
             requireNonNull(entries, "entries");
             advances = entries;
             return this;
         }
 
-        public Builder advance(String character, int value) {
+        public Builder advance(String character, Double value) {
             if (this.advances == null) {
                 this.advances = new LinkedHashMap<>();
             }
@@ -127,7 +127,7 @@ public class SpaceFontProvider implements FontProvider {
             return this;
         }
 
-        public Builder advance(int codePoint, int value) {
+        public Builder advance(int codePoint, double value) {
             return advance(
                     new StringBuilder().appendCodePoint(codePoint).toString(),
                     value

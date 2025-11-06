@@ -122,7 +122,7 @@ public final class FontSerializer implements JsonResourceSerializer<Font>, JsonR
                 .name("type").value("bitmap")
                 .name("file").value(KeySerializer.toString(provider.file()));
 
-        int height = provider.height();
+        double height = provider.height();
         if (height != BitMapFontProvider.DEFAULT_HEIGHT) {
             // only write if height is not equal to the default height
             writer.name("height").value(height);
@@ -147,7 +147,7 @@ public final class FontSerializer implements JsonResourceSerializer<Font>, JsonR
 
         return FontProvider.bitMap()
                 .file(Key.key(node.get("file").getAsString()))
-                .height(GsonUtil.getInt(node, "height", BitMapFontProvider.DEFAULT_HEIGHT))
+                .height(GsonUtil.getFloat(node, "height", BitMapFontProvider.DEFAULT_HEIGHT))
                 .ascent(node.get("ascent").getAsInt())
                 .characters(characters)
                 .build();
@@ -157,7 +157,7 @@ public final class FontSerializer implements JsonResourceSerializer<Font>, JsonR
         writer.beginObject()
                 .name("type").value("space")
                 .name("advances").beginObject();
-        for (Map.Entry<String, Integer> entry : provider.advances().entrySet()) {
+        for (Map.Entry<String, Double> entry : provider.advances().entrySet()) {
             writer.name(entry.getKey()).value(entry.getValue());
         }
         writer.endObject().endObject();
@@ -165,10 +165,10 @@ public final class FontSerializer implements JsonResourceSerializer<Font>, JsonR
 
     private static SpaceFontProvider readSpace(JsonObject node) {
         JsonObject advancesNode = node.getAsJsonObject("advances");
-        Map<String, Integer> advances = new LinkedHashMap<>();
+        Map<String, Double> advances = new LinkedHashMap<>();
         for (Map.Entry<String, JsonElement> advanceEntryNode : advancesNode.entrySet()) {
             String character = advanceEntryNode.getKey();
-            int advance = advanceEntryNode.getValue().getAsInt();
+            double advance = advanceEntryNode.getValue().getAsDouble();
             advances.put(character, advance);
         }
         return FontProvider.space(advances);

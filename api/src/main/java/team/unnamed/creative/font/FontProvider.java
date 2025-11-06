@@ -50,7 +50,7 @@ public interface FontProvider extends Examinable {
      * @since 1.0.0
      */
     @Contract("_, _, _, _ -> new")
-    static @NotNull BitMapFontProvider bitMap(final @NotNull Key file, final int height, final int ascent, final @NotNull List<String> characters) {
+    static @NotNull BitMapFontProvider bitMap(final @NotNull Key file, final double height, final double ascent, final @NotNull List<String> characters) {
         return new BitMapFontProviderImpl(file, height, ascent, characters);
     }
 
@@ -89,7 +89,7 @@ public interface FontProvider extends Examinable {
      * @return the newly created builder
      * @sincePackFormat 9
      */
-    static SpaceFontProvider space(Map<String, Integer> advances) {
+    static SpaceFontProvider space(Map<String, Double> advances) {
         return new SpaceFontProvider(advances);
     }
 

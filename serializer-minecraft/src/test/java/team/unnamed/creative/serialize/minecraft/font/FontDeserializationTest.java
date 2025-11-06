@@ -147,8 +147,8 @@ class FontDeserializationTest {
         final Font includeSpace = Font.font()
                 .key(Key.key("include/space"))
                 .addProvider(FontProvider.space()
-                        .advance(" ", 4)
-                        .advance("\u200c", 0)
+                        .advance(" ", 4.0)
+                        .advance("\u200c", 0.0)
                         .build())
                 .build();
 
