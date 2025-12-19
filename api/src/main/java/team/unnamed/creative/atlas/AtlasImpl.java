@@ -66,13 +66,13 @@ record AtlasImpl(Key key, List<AtlasSource> sources) implements Atlas {
     @Override
     public boolean contains(@NotNull Key textureKey) {
         for (AtlasSource source : sources) {
-            if (source instanceof SingleAtlasSource single)
+            if (source instanceof SingleAtlasSource single) {
                 if (single.resource() == textureKey || single.sprite() == textureKey)
                     return true;
-            else if (source instanceof DirectoryAtlasSource directory)
+            } else if (source instanceof DirectoryAtlasSource directory) {
                 if (textureKey.value().startsWith(directory.prefix()))
                     return true;
-            else return false;
+            }
         }
         return false;
     }
