@@ -28,6 +28,8 @@ import net.kyori.examination.Examinable;
 import net.kyori.examination.ExaminableProperty;
 import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
+import team.unnamed.creative.item.ItemModel;
+import team.unnamed.creative.item.SelectItemModel;
 
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -131,6 +133,10 @@ public class Variant implements Examinable {
      */
     public int weight() {
         return weight;
+    }
+
+    public @NotNull Variant.Builder toBuilder() {
+        return Variant.builder().model(model).x(x).y(y).uvLock(uvLock).weight(weight);
     }
 
     @Override
