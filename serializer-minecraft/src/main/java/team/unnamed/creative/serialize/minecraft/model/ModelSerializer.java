@@ -453,7 +453,7 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
     }
 
     private static void writeTextures(JsonWriter writer, ModelTextures texture) throws IOException {
-        final ModelTexture particle = texture.particle();
+        ModelTexture particle = texture.particle();
         final List<ModelTexture> layers = texture.layers();
         final Map<String, ModelTexture> variables = texture.variables();
 
@@ -464,10 +464,6 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
 
         writer.name("textures");
         writer.beginObject();
-        if (particle != null) {
-            writer.name("particle");
-            writeModelTexture(writer, particle);
-        }
         for (int i = 0; i < layers.size(); i++) {
             writer.name("layer" + i);
             writeModelTexture(writer, layers.get(i));
@@ -476,6 +472,12 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
             writer.name(variable.getKey());
             writeModelTexture(writer, variable.getValue());
         }
+        writer.name("particle");
+        if (particle == null) {
+            if (!layers.isEmpty()) particle = layers.getFirst();
+            else particle = variables.values().stream().findFirst().orElse(null);
+        }
+        writeModelTexture(writer, particle);
         writer.endObject();
     }
 
