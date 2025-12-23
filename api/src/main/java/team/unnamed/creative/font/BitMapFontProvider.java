@@ -47,7 +47,7 @@ public interface BitMapFontProvider extends FontProvider {
     /**
      * Default bitmap font height
      */
-    int DEFAULT_HEIGHT = 8;
+    float DEFAULT_HEIGHT = 8.0f;
 
     /**
      * Returns the texture location of this
@@ -78,7 +78,7 @@ public interface BitMapFontProvider extends FontProvider {
      * @return The font characters height
      * @since 1.0.0
      */
-    int height();
+    double height();
 
     /**
      * Returns a new bitmap font with the given
@@ -89,7 +89,7 @@ public interface BitMapFontProvider extends FontProvider {
      * @since 1.0.0
      */
     @Contract(value = "_ -> new", pure = true)
-    @NotNull BitMapFontProvider height(final int height);
+    @NotNull BitMapFontProvider height(final double height);
 
     /**
      * Returns the font characters ascent, measured in
@@ -99,7 +99,7 @@ public interface BitMapFontProvider extends FontProvider {
      * @return The font characters ascent
      * @since 1.0.0
      */
-    int ascent();
+    double ascent();
 
     /**
      * Returns a new bitmap font with the given
@@ -110,7 +110,7 @@ public interface BitMapFontProvider extends FontProvider {
      * @since 1.0.0
      */
     @Contract(value = "_ -> new", pure = true)
-    @NotNull BitMapFontProvider ascent(final int ascent);
+    @NotNull BitMapFontProvider ascent(final double ascent);
 
     /**
      * Returns a list of strings containing the characters replaced by
@@ -178,7 +178,7 @@ public interface BitMapFontProvider extends FontProvider {
          * @since 1.0.0
          */
         @Contract("_ -> this")
-        @NotNull Builder height(final int height);
+        @NotNull Builder height(final double height);
 
         /**
          * Sets the font ascent
@@ -188,7 +188,7 @@ public interface BitMapFontProvider extends FontProvider {
          * @since 1.0.0
          */
         @Contract("_ -> this")
-        @NotNull Builder ascent(final int ascent);
+        @NotNull Builder ascent(final double ascent);
 
         /**
          * Sets the font characters

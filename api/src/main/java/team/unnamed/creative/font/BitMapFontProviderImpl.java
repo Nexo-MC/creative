@@ -36,12 +36,12 @@ import java.util.stream.Stream;
 import static java.util.Objects.requireNonNull;
 import static team.unnamed.creative.util.MoreCollections.immutableListOf;
 
-record BitMapFontProviderImpl(Key file, int height, int ascent,
+record BitMapFontProviderImpl(Key file, double height, double ascent,
                               @Unmodifiable List<String> characters) implements BitMapFontProvider {
     BitMapFontProviderImpl(
             final @NotNull Key file,
-            final int height,
-            final int ascent,
+            final double height,
+            final double ascent,
             final @NotNull List<String> characters
     ) {
         this.file = requireNonNull(file, "file");
@@ -78,12 +78,12 @@ record BitMapFontProviderImpl(Key file, int height, int ascent,
     }
 
     @Override
-    public @NotNull BitMapFontProvider height(final int height) {
+    public @NotNull BitMapFontProvider height(final double height) {
         return new BitMapFontProviderImpl(this.file, height, this.ascent, this.characters);
     }
 
     @Override
-    public @NotNull BitMapFontProvider ascent(final int ascent) {
+    public @NotNull BitMapFontProvider ascent(final double ascent) {
         return new BitMapFontProviderImpl(this.file, this.height, ascent, this.characters);
     }
 
@@ -126,8 +126,8 @@ record BitMapFontProviderImpl(Key file, int height, int ascent,
 
     static final class BuilderImpl implements Builder {
         private Key file;
-        private int height = DEFAULT_HEIGHT;
-        private int ascent;
+        private double height = DEFAULT_HEIGHT;
+        private double ascent;
         private List<String> characters = Collections.emptyList();
 
         @Override
@@ -137,13 +137,13 @@ record BitMapFontProviderImpl(Key file, int height, int ascent,
         }
 
         @Override
-        public @NotNull Builder height(final int height) {
+        public @NotNull Builder height(final double height) {
             this.height = height;
             return this;
         }
 
         @Override
-        public @NotNull Builder ascent(final int ascent) {
+        public @NotNull Builder ascent(final double ascent) {
             this.ascent = ascent;
             return this;
         }

@@ -58,15 +58,15 @@ class ResourcePackMergeTest {
         base.font(Font.font()
                 .key(Font.MINECRAFT_DEFAULT)
                 .addProvider(FontProvider.space()
-                        .advance("a", 5)
-                        .advance(" ", 4)
+                        .advance("a", 5.0)
+                        .advance(" ", 4.0)
                         .build())
                 .build());
         added.font(Font.font()
                 .key(Font.MINECRAFT_DEFAULT)
                 .addProvider(FontProvider.space()
-                        .advance("b", 6)
-                        .advance("\t", 7)
+                        .advance("b", 6.0)
+                        .advance("\t", 7.0)
                         .build())
                 .build());
 
@@ -81,8 +81,8 @@ class ResourcePackMergeTest {
                 Font.font()
                         .key(Font.MINECRAFT_DEFAULT)
                         .addProvider(FontProvider.space()
-                                .advance("b", 6)
-                                .advance("\t", 7)
+                                .advance("b", 6.0)
+                                .advance("\t", 7.0)
                                 .build())
                         .build(),
                 base.font(Font.MINECRAFT_DEFAULT)
@@ -108,15 +108,15 @@ class ResourcePackMergeTest {
         base.font(Font.font()
                 .key(Font.MINECRAFT_DEFAULT)
                 .addProvider(FontProvider.space()
-                        .advance("a", 5)
-                        .advance(" ", 4)
+                        .advance("a", 5.0)
+                        .advance(" ", 4.0)
                         .build())
                 .build());
         added.font(Font.font()
                 .key(Font.MINECRAFT_DEFAULT)
                 .addProvider(FontProvider.space()
-                        .advance("b", 6)
-                        .advance("\t", 7)
+                        .advance("b", 6.0)
+                        .advance("\t", 7.0)
                         .build())
                 .build());
 
@@ -133,14 +133,14 @@ class ResourcePackMergeTest {
                         // todo: merging should be smarter than this
                         .addProvider(
                                 FontProvider.space()
-                                        .advance("a", 5)
-                                        .advance(" ", 4)
+                                        .advance("a", 5.0)
+                                        .advance(" ", 4.0)
                                         .build()
                         )
                         .addProvider(
                                 FontProvider.space()
-                                        .advance("b", 6)
-                                        .advance("\t", 7)
+                                        .advance("b", 6.0)
+                                        .advance("\t", 7.0)
                                         .build()
                         )
                         .build(),
