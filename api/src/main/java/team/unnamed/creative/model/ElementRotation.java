@@ -30,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.base.Axis3D;
 import team.unnamed.creative.base.Vector3Float;
 
-import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
@@ -41,15 +40,11 @@ import static java.util.Objects.requireNonNull;
  *
  * @since 1.0.0
  */
-public class ElementRotation implements Examinable {
+public record ElementRotation(Vector3Float origin, Vector3Float rotation, boolean rescale) implements Examinable {
 
     public static final boolean DEFAULT_RESCALE = false;
 
-    private final Vector3Float origin;
-    private final Vector3Float rotation;
-    private final boolean rescale;
-
-    private ElementRotation(
+    public ElementRotation(
             Vector3Float origin,
             Vector3Float rotation,
             boolean rescale
@@ -90,7 +85,7 @@ public class ElementRotation implements Examinable {
     @Deprecated
     public Axis3D axis() {
         if (rotation.x() != 0f) return Axis3D.X;
-        else  if (rotation.y() != 0f) return Axis3D.Y;
+        else if (rotation.y() != 0f) return Axis3D.Y;
         else if (rotation.z() != 0f) return Axis3D.Z;
         else return Axis3D.X;
     }
@@ -104,12 +99,8 @@ public class ElementRotation implements Examinable {
     @Deprecated
     public float angle() {
         if (rotation.x() != 0f) return rotation.x();
-        else  if (rotation.y() != 0f) return rotation.y();
+        else if (rotation.y() != 0f) return rotation.y();
         else return rotation.z();
-    }
-
-    public Vector3Float rotation() {
-        return rotation;
     }
 
     /**
@@ -121,11 +112,22 @@ public class ElementRotation implements Examinable {
     }
 
     public ElementRotation origin(Vector3Float origin) {
+        if (this.origin == origin) return this;
         return new ElementRotation(origin, this.rotation, this.rescale);
     }
 
     public ElementRotation rescale(boolean rescale) {
+        if (this.rescale == rescale) return this;
         return new ElementRotation(this.origin, this.rotation, rescale);
+    }
+
+    public ElementRotation rotation(Vector3Float rotation) {
+        if (this.rotation == rotation) return this;
+        return new ElementRotation(this.origin, rotation, this.rescale);
+    }
+
+    public @NotNull ElementRotation.Builder toBuilder() {
+        return ElementRotation.builder().origin(origin).rotation(this.rotation).rescale(rescale);
     }
 
     @Override
@@ -148,11 +150,6 @@ public class ElementRotation implements Examinable {
         if (o == null || getClass() != o.getClass()) return false;
         ElementRotation that = (ElementRotation) o;
         return rescale == that.rescale && rotation.equals(that.rotation) && origin.equals(that.origin);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(origin, rotation, rescale);
     }
 
     /**

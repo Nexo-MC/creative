@@ -27,6 +27,7 @@ import net.kyori.examination.ExaminableProperty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
+import team.unnamed.creative.atlas.Atlas;
 import team.unnamed.creative.base.CubeFace;
 import team.unnamed.creative.base.Vector3Float;
 
@@ -119,6 +120,11 @@ record ElementImpl(Vector3Float from, Vector3Float to, ElementRotation rotation,
                 && shade == element.shade
                 && faces.equals(element.faces)
                 && lightEmission == element.lightEmission;
+    }
+
+    @Override
+    public @NotNull Element.Builder toBuilder() {
+        return Element.element().from(from).to(to).rotation(rotation).shade(shade).faces(faces).lightEmission(lightEmission);
     }
 
     static final class BuilderImpl implements Builder {

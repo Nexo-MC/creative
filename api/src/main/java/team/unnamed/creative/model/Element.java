@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
+import team.unnamed.creative.atlas.Atlas;
 import team.unnamed.creative.base.CubeFace;
 import team.unnamed.creative.base.Vector3Float;
 
@@ -119,6 +120,9 @@ public interface Element extends Examinable {
     @Unmodifiable @NotNull Map<CubeFace, ElementFace> faces();
 
     int lightEmission();
+
+    @Contract("-> new")
+    @NotNull Element.Builder toBuilder();
 
     /**
      * A builder for {@link Element} instances.
