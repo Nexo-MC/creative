@@ -52,7 +52,7 @@ public record ElementRotation(Vector3Float origin, Vector3Float rotation, boolea
         this.origin = requireNonNull(origin, "origin");
         this.rotation = requireNonNull(rotation, "rotation");
         this.rescale = rescale;
-        validate();
+        //validate();
     }
 
     private void validate() {
