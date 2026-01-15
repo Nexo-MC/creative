@@ -87,7 +87,7 @@ public record ElementRotation(Vector3Float origin, Vector3Float rotation, boolea
         if (rotation.x() != 0f) return Axis3D.X;
         else if (rotation.y() != 0f) return Axis3D.Y;
         else if (rotation.z() != 0f) return Axis3D.Z;
-        else return Axis3D.X;
+        else return Axis3D.Y;
     }
 
     /**

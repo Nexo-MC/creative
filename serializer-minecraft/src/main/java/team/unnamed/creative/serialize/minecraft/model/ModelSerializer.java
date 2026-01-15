@@ -93,8 +93,14 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
         List<Element> elements = model.elements();
         if (!elements.isEmpty()) {
             writer.name("elements").beginArray();
+            boolean writeLegacy = targetPackFormat < 75;
+            if (!writeLegacy) for (Element element : elements) {
+                if (element.rotation() == null) continue;
+                if (element.rotation().rotation().equals(Vector3Float.ZERO)) writeLegacy = true;
+                if (element.rotation().rotation().x() < -45f || element.rotation().rotation().x() > 45f) writeLegacy = false;
+            }
             for (Element element : elements) {
-                writeElement(writer, element, targetPackFormat);
+                writeElement(writer, element, writeLegacy);
             }
             writer.endArray();
         }
@@ -184,7 +190,7 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
                 .build();
     }
 
-    private static void writeElement(JsonWriter writer, Element element, int targetPackFormat) throws IOException {
+    private static void writeElement(JsonWriter writer, Element element, boolean writeLegacy) throws IOException {
         writer.beginObject().name("from");
         GsonUtil.writeVector3Float(writer, element.from());
         writer.name("to");
@@ -193,7 +199,7 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
         ElementRotation rotation = element.rotation();
         if (rotation != null) {
             writer.name("rotation");
-            writeElementRotation(writer, rotation, targetPackFormat);
+            writeElementRotation(writer, rotation, writeLegacy);
         }
 
         boolean shade = element.shade();
@@ -311,11 +317,11 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
                 .build();
     }
 
-    private static void writeElementRotation(JsonWriter writer, ElementRotation rotation, int targetPackFormat) throws IOException {
+    private static void writeElementRotation(JsonWriter writer, ElementRotation rotation, boolean writeLegacy) throws IOException {
         writer.beginObject().name("origin");
         GsonUtil.writeVector3Float(writer, rotation.origin());
 
-        if (targetPackFormat >= 75) {
+        if (!writeLegacy) {
             writer.name("x").value(rotation.rotation().x())
                     .name("y").value(rotation.rotation().y())
                     .name("z").value(rotation.rotation().z());
