@@ -23,6 +23,7 @@
  */
 package team.unnamed.creative.serialize.minecraft.metadata;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.internal.Streams;
@@ -35,11 +36,15 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import team.unnamed.creative.metadata.pack.FormatVersion;
 import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.metadata.pack.PackMeta;
 import team.unnamed.creative.serialize.minecraft.base.PackFormatSerializer;
 
 import java.io.IOException;
+import java.text.Format;
+import java.util.Optional;
 
 final class PackMetaCodec implements MetadataPartCodec<PackMeta> {
 
@@ -60,13 +65,17 @@ final class PackMetaCodec implements MetadataPartCodec<PackMeta> {
 
     @Override
     public @NotNull PackMeta read(final @NotNull JsonObject node) {
-        final int singleFormat = node.get("pack_format").getAsInt();
+        final int mainFormat = node.has("pack_format") ? node.get("pack_format").getAsInt() : -1;
         final PackFormat format;
-        if (node.has("supported_formats")) { // since Minecraft 1.20.2 (pack format 18)
+        if (node.has("min_format") && node.has("max_format")) {
+            FormatVersion minFormat = PackFormatSerializer.deserializeFormat(node.get("min_format"));
+            FormatVersion maxFormat = PackFormatSerializer.deserializeFormat(node.get("max_format"));
+            format = PackFormat.format(minFormat, minFormat, maxFormat);
+        } else if (node.has("supported_formats")) { // since Minecraft 1.20.2 (pack format 18)
             JsonElement el = node.get("supported_formats");
-            format = PackFormatSerializer.deserialize(el, singleFormat);
+            format = PackFormatSerializer.deserialize(el, mainFormat);
         } else {
-            format = PackFormat.format(singleFormat);
+            format = PackFormat.format(mainFormat);
         }
 
         final JsonElement descriptionNode = node.get("description");

@@ -28,6 +28,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.metadata.pack.FormatVersion;
 import team.unnamed.creative.metadata.pack.PackFormat;
 
@@ -67,18 +68,19 @@ public final class PackFormatSerializer {
             writer.value(maxMajor);
             writer.endArray();
 
-            if ((minMajor <= 64 && maxMajor >= 64) || minMajor >= 65) {
-                // if this pack supports 1.21.9+ format, add extra fields for compatibility
-                writer.name("min_format").value(minMajor);
-                writer.name("max_format").value(maxMajor);
-                if (minMajor < 15) writer.name("pack_format").value(15);
-            }
+//            if ((minMajor <= 64 && maxMajor >= 64) || minMajor >= 65) {
+//                // if this pack supports 1.21.9+ format, add extra fields for compatibility
+//                writer.name("min_format").value(minMajor);
+//                writer.name("max_format").value(maxMajor);
+//                if (minMajor < 15) writer.name("pack_format").value(15);
+//            }
         }
     }
 
-    public static PackFormat deserialize(JsonElement el, int format) {
+    public static PackFormat deserialize(JsonElement el, @Nullable Integer format) {
         PackFormat f = deserialize(el);
-        return PackFormat.format(FormatVersion.of(format), f.minVersion(), f.maxVersion());
+        FormatVersion mainFormat = format == null || format < 0 ? f.minVersion() : FormatVersion.of(format);
+        return PackFormat.format(mainFormat, f.minVersion(), f.maxVersion());
     }
 
     public static PackFormat deserialize(JsonElement el) {
@@ -101,6 +103,22 @@ public final class PackFormatSerializer {
             throw new IllegalStateException("Unsupported supported_formats type: " + el.getClass());
         }
         return PackFormat.format(min, min, max);
+    }
+
+    public static FormatVersion deserializeFormat(JsonElement el) {
+        int major, minor;
+        if (el.isJsonPrimitive()) {
+            major = el.getAsInt();
+            minor = 0;
+        } else if (el.isJsonArray()) {
+            JsonArray arr = el.getAsJsonArray();
+            major = arr.get(0).getAsInt();
+            minor = arr.size() > 1 ? arr.get(1).getAsInt() : 0;
+        } else {
+            throw new IllegalStateException("Unsupported supported_formats type: " + el.getClass());
+        }
+
+        return FormatVersion.of(major, minor);
     }
 
 }
