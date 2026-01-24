@@ -52,17 +52,14 @@ public record ElementRotation(Vector3Float origin, Vector3Float rotation, boolea
         this.origin = requireNonNull(origin, "origin");
         this.rotation = requireNonNull(rotation, "rotation");
         this.rescale = rescale;
-        //validate();
     }
 
-    private void validate() {
-        // Skip if using 1.21.11+ format where one can rotate beyond -45->45 and support multiple angles
-        if (rotation.x() != 0f && (rotation.y() != 0f || rotation.z() != 0f)) return;
-        if (rotation.y() != 0f && rotation.z() != 0f) return;
-
-        float[] absAngles = rotation.toArray(Math::abs);
-        for (float absAngle : absAngles) if (absAngle > 45.0f)
-            throw new IllegalArgumentException("Angle must be between [-45.0, 45.0] (inclusive), but was " + absAngle);
+    public boolean containsModernRotation() {
+        if (rotation.equals(Vector3Float.ZERO)) return false;
+        if (rotation.x() < -45f || rotation.x() > 45f) return true;
+        if (rotation.y() < -45f || rotation.y() > 45f) return true;
+        if (rotation.z() < -45f || rotation.z() > 45f) return true;
+        return false;
     }
 
     /**

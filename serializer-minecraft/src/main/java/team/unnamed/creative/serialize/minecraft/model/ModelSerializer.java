@@ -49,6 +49,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 @ApiStatus.Internal
 public final class ModelSerializer implements JsonResourceSerializer<Model>, JsonResourceDeserializer<Model> {
@@ -95,9 +96,9 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
             writer.name("elements").beginArray();
             boolean writeLegacy = targetPackFormat < 75;
             if (!writeLegacy) for (Element element : elements) {
-                if (element.rotation() == null) continue;
-                if (element.rotation().rotation().equals(Vector3Float.ZERO)) writeLegacy = true;
-                if (element.rotation().rotation().x() < -45f || element.rotation().rotation().x() > 45f) writeLegacy = false;
+                ElementRotation rotation = element.rotation();
+                if (rotation == null) continue;
+                writeLegacy = !rotation.containsModernRotation();
             }
             for (Element element : elements) {
                 writeElement(writer, element, writeLegacy);
