@@ -102,7 +102,8 @@ final class PackMetaCodec implements MetadataPartCodec<PackMeta> {
             Streams.write(GsonComponentSerializer.gson().serializeToTree(description), writer);
         }
 
-        if (!pack.formats().isSingle()) { // since Minecraft 1.20.2 (pack format 18)
+        // If Format is lower than 65, we should not add 'supported_formats'
+        if (!pack.formats().isSingle() && pack.formats().minVersion().major() < 65) { // since Minecraft 1.20.2 (pack format 18)
             // only write min and max values if not single
             // "supported_formats": [16, 17]
             writer.name("supported_formats");
