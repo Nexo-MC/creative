@@ -34,6 +34,7 @@ import team.unnamed.creative.base.Axis3D;
 import team.unnamed.creative.base.CubeFace;
 import team.unnamed.creative.base.Vector2Float;
 import team.unnamed.creative.base.Vector3Float;
+import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.model.*;
 import team.unnamed.creative.overlay.ResourceContainer;
 import team.unnamed.creative.serialize.minecraft.GsonUtil;
@@ -70,7 +71,7 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
     }
 
     @Override
-    public void serializeToJson(Model model, JsonWriter writer, int targetPackFormat) throws IOException {
+    public void serializeToJson(Model model, JsonWriter writer, PackFormat packFormat) throws IOException {
         writer.beginObject();
 
         // parent
@@ -94,7 +95,7 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
         List<Element> elements = model.elements();
         if (!elements.isEmpty()) {
             writer.name("elements").beginArray();
-            boolean writeLegacy = targetPackFormat < 75;
+            boolean writeLegacy = packFormat.minVersion().major() < 75;
             if (!writeLegacy) for (Element element : elements) {
                 ElementRotation rotation = element.rotation();
                 if (rotation == null) continue;

@@ -28,6 +28,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 import net.kyori.adventure.key.Key;
 import org.intellij.lang.annotations.Subst;
+import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.overlay.ResourceContainer;
 import team.unnamed.creative.serialize.minecraft.ResourceCategoryImpl;
 import team.unnamed.creative.serialize.minecraft.io.JsonResourceDeserializer;
@@ -75,7 +76,7 @@ public class WaypointStyleSerializer implements JsonResourceSerializer<WaypointS
     }
 
     @Override
-    public void serializeToJson(WaypointStyle object, JsonWriter writer, int targetPackFormat) throws IOException {
+    public void serializeToJson(WaypointStyle object, JsonWriter writer, PackFormat packFormat) throws IOException {
         writer.beginObject();
 
         writer.name("near_distance");

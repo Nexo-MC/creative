@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.BuiltResourcePack;
 import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.base.Writable;
+import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.serialize.ResourcePackWriter;
 import team.unnamed.creative.serialize.minecraft.fs.FileTreeWriter;
 import team.unnamed.creative.serialize.minecraft.fs.ZipEntryLifecycleHandler;
@@ -85,8 +86,8 @@ public interface MinecraftResourcePackWriter extends ResourcePackWriter<FileTree
      * @return The target pack format version number
      * @since 1.8.0
      */
-    default int targetPackFormat() {
-        return -1;
+    default PackFormat targetPackFormat() {
+        return PackFormat.UNKNOWN;
     }
 
     /**
@@ -208,7 +209,7 @@ public interface MinecraftResourcePackWriter extends ResourcePackWriter<FileTree
          * @return This builder
          * @since 1.8.0
          */
-        @NotNull Builder targetPackFormat(final int packFormat);
+        @NotNull Builder targetPackFormat(final PackFormat packFormat);
 
         /**
          * Builds a new {@link MinecraftResourcePackWriter} instance.

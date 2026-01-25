@@ -32,6 +32,7 @@ import team.unnamed.creative.blockstate.Condition;
 import team.unnamed.creative.blockstate.MultiVariant;
 import team.unnamed.creative.blockstate.Selector;
 import team.unnamed.creative.blockstate.Variant;
+import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.overlay.ResourceContainer;
 import team.unnamed.creative.serialize.minecraft.GsonUtil;
 import team.unnamed.creative.serialize.minecraft.ResourceCategoryImpl;
@@ -62,7 +63,7 @@ public final class BlockStateSerializer implements JsonResourceSerializer<BlockS
     }
 
     @Override
-    public void serializeToJson(BlockState state, JsonWriter writer, int targetPackFormat) throws IOException {
+    public void serializeToJson(BlockState state, JsonWriter writer, PackFormat packFormat) throws IOException {
         writer.beginObject();
 
         // write "variants" part if not empty

@@ -34,6 +34,7 @@ import team.unnamed.creative.base.Writable;
 import team.unnamed.creative.metadata.Metadata;
 import team.unnamed.creative.metadata.overlays.OverlayEntry;
 import team.unnamed.creative.metadata.overlays.OverlaysMeta;
+import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.metadata.pack.PackMeta;
 import team.unnamed.creative.overlay.Overlay;
 import team.unnamed.creative.overlay.ResourceContainer;
@@ -85,9 +86,9 @@ final class MinecraftResourcePackReaderImpl implements MinecraftResourcePackRead
         Map<@Nullable String, Map<Key, Texture>> incompleteTextures = new LinkedHashMap<>();
 
         // fill in with the default ones first (pack format is unknown at the start)
-        Map<String, ResourceCategory<?>> categoriesByFolderThisPackFormat = ResourceCategories.buildCategoryMapByFolder(-1);
-        Map<String, Integer> packFormatsByOverlayDir = new HashMap<>();
-        int packFormat = -1;
+        Map<String, ResourceCategory<?>> categoriesByFolderThisPackFormat = ResourceCategories.buildCategoryMapByFolder(PackFormat.UNKNOWN);
+        Map<String, PackFormat> packFormatsByOverlayDir = new HashMap<>();
+        PackFormat packFormat = PackFormat.UNKNOWN;
 
         while (reader.hasNext()) {
             String path = reader.next();
@@ -118,14 +119,14 @@ final class MinecraftResourcePackReaderImpl implements MinecraftResourcePackRead
                             System.err.println("Reading a resource-pack with no pack meta in its pack.mcmeta file! Unknown pack format version :(");
                         } else {
                             // update the pack format and categories
-                            packFormat = packMeta.formats().min();
+                            packFormat = packMeta.formats();
                             categoriesByFolderThisPackFormat = ResourceCategories.buildCategoryMapByFolder(packFormat);
                         }
 
                         // overlays info
                         OverlaysMeta overlaysMeta = metadata.meta(OverlaysMeta.class);
                         if (overlaysMeta != null) for (OverlayEntry entry : overlaysMeta.entries()) {
-                            packFormatsByOverlayDir.put(entry.directory(), entry.formats().min());
+                            packFormatsByOverlayDir.put(entry.directory(), entry.formats());
                         }
                         continue;
                     }
@@ -146,7 +147,7 @@ final class MinecraftResourcePackReaderImpl implements MinecraftResourcePackRead
             // but it may change if the file is inside an overlay folder
             @Subst("dir")
             @Nullable String overlayDir = null;
-            int localPackFormat = packFormat;
+            PackFormat localPackFormat = packFormat;
 
             // the file path, relative to the container
             String containerPath = path;
@@ -176,7 +177,7 @@ final class MinecraftResourcePackReaderImpl implements MinecraftResourcePackRead
                 container = overlay;
                 folder = tokens.poll();
                 containerPath = path.substring((overlayDir + '/').length());
-                localPackFormat = packFormatsByOverlayDir.getOrDefault(overlayDir, -1);
+                localPackFormat = packFormatsByOverlayDir.getOrDefault(overlayDir, PackFormat.UNKNOWN);
             }
 
             // null check to make ide happy
@@ -276,7 +277,7 @@ final class MinecraftResourcePackReaderImpl implements MinecraftResourcePackRead
                     container.unknownFile(containerPath, reader.content().asWritable());
                     continue;
                 }
-                String keyValue = withoutExtension(categoryPath, category.extension(-1));
+                String keyValue = withoutExtension(categoryPath, category.extension(PackFormat.UNKNOWN));
                 if (keyValue == null) {
                     // wrong extension
                     container.unknownFile(containerPath, reader.content().asWritable());

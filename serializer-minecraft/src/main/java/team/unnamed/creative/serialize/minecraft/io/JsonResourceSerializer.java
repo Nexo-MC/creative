@@ -25,6 +25,8 @@ package team.unnamed.creative.serialize.minecraft.io;
 
 import com.google.gson.stream.JsonWriter;
 import org.jetbrains.annotations.NotNull;
+import team.unnamed.creative.metadata.pack.FormatVersion;
+import team.unnamed.creative.metadata.pack.PackFormat;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -34,25 +36,25 @@ import java.nio.charset.StandardCharsets;
 
 public interface JsonResourceSerializer<T> extends ResourceSerializer<T> {
 
-    void serializeToJson(T object, JsonWriter writer, int targetPackFormat) throws IOException;
+    void serializeToJson(T object, JsonWriter writer, PackFormat packFormat) throws IOException;
 
     @Override
-    default void serialize(T object, OutputStream output, int targetPackFormat) throws IOException {
+    default void serialize(T object, OutputStream output, PackFormat packFormat) throws IOException {
         try (JsonWriter writer = new JsonWriter(new OutputStreamWriter(output, StandardCharsets.UTF_8))) {
-            serializeToJson(object, writer, targetPackFormat);
+            serializeToJson(object, writer, packFormat);
         }
     }
 
-    default @NotNull String serializeToJsonString(final @NotNull T object, final int targetPackFormat) throws IOException {
+    default @NotNull String serializeToJsonString(final @NotNull T object, final PackFormat packFormat) throws IOException {
         final StringWriter writer = new StringWriter();
         try (final JsonWriter jsonWriter = new JsonWriter(writer)) {
-            serializeToJson(object, jsonWriter, targetPackFormat);
+            serializeToJson(object, jsonWriter, packFormat);
         }
         return writer.toString();
     }
 
     default @NotNull String serializeToJsonString(final @NotNull T object) throws IOException {
-        return serializeToJsonString(object, -1);
+        return serializeToJsonString(object, PackFormat.UNKNOWN);
     }
 
 }

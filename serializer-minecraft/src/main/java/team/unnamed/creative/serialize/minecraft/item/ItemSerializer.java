@@ -50,6 +50,7 @@ import team.unnamed.creative.item.tint.CustomModelDataTintSource;
 import team.unnamed.creative.item.tint.GrassTintSource;
 import team.unnamed.creative.item.tint.KeyedAndBackedTintSource;
 import team.unnamed.creative.item.tint.TintSource;
+import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.overlay.ResourceContainer;
 import team.unnamed.creative.serialize.minecraft.GsonUtil;
 import team.unnamed.creative.serialize.minecraft.ResourceCategoryImpl;
@@ -79,17 +80,17 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
     private ItemSerializer() {
     }
 
-    private void serializeItemModel(ItemModel model, JsonWriter writer, int targetPackFormat) throws IOException {
+    private void serializeItemModel(ItemModel model, JsonWriter writer, PackFormat packFormat) throws IOException {
         writer.beginObject();
         switch (model) {
             case EmptyItemModel ignored -> writer.name("type").value("empty");
             case ReferenceItemModel referenceItemModel -> writeReference(writer, referenceItemModel);
             case SpecialItemModel specialItemModel -> writeSpecial(writer, specialItemModel);
-            case CompositeItemModel compositeItemModel -> writeComposite(writer, compositeItemModel, targetPackFormat);
-            case ConditionItemModel conditionItemModel -> writeCondition(writer, conditionItemModel, targetPackFormat);
-            case SelectItemModel selectItemModel -> writeSelect(writer, selectItemModel, targetPackFormat);
+            case CompositeItemModel compositeItemModel -> writeComposite(writer, compositeItemModel, packFormat);
+            case ConditionItemModel conditionItemModel -> writeCondition(writer, conditionItemModel, packFormat);
+            case SelectItemModel selectItemModel -> writeSelect(writer, selectItemModel, packFormat);
             case RangeDispatchItemModel rangeDispatchItemModel ->
-                    writeRangeDispatch(writer, rangeDispatchItemModel, targetPackFormat);
+                    writeRangeDispatch(writer, rangeDispatchItemModel, packFormat);
             case BundleSelectedItemModel ignored -> writer.name("type").value("bundle/selected_item");
             default -> throw new IllegalArgumentException("Unknown item model type: " + model.getClass());
         }
@@ -116,10 +117,10 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
     }
 
     @Override
-    public void serializeToJson(Item item, JsonWriter writer, int targetPackFormat) throws IOException {
+    public void serializeToJson(Item item, JsonWriter writer, PackFormat packFormat) throws IOException {
         writer.beginObject();
         writer.name("model");
-        serializeItemModel(item.model(), writer, targetPackFormat);
+        serializeItemModel(item.model(), writer, packFormat);
 
         boolean handAnimationOnSwap = item.handAnimationOnSwap();
         if (handAnimationOnSwap != Item.DEFAULT_HAND_ANIMATION_ON_SWAP) {
@@ -383,11 +384,11 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
         return ItemModel.special(render, Key.key(node.get("base").getAsString()));
     }
 
-    private void writeComposite(final @NotNull JsonWriter writer, final @NotNull CompositeItemModel model, final int targetPackFormat) throws IOException {
+    private void writeComposite(final @NotNull JsonWriter writer, final @NotNull CompositeItemModel model, final PackFormat packFormat) throws IOException {
         writer.name("type").value("composite");
         writer.name("models").beginArray();
         for (ItemModel child : model.models()) {
-            serializeItemModel(child, writer, targetPackFormat);
+            serializeItemModel(child, writer, packFormat);
         }
         writer.endArray();
     }
@@ -400,7 +401,7 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
         return ItemModel.composite(models);
     }
 
-    private void writeCondition(final @NotNull JsonWriter writer, final @NotNull ConditionItemModel model, final int targetPackFormat) throws IOException {
+    private void writeCondition(final @NotNull JsonWriter writer, final @NotNull ConditionItemModel model, final PackFormat packFormat) throws IOException {
         writer.name("type").value("condition");
         final ItemBooleanProperty condition = model.condition();
         switch (condition) {
@@ -434,9 +435,9 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
             default -> throw new IllegalArgumentException("Unknown condition type: " + condition.getClass());
         }
         writer.name("on_true");
-        serializeItemModel(model.onTrue(), writer, targetPackFormat);
+        serializeItemModel(model.onTrue(), writer, packFormat);
         writer.name("on_false");
-        serializeItemModel(model.onFalse(), writer, targetPackFormat);
+        serializeItemModel(model.onFalse(), writer, packFormat);
     }
 
     private @NotNull ConditionItemModel readCondition(final @NotNull JsonObject node) throws IOException {
@@ -504,7 +505,7 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
         );
     }
 
-    private void writeSelect(final @NotNull JsonWriter writer, final @NotNull SelectItemModel model, final int targetPackFormat) throws IOException {
+    private void writeSelect(final @NotNull JsonWriter writer, final @NotNull SelectItemModel model, final PackFormat packFormat) throws IOException {
         writer.name("type").value("select");
 
         final ItemStringProperty property = model.property();
@@ -555,7 +556,7 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
                 writer.endArray();
             }
             writer.name("model");
-            serializeItemModel(_case.model(), writer, targetPackFormat);
+            serializeItemModel(_case.model(), writer, packFormat);
             writer.endObject();
         }
         writer.endArray();
@@ -563,7 +564,7 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
         final ItemModel fallback = model.fallback();
         if (fallback != null) {
             writer.name("fallback");
-            serializeItemModel(fallback, writer, targetPackFormat);
+            serializeItemModel(fallback, writer, packFormat);
         }
     }
 
@@ -639,7 +640,7 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
         return ItemModel.select(property, cases, fallback);
     }
 
-    private void writeRangeDispatch(final @NotNull JsonWriter writer, final @NotNull RangeDispatchItemModel model, final int targetPackFormat) throws IOException {
+    private void writeRangeDispatch(final @NotNull JsonWriter writer, final @NotNull RangeDispatchItemModel model, final PackFormat packFormat) throws IOException {
         writer.name("type").value("range_dispatch");
 
         final ItemNumericProperty property = model.property();
@@ -712,7 +713,7 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
             writer.beginObject();
             writer.name("threshold").value(entry.threshold());
             writer.name("model");
-            serializeItemModel(entry.model(), writer, targetPackFormat);
+            serializeItemModel(entry.model(), writer, packFormat);
             writer.endObject();
         }
         writer.endArray();
@@ -720,7 +721,7 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
         final ItemModel fallback = model.fallback();
         if (fallback != null) {
             writer.name("fallback");
-            serializeItemModel(fallback, writer, targetPackFormat);
+            serializeItemModel(fallback, writer, packFormat);
         }
     }
 

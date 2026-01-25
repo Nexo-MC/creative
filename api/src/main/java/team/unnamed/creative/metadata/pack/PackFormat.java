@@ -39,6 +39,8 @@ import org.jetbrains.annotations.NotNull;
 @ApiStatus.NonExtendable
 public interface PackFormat extends Examinable {
 
+    PackFormat UNKNOWN = new PackFormatImpl(FormatVersion.of(0), FormatVersion.of(0), FormatVersion.of(0));
+
     /**
      * Returns the pack format as a {@link FormatVersion}, which supports
      * both <em>major</em> and <em>minor</em> components (e.g., {@code 65.2}, {@code 68.0}).

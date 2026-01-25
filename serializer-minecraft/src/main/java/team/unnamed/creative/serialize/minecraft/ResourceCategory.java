@@ -27,6 +27,7 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.overlay.ResourceContainer;
 import team.unnamed.creative.part.ResourcePackPart;
 import team.unnamed.creative.serialize.minecraft.io.ResourceDeserializer;
@@ -51,7 +52,7 @@ public interface ResourceCategory<T extends Keyed & ResourcePackPart> {
      * @param packFormat The pack format
      * @return The folder name
      */
-    @NotNull String folder(final int packFormat);
+    @NotNull String folder(final PackFormat packFormat);
 
     /**
      * Returns the extension for this category,
@@ -60,7 +61,7 @@ public interface ResourceCategory<T extends Keyed & ResourcePackPart> {
      * @param packFormat The pack format
      * @return The extension
      */
-    @NotNull String extension(final int packFormat);
+    @NotNull String extension(final PackFormat packFormat);
 
     @NotNull ResourceDeserializer<T> deserializer();
 
@@ -68,7 +69,7 @@ public interface ResourceCategory<T extends Keyed & ResourcePackPart> {
 
     @NotNull ResourceSerializer<T> serializer();
 
-    default @NotNull String pathOf(final @NotNull T resource, final int packFormat) {
+    default @NotNull String pathOf(final @NotNull T resource, final PackFormat packFormat) {
         Key key = resource.key();
         // assets/<namespace>/<category>/<path><extension>
         return "assets/" + key.namespace() + "/" + folder(packFormat) + "/" + key.value() + extension(packFormat);

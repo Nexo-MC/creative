@@ -23,11 +23,13 @@
  */
 package team.unnamed.creative.serialize.minecraft.io;
 
+import team.unnamed.creative.metadata.pack.PackFormat;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
 public interface ResourceSerializer<T> {
 
-    void serialize(T object, OutputStream output, int targetPackFormat) throws IOException;
+    void serialize(T object, OutputStream output, PackFormat packFormat) throws IOException;
 
 }

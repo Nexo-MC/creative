@@ -28,6 +28,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 import team.unnamed.creative.metadata.Metadata;
 import team.unnamed.creative.metadata.MetadataPart;
+import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.serialize.minecraft.io.JsonResourceSerializer;
 
 import java.io.IOException;
@@ -53,7 +54,7 @@ public class MetadataSerializer implements JsonResourceSerializer<Metadata> {
     }
 
     @Override
-    public void serializeToJson(Metadata metadata, JsonWriter writer, int targetPackFormat) throws IOException {
+    public void serializeToJson(Metadata metadata, JsonWriter writer, PackFormat packFormat) throws IOException {
         writer.beginObject();
         for (MetadataPart part : metadata.parts()) {
             MetadataPartCodec codec = null;

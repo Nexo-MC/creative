@@ -31,6 +31,7 @@ import team.unnamed.creative.base.Writable;
 import team.unnamed.creative.metadata.Metadata;
 import team.unnamed.creative.metadata.overlays.OverlayEntry;
 import team.unnamed.creative.metadata.overlays.OverlaysMeta;
+import team.unnamed.creative.metadata.pack.FormatVersion;
 import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.metadata.pack.PackMeta;
 import team.unnamed.creative.overlay.Overlay;
@@ -62,12 +63,12 @@ final class MinecraftResourcePackWriterImpl implements MinecraftResourcePackWrit
 
     private final ZipEntryLifecycleHandler zipEntryLifecycleHandler;
     private final boolean prettyPrinting;
-    private final int targetPackFormat;
+    private final PackFormat targetPackFormat;
 
     private MinecraftResourcePackWriterImpl(
             final @NotNull ZipEntryLifecycleHandler zipEntryLifecycleHandler,
             final boolean prettyPrinting,
-            final int targetPackFormat
+            final PackFormat targetPackFormat
     ) {
         this.zipEntryLifecycleHandler = zipEntryLifecycleHandler; // trust the caller (builder)
         this.prettyPrinting = prettyPrinting;
@@ -80,7 +81,7 @@ final class MinecraftResourcePackWriterImpl implements MinecraftResourcePackWrit
     }
 
     @Override
-    public int targetPackFormat() {
+    public PackFormat targetPackFormat() {
         return targetPackFormat;
     }
 
@@ -89,19 +90,19 @@ final class MinecraftResourcePackWriterImpl implements MinecraftResourcePackWrit
             final @NotNull ResourceContainer resourceContainer,
             final @NotNull FileTreeWriter target,
             final @NotNull ResourceCategory<T> category,
-            final int localTargetPackFormat
+            final PackFormat packFormat
     ) {
         for (T resource : category.lister().apply(resourceContainer)) {
-            String path = basePath + category.pathOf(resource, localTargetPackFormat);
+            String path = basePath + category.pathOf(resource, packFormat);
             final ResourceSerializer<T> serializer = category.serializer();
 
             if (serializer instanceof JsonResourceSerializer) {
                 // if it's a JSON serializer, we can use our own method, that will
                 // do some extra configuration
-                writeToJson(target, (JsonResourceSerializer<T>) serializer, resource, path, localTargetPackFormat);
+                writeToJson(target, (JsonResourceSerializer<T>) serializer, resource, path, packFormat);
             } else {
                 try (OutputStream output = target.openStream(path)) {
-                    category.serializer().serialize(resource, output, localTargetPackFormat);
+                    category.serializer().serialize(resource, output, packFormat);
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
@@ -109,15 +110,15 @@ final class MinecraftResourcePackWriterImpl implements MinecraftResourcePackWrit
         }
     }
 
-    private void writeWithBasePathAndTargetPackFormat(FileTreeWriter target, ResourceContainer container, String basePath, final int localTargetPackFormat) {
+    private void writeWithBasePathAndTargetPackFormat(FileTreeWriter target, ResourceContainer container, String basePath, final PackFormat packFormat) {
         // write resources from most categories
         for (ResourceCategory<?> category : ResourceCategories.categories()) {
-            writeFullCategory(basePath, container, target, category, localTargetPackFormat);
+            writeFullCategory(basePath, container, target, category, packFormat);
         }
 
         // write sound registries
         for (SoundRegistry soundRegistry : container.soundRegistries()) {
-            writeToJson(target, SoundRegistrySerializer.INSTANCE, soundRegistry, basePath + MinecraftResourcePackStructure.pathOf(soundRegistry), localTargetPackFormat);
+            writeToJson(target, SoundRegistrySerializer.INSTANCE, soundRegistry, basePath + MinecraftResourcePackStructure.pathOf(soundRegistry), packFormat);
         }
 
         // write textures
@@ -129,7 +130,7 @@ final class MinecraftResourcePackWriterImpl implements MinecraftResourcePackWrit
 
             Metadata metadata = texture.meta();
             if (!metadata.parts().isEmpty()) {
-                writeToJson(target, MetadataSerializer.INSTANCE, metadata, basePath + MinecraftResourcePackStructure.pathOfMeta(texture), localTargetPackFormat);
+                writeToJson(target, MetadataSerializer.INSTANCE, metadata, basePath + MinecraftResourcePackStructure.pathOfMeta(texture), packFormat);
             }
         }
 
@@ -156,9 +157,9 @@ final class MinecraftResourcePackWriterImpl implements MinecraftResourcePackWrit
             // todo: find a better way to log warnings
             if (packMeta == null) {
                 System.err.println("Resource pack does not contain PackMeta, won't be recognized by Minecraft");
-            } else if (targetPackFormat != -1 && !packMeta.formats().isInRange(targetPackFormat)) {
+            } else if (targetPackFormat != PackFormat.UNKNOWN && !packMeta.formats().isInRange(targetPackFormat.formatVersion())) {
                 System.err.println("Resource pack format mismatch, the resource pack specifies formats "
-                        + packMeta.formats() + " but the target format specified to the writer is " + targetPackFormat);
+                        + packMeta.formats() + " but the target format specified to the writer is " + targetPackFormat.formatVersion());
             }
             writeToJson(target, MetadataSerializer.INSTANCE, metadata, PACK_METADATA_FILE, targetPackFormat);
         }
@@ -179,17 +180,17 @@ final class MinecraftResourcePackWriterImpl implements MinecraftResourcePackWrit
         for (Overlay overlay : resourcePack.overlays()) {
             String dir = overlay.directory();
             PackFormat packFormat = overlayFormats.get(dir);
-            int overlayTargetPackFormat = packFormat == null ? -1 : packFormat.min(); // todo: consider max pack format
+            PackFormat overlayTargetPackFormat = packFormat == null ? PackFormat.UNKNOWN : packFormat;
             writeWithBasePathAndTargetPackFormat(target, overlay, dir + '/', overlayTargetPackFormat);
         }
     }
 
-    private <T> void writeToJson(FileTreeWriter writer, JsonResourceSerializer<T> serializer, T object, String path, final int localTargetPackFormat) {
+    private <T> void writeToJson(FileTreeWriter writer, JsonResourceSerializer<T> serializer, T object, String path, final PackFormat packFormat) {
         try (JsonWriter jsonWriter = new JsonWriter(writer.openWriter(path))) {
             if (prettyPrinting) {
                 jsonWriter.setIndent("  ");
             }
-            serializer.serializeToJson(object, jsonWriter, localTargetPackFormat);
+            serializer.serializeToJson(object, jsonWriter, packFormat);
         } catch (IOException e) {
             throw new UncheckedIOException("Failed to write to " + path, e);
         }
@@ -198,7 +199,7 @@ final class MinecraftResourcePackWriterImpl implements MinecraftResourcePackWrit
     static final class BuilderImpl implements Builder {
         private ZipEntryLifecycleHandler zipEntryLifecycleHandler = ZipEntryLifecycleHandler.DEFAULT;
         private boolean prettyPrinting;
-        private int targetPackFormat = -1;
+        private PackFormat targetPackFormat = PackFormat.UNKNOWN;
 
         @Override
         public @NotNull Builder zipEntryLifecycleHandler(final @NotNull ZipEntryLifecycleHandler zipEntryLifecycleHandler) {
@@ -213,7 +214,7 @@ final class MinecraftResourcePackWriterImpl implements MinecraftResourcePackWrit
         }
 
         @Override
-        public @NotNull Builder targetPackFormat(final int targetPackFormat) {
+        public @NotNull Builder targetPackFormat(final PackFormat targetPackFormat) {
             this.targetPackFormat = targetPackFormat;
             return this;
         }

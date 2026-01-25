@@ -28,6 +28,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 import net.kyori.adventure.key.Key;
 import team.unnamed.creative.lang.Language;
+import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.overlay.ResourceContainer;
 import team.unnamed.creative.serialize.minecraft.ResourceCategoryImpl;
 import team.unnamed.creative.serialize.minecraft.io.JsonResourceDeserializer;
@@ -54,7 +55,7 @@ public final class LanguageSerializer implements JsonResourceSerializer<Language
     }
 
     @Override
-    public void serializeToJson(Language language, JsonWriter writer, int targetPackFormat) throws IOException {
+    public void serializeToJson(Language language, JsonWriter writer, PackFormat packFormat) throws IOException {
         // {
         //   "key.1": "value 1",
         //   "key.2": "value 2"

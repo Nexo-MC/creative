@@ -26,6 +26,7 @@ package team.unnamed.creative.serialize.minecraft;
 import net.kyori.adventure.key.Keyed;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.overlay.ResourceContainer;
 import team.unnamed.creative.part.ResourcePackPart;
 import team.unnamed.creative.serialize.minecraft.io.ResourceDeserializer;
@@ -76,12 +77,12 @@ public final class ResourceCategoryImpl<T extends Keyed & ResourcePackPart> impl
     }
 
     @Override
-    public @NotNull String folder(final int packFormat) {
+    public @NotNull String folder(final PackFormat packFormat) {
         return folder;
     }
 
     @Override
-    public @NotNull String extension(final int packFormat) {
+    public @NotNull String extension(final PackFormat packFormat) {
         return extension;
     }
 

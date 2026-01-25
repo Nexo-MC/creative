@@ -23,6 +23,7 @@
  */
 package team.unnamed.creative.serialize.minecraft;
 
+import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.serialize.minecraft.atlas.AtlasSerializer;
 import team.unnamed.creative.serialize.minecraft.blockstate.BlockStateSerializer;
 import team.unnamed.creative.serialize.minecraft.equipment.EquipmentCategory;
@@ -67,7 +68,7 @@ public class ResourceCategories {
         return CATEGORIES;
     }
 
-    public static Map<String, ResourceCategory<?>> buildCategoryMapByFolder(final int packFormat) {
+    public static Map<String, ResourceCategory<?>> buildCategoryMapByFolder(final PackFormat packFormat) {
         Map<String, ResourceCategory<?>> map = new HashMap<>(); // note: no need to be linked list
         for (ResourceCategory<?> category : ResourceCategories.categories()) {
             map.put(category.folder(packFormat), category);

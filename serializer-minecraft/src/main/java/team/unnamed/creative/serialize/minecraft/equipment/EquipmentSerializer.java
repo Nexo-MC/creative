@@ -32,6 +32,7 @@ import team.unnamed.creative.equipment.Equipment;
 import team.unnamed.creative.equipment.EquipmentLayer;
 import team.unnamed.creative.equipment.EquipmentLayerDye;
 import team.unnamed.creative.equipment.EquipmentLayerType;
+import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.serialize.minecraft.base.KeySerializer;
 import team.unnamed.creative.serialize.minecraft.io.JsonResourceDeserializer;
 import team.unnamed.creative.serialize.minecraft.io.JsonResourceSerializer;
@@ -49,7 +50,7 @@ public final class EquipmentSerializer implements JsonResourceSerializer<Equipme
     }
 
     @Override
-    public void serializeToJson(Equipment equipment, JsonWriter writer, int targetPackFormat) throws IOException {
+    public void serializeToJson(Equipment equipment, JsonWriter writer, PackFormat packFormat) throws IOException {
         writer.beginObject()
             .name("layers")
             .beginObject();

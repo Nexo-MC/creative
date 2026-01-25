@@ -36,6 +36,7 @@ import team.unnamed.creative.font.ReferenceFontProvider;
 import team.unnamed.creative.font.SpaceFontProvider;
 import team.unnamed.creative.font.TrueTypeFontProvider;
 import team.unnamed.creative.font.UnihexFontProvider;
+import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.overlay.ResourceContainer;
 import team.unnamed.creative.serialize.minecraft.GsonUtil;
 import team.unnamed.creative.serialize.minecraft.ResourceCategoryImpl;
@@ -65,7 +66,7 @@ public final class FontSerializer implements JsonResourceSerializer<Font>, JsonR
     }
 
     @Override
-    public void serializeToJson(Font font, JsonWriter writer, int targetPackFormat) throws IOException {
+    public void serializeToJson(Font font, JsonWriter writer, PackFormat packFormat) throws IOException {
         writer.beginObject()
                 .name("providers")
                 .beginArray();

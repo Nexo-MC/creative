@@ -28,6 +28,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 import net.kyori.adventure.key.Key;
 import org.intellij.lang.annotations.Subst;
+import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.serialize.minecraft.GsonUtil;
 import team.unnamed.creative.serialize.minecraft.base.KeySerializer;
 import team.unnamed.creative.serialize.minecraft.io.JsonResourceSerializer;
@@ -48,7 +49,7 @@ public final class SoundRegistrySerializer implements JsonResourceSerializer<Sou
     public static final SoundRegistrySerializer INSTANCE = new SoundRegistrySerializer();
 
     @Override
-    public void serializeToJson(SoundRegistry registry, JsonWriter writer, int targetPackFormat) throws IOException {
+    public void serializeToJson(SoundRegistry registry, JsonWriter writer, PackFormat packFormat) throws IOException {
         writer.beginObject();
         for (SoundEvent event : registry.sounds()) {
             writer.name(event.key().value())
