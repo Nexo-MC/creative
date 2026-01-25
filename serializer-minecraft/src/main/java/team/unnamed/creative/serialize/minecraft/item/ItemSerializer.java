@@ -141,7 +141,7 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
     }
 
     @Override
-    public Item deserializeFromJson(JsonElement node, Key key) throws IOException {
+    public Item deserializeFromJson(JsonElement node, Key key, PackFormat packFormat) throws IOException {
         JsonObject jsonObject = node.getAsJsonObject();
         ItemModel model = deserializeItemModel(jsonObject.get("model"));
         boolean handAnimationOnSwap = jsonObject.has("hand_animation_on_swap")

@@ -83,7 +83,7 @@ public final class EquipmentSerializer implements JsonResourceSerializer<Equipme
     }
 
     @Override
-    public Equipment deserializeFromJson(JsonElement node, Key key) {
+    public Equipment deserializeFromJson(JsonElement node, Key key, PackFormat packFormat) {
         final JsonObject layers = node.getAsJsonObject().getAsJsonObject("layers");
         final Equipment.Builder builder = Equipment.equipment()
                 .key(key);

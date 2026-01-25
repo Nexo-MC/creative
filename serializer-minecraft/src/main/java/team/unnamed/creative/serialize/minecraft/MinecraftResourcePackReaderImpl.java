@@ -293,16 +293,13 @@ final class MinecraftResourcePackReaderImpl implements MinecraftResourcePackRead
                 Key key = Key.key(namespace, keyValue);
                 try {
                     ResourceDeserializer<? extends ResourcePackPart> deserializer = category.deserializer();
-                    ResourcePackPart resource;
-                    if (deserializer instanceof BinaryResourceDeserializer) {
-                        resource = ((BinaryResourceDeserializer<? extends ResourcePackPart>) deserializer)
+                    ResourcePackPart resource = (ResourcePackPart) switch (deserializer) {
+                        case BinaryResourceDeserializer binaryResourceDeserializer -> binaryResourceDeserializer
                                 .deserializeBinary(reader.content().asWritable(), key);
-                    } else if (deserializer instanceof JsonResourceDeserializer) {
-                        resource = ((JsonResourceDeserializer<? extends ResourcePackPart>) deserializer)
-                                .deserializeFromJson(parseJson(reader.stream()), key);
-                    } else {
-                        resource = deserializer.deserialize(reader.stream(), key);
-                    }
+                        case JsonResourceDeserializer jsonResourceDeserializer -> jsonResourceDeserializer
+                                .deserializeFromJson(parseJson(reader.stream()), key, localPackFormat);
+                        default -> deserializer.deserialize(reader.stream(), key);
+                    };
                     resource.addTo(container);
                 } catch (IOException e) {
                     throw new UncheckedIOException("Failed to deserialize resource at: '" + path + "'", e);

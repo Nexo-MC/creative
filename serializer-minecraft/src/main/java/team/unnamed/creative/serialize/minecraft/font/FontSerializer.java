@@ -84,7 +84,7 @@ public final class FontSerializer implements JsonResourceSerializer<Font>, JsonR
     }
 
     @Override
-    public Font deserializeFromJson(JsonElement node, Key key) {
+    public Font deserializeFromJson(JsonElement node, Key key, PackFormat packFormat) {
         JsonObject objectNode = node.getAsJsonObject();
         List<FontProvider> providers = new ArrayList<>();
         for (JsonElement providerNode : objectNode.getAsJsonArray("providers")) {

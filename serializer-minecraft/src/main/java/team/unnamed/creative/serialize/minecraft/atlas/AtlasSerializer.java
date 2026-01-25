@@ -81,7 +81,7 @@ public final class AtlasSerializer implements JsonResourceSerializer<Atlas>, Jso
     }
 
     @Override
-    public Atlas deserializeFromJson(JsonElement node, Key key) {
+    public Atlas deserializeFromJson(JsonElement node, Key key, PackFormat packFormat) {
         List<AtlasSource> sources = new ArrayList<>();
         for (JsonElement sourceElement : node.getAsJsonObject().getAsJsonArray(SOURCES_FIELD)) {
             sources.add(AtlasSourceSerializer.deserialize(sourceElement.getAsJsonObject()));

@@ -133,7 +133,7 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
     }
 
     @Override
-    public Model deserializeFromJson(JsonElement node, Key key) {
+    public Model deserializeFromJson(JsonElement node, Key key, PackFormat packFormat) {
 
         JsonObject objectNode = node.getAsJsonObject();
 
@@ -157,7 +157,7 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
         List<Element> elements = new ArrayList<>();
         if (objectNode.has("elements")) {
             for (JsonElement elementNode : objectNode.getAsJsonArray("elements")) {
-                elements.add(readElement(elementNode));
+                elements.add(readElement(elementNode, packFormat));
             }
         }
 
@@ -265,12 +265,12 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
         };
     }
 
-    private static Element readElement(JsonElement node) {
+    private static Element readElement(JsonElement node, PackFormat packFormat) {
         JsonObject objectNode = node.getAsJsonObject();
         ElementRotation rotation = null;
 
         if (objectNode.has("rotation")) {
-            rotation = readElementRotation(objectNode.get("rotation"));
+            rotation = readElementRotation(objectNode.get("rotation"), packFormat);
         }
 
         Map<CubeFace, ElementFace> faces = new LinkedHashMap<>();
@@ -340,14 +340,14 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
         writer.endObject();
     }
 
-    private static ElementRotation readElementRotation(JsonElement node) {
+    private static ElementRotation readElementRotation(JsonElement node, PackFormat packFormat) {
         JsonObject objectNode = node.getAsJsonObject();
         Vector3Float rotation;
         if (objectNode.has("axis") && objectNode.has("angle")) {
             Axis3D axis = Axis3D.valueOf(objectNode.get("axis").getAsString().toUpperCase(Locale.ROOT));
             float angle = objectNode.get("angle").getAsFloat();
             float abs = Math.abs(angle);
-            if (abs > 45f || abs < -45f) {
+            if ((packFormat.minVersion().major() < 75) && (abs > 45f || abs < -45f)) {
                 throw new IllegalArgumentException("Angle must be between [-45.0, 45.0] (inclusive), but was " + abs);
             }
             rotation = Vector3Float.ZERO.with(axis, angle);

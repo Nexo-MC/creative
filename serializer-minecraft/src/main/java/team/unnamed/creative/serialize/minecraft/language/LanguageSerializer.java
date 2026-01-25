@@ -68,7 +68,7 @@ public final class LanguageSerializer implements JsonResourceSerializer<Language
     }
 
     @Override
-    public Language deserializeFromJson(JsonElement node, Key key) {
+    public Language deserializeFromJson(JsonElement node, Key key, PackFormat packFormat) {
         JsonObject objectNode = node.getAsJsonObject();
         Map<String, String> translations = new LinkedHashMap<>();
 

@@ -91,7 +91,7 @@ public final class BlockStateSerializer implements JsonResourceSerializer<BlockS
     }
 
     @Override
-    public BlockState deserializeFromJson(JsonElement node, Key key) {
+    public BlockState deserializeFromJson(JsonElement node, Key key, PackFormat packFormat) {
 
         JsonObject objectNode = node.getAsJsonObject();
 
