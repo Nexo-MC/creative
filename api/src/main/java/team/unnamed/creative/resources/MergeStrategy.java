@@ -73,4 +73,33 @@ public interface MergeStrategy {
     static @NotNull MergeStrategy mergeAndKeepFirstOnError() {
         return MergeStrategyImpl.MERGE_AND_KEEP_FIRST_ON_ERROR;
     }
+
+    /**
+     * Gets a merge strategy that merges the resources of the
+     * first container with the resources of the second container.
+     * This will try to merge both files and prioritize the first container.
+     *
+     * @return The merge both and prioritize first on error merge strategy
+     * @since 1.11.13
+     */
+    static @NotNull MergeStrategy mergeBothAndPrioritizeFirstOnError() {
+        return MergeStrategyImpl.MERGE_BOTH_AND_PRIORITIZE_FIRST_ON_ERROR;
+    }
+
+    /**
+     * Gets a merge strategy that merges the resources of the
+     * first container with the resources of the second container.
+     * This will try to merge both files and prioritize the second container.
+     * It will act as an override if there are duplicates.
+     *
+     * @return The merge both and prioritize second on error merge strategy
+     * @since 1.11.13
+     */
+    static @NotNull MergeStrategy mergeBothAndPrioritizeSecondOnError() {
+        return MergeStrategyImpl.MERGE_BOTH_AND_PRIORITIZE_SECOND_ON_ERROR;
+    }
+
+    static boolean isMergeBoth(MergeStrategy strategy) {
+        return strategy == MergeStrategyImpl.MERGE_BOTH_AND_PRIORITIZE_FIRST_ON_ERROR || strategy == MergeStrategyImpl.MERGE_BOTH_AND_PRIORITIZE_SECOND_ON_ERROR;
+    }
 }

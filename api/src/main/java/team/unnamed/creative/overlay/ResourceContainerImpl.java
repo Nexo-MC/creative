@@ -31,12 +31,15 @@ import team.unnamed.creative.atlas.Atlas;
 import team.unnamed.creative.atlas.AtlasSource;
 import team.unnamed.creative.base.Writable;
 import team.unnamed.creative.blockstate.BlockState;
+import team.unnamed.creative.blockstate.MultiVariant;
 import team.unnamed.creative.equipment.Equipment;
 import team.unnamed.creative.equipment.EquipmentLayer;
 import team.unnamed.creative.equipment.EquipmentLayerType;
 import team.unnamed.creative.font.Font;
 import team.unnamed.creative.font.FontProvider;
 import team.unnamed.creative.item.Item;
+import team.unnamed.creative.item.ItemModel;
+import team.unnamed.creative.item.RangeDispatchItemModel;
 import team.unnamed.creative.lang.Language;
 import team.unnamed.creative.model.ItemOverride;
 import team.unnamed.creative.model.Model;
@@ -50,6 +53,7 @@ import team.unnamed.creative.waypoint.WaypointStyle;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -378,11 +382,12 @@ public class ResourceContainerImpl implements ResourceContainer {
     @Override
     public void merge(final @NotNull ResourceContainer other, final @NotNull MergeStrategy strategy) {
         final boolean override = strategy == MergeStrategy.override();
+        final boolean shouldOverride = override || strategy == MergeStrategy.mergeBothAndPrioritizeSecondOnError();
 
         // merge atlases
         for (final Atlas atlas : other.atlases()) {
             final Atlas oldAtlas = atlases.get(atlas.key());
-            if (oldAtlas == null || override) {
+            if (oldAtlas == null || shouldOverride) {
                 atlases.put(atlas.key(), atlas);
                 continue;
             }
@@ -396,11 +401,34 @@ public class ResourceContainerImpl implements ResourceContainer {
         // merge block states
         for (final BlockState blockState : other.blockStates()) {
             if (blockStates.containsKey(blockState.key())) {
-                if (strategy == MergeStrategy.override()) {
+                if (override) {
                     blockStates.put(blockState.key(), blockState);
                 } else if (strategy == MergeStrategy.mergeAndFailOnError()) {
                     throw new MergeException("Duplicate block state '" + blockState.key()
                             + "': exists in both resource containers");
+                } else if (MergeStrategy.isMergeBoth(strategy)) {
+                    var thisVariants = blockStates.get(blockState.key()).variants();
+                    var thisMultipart = blockStates.get(blockState.key()).multipart();
+                    var otherVariants = blockState.variants();
+                    var otherMultipart = blockState.multipart();
+
+                    var finalVariants = new HashMap<String, MultiVariant>();
+                    if (strategy == MergeStrategy.mergeBothAndPrioritizeFirstOnError()) {
+                        finalVariants.putAll(thisVariants);
+                        finalVariants.putAll(otherVariants);
+                    } else {
+                        finalVariants.putAll(otherVariants);
+                        finalVariants.putAll(thisVariants);
+                    }
+
+                    var finalMultipart = new ArrayList<>(thisMultipart);
+                    finalMultipart.addAll(otherMultipart);
+
+                    blockStates.put(blockState.key(), BlockState.of(
+                            blockState.key(),
+                            finalVariants,
+                            finalMultipart
+                    ));
                 }
             } else {
                 blockStates.put(blockState.key(), blockState);
@@ -410,7 +438,7 @@ public class ResourceContainerImpl implements ResourceContainer {
         // merge equipment
         for (final Equipment equipment : other.equipment()) {
             final Equipment oldEquipment = this.equipment.get(equipment.key());
-            if (oldEquipment == null || override) {
+            if (oldEquipment == null || shouldOverride) {
                 this.equipment.put(equipment.key(), equipment);
                 continue;
             }
@@ -435,7 +463,7 @@ public class ResourceContainerImpl implements ResourceContainer {
         // merge fonts
         for (final Font font : other.fonts()) {
             final Font oldFont = fonts.get(font.key());
-            if (oldFont == null || override) {
+            if (oldFont == null || shouldOverride) {
                 fonts.put(font.key(), font);
                 continue;
             }
@@ -454,6 +482,37 @@ public class ResourceContainerImpl implements ResourceContainer {
                 } else if (strategy == MergeStrategy.mergeAndFailOnError()) {
                     throw new MergeException("Duplicated item '" + item.key()
                             + "': exists in both resource containers");
+                } else if (MergeStrategy.isMergeBoth(strategy)) {
+                    var thisModel = items.get(item.key()).model();
+                    var otherModel = item.model();
+                    var isFirstPriority = strategy == MergeStrategy.mergeBothAndPrioritizeFirstOnError();
+
+                    ItemModel finalModel;
+                    // TODO : Add merging for other Item models
+                    if (thisModel instanceof RangeDispatchItemModel a &&
+                        otherModel instanceof RangeDispatchItemModel b) {
+
+                        var first = isFirstPriority ? a : b;
+                        var second = isFirstPriority ? b : a;
+
+                        finalModel = ItemModel.rangeDispatch()
+                                .addEntries(a.entries())
+                                .addEntries(b.entries())
+                                .scale(first.scale())
+                                .fallback(first.fallback() == null ? second.fallback() : first.fallback())
+                                .property(first.property())
+                                .build();
+                    } else {
+                        finalModel = otherModel;
+                    }
+
+                    items.put(item.key(), Item.item(
+                            item.key(),
+                            finalModel,
+                            item.handAnimationOnSwap(),
+                            item.oversizedInGui(),
+                            item.swapAnimationScale()
+                    ));
                 }
             } else {
                 items.put(item.key(), item);
@@ -478,6 +537,7 @@ public class ResourceContainerImpl implements ResourceContainer {
                                     + ". Exists in both resource containers."
                     );
                 }
+                // TODO: Add merge both strategies
             }
             languages.put(language.key(), Language.language(language.key(), translations));
         }
@@ -485,7 +545,7 @@ public class ResourceContainerImpl implements ResourceContainer {
         // merge models
         for (final Model model : other.models()) {
             final Model oldModel = models.get(model.key());
-            if (oldModel == null || strategy == MergeStrategy.override()) {
+            if (oldModel == null || override) {
                 models.put(model.key(), model);
                 continue;
             }
@@ -517,6 +577,7 @@ public class ResourceContainerImpl implements ResourceContainer {
                     throw new MergeException("Duplicated sound event '" + soundEvent + "': exists" +
                             " in both resource-packs");
                 }
+                // TODO: Add merge both strategies
             }
 
             soundRegistries.put(
@@ -531,7 +592,7 @@ public class ResourceContainerImpl implements ResourceContainer {
         // merge sounds
         for (final Sound sound : other.sounds()) {
             if (sounds.containsKey(sound.key())) {
-                if (override) {
+                if (shouldOverride) {
                     sounds.put(sound.key(), sound);
                 } else if (strategy == MergeStrategy.mergeAndFailOnError()) {
                     throw new MergeException("Duplicated sound '" + sound.key()
@@ -546,7 +607,7 @@ public class ResourceContainerImpl implements ResourceContainer {
         // todo: should we merge metadata?
         for (final Texture texture : other.textures()) {
             if (textures.containsKey(texture.key())) {
-                if (override) {
+                if (shouldOverride) {
                     textures.put(texture.key(), texture);
                 } else if (strategy == MergeStrategy.mergeAndFailOnError()) {
                     throw new MergeException("Duplicated texture '" + texture.key()
@@ -560,7 +621,7 @@ public class ResourceContainerImpl implements ResourceContainer {
         // merge unknown files
         for (final Map.Entry<String, Writable> entry : other.unknownFiles().entrySet()) {
             if (files.containsKey(entry.getKey())) {
-                if (override) {
+                if (shouldOverride) {
                     files.put(entry.getKey(), entry.getValue());
                 } else if (strategy == MergeStrategy.mergeAndFailOnError()) {
                     throw new MergeException("Duplicated unknown file: '" + entry.getKey()
