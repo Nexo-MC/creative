@@ -463,7 +463,7 @@ public class ResourceContainerImpl implements ResourceContainer {
         // merge fonts
         for (final Font font : other.fonts()) {
             final Font oldFont = fonts.get(font.key());
-            if (oldFont == null || shouldOverride) {
+            if (oldFont == null || override) {
                 fonts.put(font.key(), font);
                 continue;
             }
