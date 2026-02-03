@@ -387,7 +387,7 @@ public class ResourceContainerImpl implements ResourceContainer {
         // merge atlases
         for (final Atlas atlas : other.atlases()) {
             final Atlas oldAtlas = atlases.get(atlas.key());
-            if (oldAtlas == null || shouldOverride) {
+            if (oldAtlas == null || override) {
                 atlases.put(atlas.key(), atlas);
                 continue;
             }
