@@ -102,9 +102,9 @@ final class AtlasSourceSerializer {
                 Key resource = singleSource.resource();
                 @Nullable Key sprite = singleSource.sprite();
                 writer.name(TYPE_FIELD).value(KeySerializer.toString(SINGLE_TYPE))
-                        .name("resource").value(KeySerializer.toString(resource));
+                        .name("resource").value(KeySerializer.toString(resource).replace(".png", ""));
                 if (sprite != null && !sprite.equals(resource)) {
-                    writer.name("sprite").value(KeySerializer.toString(sprite));
+                    writer.name("sprite").value(KeySerializer.toString(sprite).replace(".png", ""));
                 }
             }
             case DirectoryAtlasSource dirSource -> writer

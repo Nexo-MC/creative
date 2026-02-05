@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.base.Writable;
 import team.unnamed.creative.metadata.Metadata;
 
+import java.util.StringJoiner;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
@@ -42,7 +43,8 @@ record TextureImpl(Key key, Writable data, Metadata meta) implements Texture {
             final @NotNull Writable data,
             final @NotNull Metadata meta
     ) {
-        this.key = requireNonNull(key, "key");
+        Key keyNoExtension = key.value().endsWith(".png") ? Key.key(key.asString().replace(".png", "")) : key;
+        this.key = requireNonNull(keyNoExtension, "key");
         this.data = requireNonNull(data, "data");
         this.meta = requireNonNull(meta, "meta");
     }
@@ -97,7 +99,8 @@ record TextureImpl(Key key, Writable data, Metadata meta) implements Texture {
 
         @Override
         public @NotNull Builder key(final @NotNull Key key) {
-            this.key = requireNonNull(key, "key");
+            Key keyNoExtension = key.value().endsWith(".png") ? Key.key(key.asString().replace(".png", "")) : key;
+            this.key = requireNonNull(keyNoExtension, "key");
             return this;
         }
 
