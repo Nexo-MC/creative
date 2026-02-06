@@ -73,9 +73,8 @@ record BitMapFontProviderImpl(Key file, int height, int ascent,
 
     @Override
     public @NotNull BitMapFontProvider file(final @NotNull Key file) {
-        Key fileWithExtension = file.value().endsWith(".png") ? file : Key.key(file.asString() + ".png");
-        requireNonNull(fileWithExtension, "file");
-        return new BitMapFontProviderImpl(fileWithExtension, this.height, this.ascent, this.characters);
+        requireNonNull(file, "file");
+        return new BitMapFontProviderImpl(file, this.height, this.ascent, this.characters);
     }
 
     @Override
