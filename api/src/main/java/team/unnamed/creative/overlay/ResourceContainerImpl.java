@@ -476,46 +476,49 @@ public class ResourceContainerImpl implements ResourceContainer {
 
         // merge items
         for (final Item item : other.items()) {
-            if (items.containsKey(item.key())) {
-                if (override) {
-                    items.put(item.key(), item);
-                } else if (strategy == MergeStrategy.mergeAndFailOnError()) {
-                    throw new MergeException("Duplicated item '" + item.key()
-                            + "': exists in both resource containers");
-                } else if (MergeStrategy.isMergeBoth(strategy)) {
-                    var thisModel = items.get(item.key()).model();
-                    var otherModel = item.model();
-                    var isFirstPriority = strategy == MergeStrategy.mergeBothAndPrioritizeFirstOnError();
-
-                    ItemModel finalModel;
-                    // TODO : Add merging for other Item models
-                    if (thisModel instanceof RangeDispatchItemModel a &&
-                        otherModel instanceof RangeDispatchItemModel b) {
-
-                        var first = isFirstPriority ? a : b;
-                        var second = isFirstPriority ? b : a;
-
-                        finalModel = ItemModel.rangeDispatch()
-                                .addEntries(a.entries())
-                                .addEntries(b.entries())
-                                .scale(first.scale())
-                                .fallback(first.fallback() == null ? second.fallback() : first.fallback())
-                                .property(first.property())
-                                .build();
-                    } else {
-                        finalModel = otherModel;
-                    }
-
-                    items.put(item.key(), Item.item(
-                            item.key(),
-                            finalModel,
-                            item.handAnimationOnSwap(),
-                            item.oversizedInGui(),
-                            item.swapAnimationScale()
-                    ));
-                }
-            } else {
+            if (!items.containsKey(item.key())) {
                 items.put(item.key(), item);
+                continue;
+            }
+
+            var prevItem = items.get(item.key());
+
+            if (override) {
+                items.put(item.key(), item);
+            } else if (strategy == MergeStrategy.mergeAndFailOnError()) {
+                throw new MergeException("Duplicated item '" + item.key()
+                        + "': exists in both resource containers");
+            } else if (MergeStrategy.isMergeBoth(strategy)) {
+                var thisModel = prevItem.model();
+                var otherModel = item.model();
+                var isFirstPriority = strategy == MergeStrategy.mergeBothAndPrioritizeFirstOnError();
+
+                ItemModel finalModel;
+                // TODO : Add merging for other Item models
+                if (thisModel instanceof RangeDispatchItemModel a &&
+                    otherModel instanceof RangeDispatchItemModel b) {
+
+                    var first = isFirstPriority ? a : b;
+                    var second = isFirstPriority ? b : a;
+
+                    finalModel = ItemModel.rangeDispatch()
+                            .addEntries(a.entries())
+                            .addEntries(b.entries())
+                            .scale(first.scale())
+                            .fallback(first.fallback() == null ? second.fallback() : first.fallback())
+                            .property(first.property())
+                            .build();
+                } else {
+                    finalModel = otherModel;
+                }
+
+                items.put(item.key(), Item.item(
+                        item.key(),
+                        finalModel,
+                        isFirstPriority ? prevItem.handAnimationOnSwap() : item.handAnimationOnSwap(),
+                        isFirstPriority ? prevItem.oversizedInGui() : item.oversizedInGui(),
+                        isFirstPriority ? prevItem.swapAnimationScale() : item.swapAnimationScale()
+                ));
             }
         }
 
