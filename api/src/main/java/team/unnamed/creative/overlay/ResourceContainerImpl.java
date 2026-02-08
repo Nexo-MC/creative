@@ -501,9 +501,19 @@ public class ResourceContainerImpl implements ResourceContainer {
                     var first = isFirstPriority ? a : b;
                     var second = isFirstPriority ? b : a;
 
+                    var entries = new ArrayList<>(first.entries());
+                    for (var entry : second.entries()) {
+                        var exists = entries.stream().anyMatch(b2 -> {
+                            return entry.threshold() == b2.threshold();
+                        });
+
+                        if (!exists) {
+                            entries.add(entry);
+                        }
+                    }
+
                     finalModel = ItemModel.rangeDispatch()
-                            .addEntries(a.entries())
-                            .addEntries(b.entries())
+                            .addEntries(entries)
                             .scale(first.scale())
                             .fallback(first.fallback() == null ? second.fallback() : first.fallback())
                             .property(first.property())
