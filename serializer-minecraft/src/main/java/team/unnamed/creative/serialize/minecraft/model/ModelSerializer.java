@@ -494,11 +494,23 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
     }
 
     private static void writeModelTexture(JsonWriter writer, ModelTexture texture) throws IOException {
-        if (texture.reference() != null) {
-            writer.value("#" + texture.reference());
+        if (!texture.forceTranslucent()) {
+            if (texture.reference() != null) {
+                writer.value("#" + texture.reference());
+            } else {
+                writer.value(KeySerializer.toString(texture.key()));
+            }
         } else {
-            writer.value(KeySerializer.toString(texture.key()));
+            writer.beginObject();
+            writer.name("sprite");
+            if (texture.reference() != null) {
+                writer.value("#" + texture.reference());
+            } else {
+                writer.value(KeySerializer.toString(texture.key()));
+            }
+            writer.name("force_translucent").value(texture.forceTranslucent());
         }
+
     }
 
     private static ModelTextures readTextures(JsonElement node) {

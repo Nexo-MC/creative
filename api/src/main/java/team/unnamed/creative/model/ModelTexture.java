@@ -30,27 +30,12 @@ import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
-public class ModelTexture {
+/**
+ * @param key only one is null
+ */
+public record ModelTexture(@Nullable Key key, @Nullable String reference, boolean forceTranslucent) {
 
-    // only one is null
-    private final @Nullable Key key;
-    private final @Nullable String reference;
-
-    private ModelTexture(
-            @Nullable Key key,
-            @Nullable String reference
-    ) {
-        this.key = key;
-        this.reference = reference;
-    }
-
-    public @Nullable Key key() {
-        return key;
-    }
-
-    public @Nullable String reference() {
-        return reference;
-    }
+    public static final boolean DEFAULT_FORCE_TRANSLUCENT = false;
 
     public Object get() {
         return key == null ? reference : key;
@@ -64,7 +49,8 @@ public class ModelTexture {
         ModelTexture that = (ModelTexture) o;
 
         if (!Objects.equals(key, that.key)) return false;
-        return Objects.equals(reference, that.reference);
+        if (!Objects.equals(reference, that.reference)) return false;
+        return forceTranslucent == that.forceTranslucent;
     }
 
     @Override
@@ -76,12 +62,22 @@ public class ModelTexture {
 
     public static ModelTexture ofKey(Key key) {
         requireNonNull(key, "key");
-        return new ModelTexture(key, null);
+        return new ModelTexture(key, null, DEFAULT_FORCE_TRANSLUCENT);
     }
 
     public static ModelTexture ofReference(String reference) {
         requireNonNull(reference, "reference");
-        return new ModelTexture(null, reference);
+        return new ModelTexture(null, reference, DEFAULT_FORCE_TRANSLUCENT);
+    }
+
+    public static ModelTexture ofKey(Key key, boolean forceTranslucent) {
+        requireNonNull(key, "key");
+        return new ModelTexture(key, null, forceTranslucent);
+    }
+
+    public static ModelTexture ofReference(String reference, boolean forceTranslucent) {
+        requireNonNull(reference, "reference");
+        return new ModelTexture(null, reference, forceTranslucent);
     }
 
 }
