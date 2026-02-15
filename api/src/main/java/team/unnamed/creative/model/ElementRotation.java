@@ -54,12 +54,13 @@ public record ElementRotation(Vector3Float origin, Vector3Float rotation, boolea
         this.rescale = rescale;
     }
 
-    public boolean containsLegacyRotation() {
+    public boolean containsLegacyRotation(boolean writeLegacy) {
         float x = rotation.x(); float y = rotation.y(); float z = rotation.z();
         if (x < -45f || x > 45f) return false;
         if (y < -45f || y > 45f) return false;
         if (z < -45f || z > 45f) return false;
         if (x != 0f && (y != 0f || z != 0f) || (y != 0f && z != 0f)) return false;
+        if (rotation.equals(Vector3Float.ZERO)) return writeLegacy;
         return true;
     }
 
