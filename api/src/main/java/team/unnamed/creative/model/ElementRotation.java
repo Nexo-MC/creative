@@ -54,12 +54,13 @@ public record ElementRotation(Vector3Float origin, Vector3Float rotation, boolea
         this.rescale = rescale;
     }
 
-    public boolean containsModernRotation() {
-        if (rotation.equals(Vector3Float.ZERO)) return false;
-        if (rotation.x() < -45f || rotation.x() > 45f) return true;
-        if (rotation.y() < -45f || rotation.y() > 45f) return true;
-        if (rotation.z() < -45f || rotation.z() > 45f) return true;
-        return false;
+    public boolean containsLegacyRotation() {
+        float x = rotation.x(); float y = rotation.y(); float z = rotation.z();
+        if (x < -45f || x > 45f) return false;
+        if (y < -45f || y > 45f) return false;
+        if (z < -45f || z > 45f) return false;
+        if (x != 0f && (y != 0f || z != 0f) || (y != 0f && z != 0f)) return false;
+        return true;
     }
 
     /**
