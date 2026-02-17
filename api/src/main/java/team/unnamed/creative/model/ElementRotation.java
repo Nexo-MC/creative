@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.base.Axis3D;
 import team.unnamed.creative.base.Vector3Float;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
@@ -55,13 +56,41 @@ public record ElementRotation(Vector3Float origin, Vector3Float rotation, boolea
     }
 
     public boolean containsLegacyRotation(boolean writeLegacy) {
-        float x = rotation.x(); float y = rotation.y(); float z = rotation.z();
-        if (x < -45f || x > 45f) return false;
-        if (y < -45f || y > 45f) return false;
-        if (z < -45f || z > 45f) return false;
-        if (x != 0f && (y != 0f || z != 0f) || (y != 0f && z != 0f)) return false;
-        if (rotation.equals(Vector3Float.ZERO)) return writeLegacy;
+        float x = rotation.x();
+        float y = rotation.y();
+        float z = rotation.z();
+
+        float min = -45f;
+        float max = 45f;
+        float step = 22.5f;
+        float epsilon = 0.0001f;
+
+        // If all are 0 → keep previous state
+        if (Math.abs(x) < epsilon && Math.abs(y) < epsilon && Math.abs(z) < epsilon) return writeLegacy;
+
+        // Must be within range -45..45
+        if (x < min || x > max) return false;
+        if (y < min || y > max) return false;
+        if (z < min || z > max) return false;
+
+        // Only one axis may be non-zero
+        int nonZeroCount = 0;
+        if (Math.abs(x) > epsilon) nonZeroCount++;
+        if (Math.abs(y) > epsilon) nonZeroCount++;
+        if (Math.abs(z) > epsilon) nonZeroCount++;
+        if (nonZeroCount > 1) return false;
+
+        // Must be increment of 22.5
+        if (!isMultipleOfStep(x, step, epsilon)) return false;
+        if (!isMultipleOfStep(y, step, epsilon)) return false;
+        if (!isMultipleOfStep(z, step, epsilon)) return false;
+
         return true;
+    }
+
+    private boolean isMultipleOfStep(float value, float step, float epsilon) {
+        float quotient = value / step;
+        return Math.abs(quotient - Math.round(quotient)) < epsilon;
     }
 
     /**
