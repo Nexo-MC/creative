@@ -103,7 +103,8 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
         if (!elements.isEmpty()) {
             writer.name("elements").beginArray();
             boolean writeLegacy = packFormat.minVersion().major() < 75;
-            if (!writeLegacy) for (Element element : elements) {
+
+            if (writeLegacy) for (Element element : elements) {
                 ElementRotation rotation = element.rotation();
                 if (rotation == null) continue;
                 writeLegacy = rotation.containsLegacyRotation(writeLegacy);

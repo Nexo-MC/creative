@@ -30,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.base.Axis3D;
 import team.unnamed.creative.base.Vector3Float;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
@@ -85,7 +84,7 @@ public record ElementRotation(Vector3Float origin, Vector3Float rotation, boolea
         if (!isMultipleOfStep(y, step, epsilon)) return false;
         if (!isMultipleOfStep(z, step, epsilon)) return false;
 
-        return true;
+        return writeLegacy;
     }
 
     private boolean isMultipleOfStep(float value, float step, float epsilon) {

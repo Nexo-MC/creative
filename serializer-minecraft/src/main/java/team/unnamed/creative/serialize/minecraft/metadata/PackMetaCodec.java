@@ -91,8 +91,7 @@ final class PackMetaCodec implements MetadataPartCodec<PackMeta> {
 
     @Override
     public void write(final @NotNull JsonWriter writer, final @NotNull PackMeta pack) throws IOException {
-        writer.beginObject()
-                .name("pack_format").value(pack.formats().format());
+        writer.beginObject();
 
         writer.name("description");
         Component description = pack.description();
@@ -101,6 +100,8 @@ final class PackMetaCodec implements MetadataPartCodec<PackMeta> {
         } else {
             Streams.write(GsonComponentSerializer.gson().serializeToTree(description), writer);
         }
+
+        if (pack.formats().minVersion().major() < 69) writer.name("pack_format").value(pack.formats().format());
 
         // If Format is lower than 65, we should not add 'supported_formats'
         if (!pack.formats().isSingle() && pack.formats().minVersion().major() < 65) { // since Minecraft 1.20.2 (pack format 18)
