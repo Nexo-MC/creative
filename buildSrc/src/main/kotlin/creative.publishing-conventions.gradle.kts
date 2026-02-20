@@ -14,11 +14,7 @@ publishing {
             val snapshot = project.version.toString().endsWith("-SNAPSHOT")
 
             name = repositoryName
-            url = if (snapshot) {
-                uri(snapshotRepository)
-            } else {
-                uri(releaseRepository)
-            }
+            url = if (snapshot) uri(snapshotRepository) else uri(releaseRepository)
             credentials(PasswordCredentials::class)
         }
     }
@@ -28,7 +24,7 @@ publishing {
             pom {
                 name.set("${project.group}:${project.name}")
                 description.set(project.description)
-                url.set("https://github.com/unnamed/creative")
+                url.set("https://github.com/Nexo-MC/creative")
                 packaging = "jar"
                 licenses {
                     license {
@@ -42,12 +38,16 @@ publishing {
                         name.set("Andre Roldan")
                         email.set("yusshu@unnamed.team")
                     }
+                    developer {
+                        id.set("boy0000")
+                        name.set("Boy0000")
+                    }
                 }
-                scm {
-                    connection.set("scm:git:git://github.com/unnamed/creative.git")
-                    developerConnection.set("scm:git:ssh://github.com:unnamed/creative.git")
-                    url.set("https://github.com/unnamed/creative")
-                }
+                //scm {
+                //    connection.set("scm:git:git://github.com/unnamed/creative.git")
+                //    developerConnection.set("scm:git:ssh://github.com:unnamed/creative.git")
+                //    url.set("https://github.com/unnamed/creative")
+                //}
             }
         }
     }
