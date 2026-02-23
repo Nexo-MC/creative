@@ -52,7 +52,7 @@ class PackMetaTest {
     @DisplayName("Test pack meta serialization with version range")
     void test_version_range_serialization() {
         PackMeta packMeta = PackMeta.of(
-                PackFormat.format(18, 18, 20),
+                PackFormat.format(18, 20),
                 Component.text("Description!")
         );
         assertEquals(
@@ -83,7 +83,7 @@ class PackMetaTest {
     @DisplayName("Test pack meta serialization with version range and component description")
     void test_combined_serialization() {
         PackMeta packMeta = PackMeta.of(
-                PackFormat.format(18, 18, 20),
+                PackFormat.format(18, 20),
                 Component.text()
                         .append(Component.text("Unnamed Team", TextColor.color(0xff8df8)))
                         .append(Component.text(" ftw ", NamedTextColor.GRAY))
@@ -116,7 +116,7 @@ class PackMetaTest {
         PackMeta packMeta = PackMetaCodec.INSTANCE.fromJson("{\"pack_format\":18,\"description\":\"Description!\",\"supported_formats\":[18,20]}");
         assertEquals(
                 PackMeta.of(
-                        PackFormat.format(18, 18, 20),
+                        PackFormat.format(18, 20),
                         Component.text("Description!")
                 ),
                 packMeta
@@ -146,7 +146,7 @@ class PackMetaTest {
         PackMeta packMeta = PackMetaCodec.INSTANCE.fromJson("{\"pack_format\":18,\"description\":{\"extra\":[{\"color\":\"#FF8DF8\",\"text\":\"Unnamed Team\"},{\"color\":\"gray\",\"text\":\" ftw \"},{\"keybind\":\"i.dont.know\"}],\"text\":\"\"},\"supported_formats\":[18,20]}");
         assertEquals(
                 PackMeta.of(
-                        PackFormat.format(18, 18, 20),
+                        PackFormat.format(18, 20),
                         Component.text()
                                 .append(Component.text("Unnamed Team", TextColor.color(0xff8df8)))
                                 .append(Component.text(" ftw ", NamedTextColor.GRAY))

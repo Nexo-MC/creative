@@ -53,12 +53,6 @@ final class PackMetaImpl implements PackMeta {
     }
 
     @Override
-    @Deprecated
-    public int format() {
-        return format.format();
-    }
-
-    @Override
     public @NotNull PackFormat formats() {
         return format;
     }

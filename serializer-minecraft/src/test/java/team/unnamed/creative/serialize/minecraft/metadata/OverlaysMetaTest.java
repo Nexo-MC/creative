@@ -50,8 +50,8 @@ class OverlaysMetaTest {
     @DisplayName("Test overlays meta serialization with custom pack format range")
     void test_range_serialization() {
         final OverlaysMeta overlaysMeta = OverlaysMeta.of(
-                OverlayEntry.of(PackFormat.format(18, 18, 20), "v18-20"),
-                OverlayEntry.of(PackFormat.format(21, 21, 24), "v21-24")
+                OverlayEntry.of(PackFormat.format(18, 20), "v18-20"),
+                OverlayEntry.of(PackFormat.format(21, 24), "v21-24")
         );
         assertEquals(
                 "{\"entries\":[{\"formats\":[18,20],\"directory\":\"v18-20\"},{\"formats\":[21,24],\"directory\":\"v21-24\"}]}",
@@ -78,8 +78,8 @@ class OverlaysMetaTest {
         final OverlaysMeta overlaysMeta = OverlaysMetaCodec.INSTANCE.fromJson("{\"entries\":[{\"formats\":[18,20],\"directory\":\"v18-20\"},{\"formats\":[21,24],\"directory\":\"v21-24\"}]}");
         assertEquals(
                 OverlaysMeta.of(
-                        OverlayEntry.of(PackFormat.format(18, 18, 20), "v18-20"),
-                        OverlayEntry.of(PackFormat.format(21, 21, 24), "v21-24")
+                        OverlayEntry.of(PackFormat.format(18, 20), "v18-20"),
+                        OverlayEntry.of(PackFormat.format(21, 24), "v21-24")
                 ),
                 overlaysMeta
         );

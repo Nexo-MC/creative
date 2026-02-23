@@ -57,7 +57,7 @@ class MetadataTest {
 
         assertEquals(
                 Metadata.metadata()
-                        .addPart(PackMeta.of(PackFormat.format(16, 16, 17), Component.text("Description!")))
+                        .addPart(PackMeta.of(PackFormat.format(16, 17), Component.text("Description!")))
                         .addPart(LanguageMeta.language(new HashMap<>() {{
                             put("english", LanguageEntry.languageEntry("English", "US", false));
                         }}))
@@ -68,7 +68,7 @@ class MetadataTest {
                         ))
                         .addPart(OverlaysMeta.of(
                                 OverlayEntry.of(PackFormat.format(18), "abc"),
-                                OverlayEntry.of(PackFormat.format(19, 19, 21), "def")
+                                OverlayEntry.of(PackFormat.format(19, 21), "def")
                         ))
                         .addPart(AnimationMeta.animation()
                                 .width(16)

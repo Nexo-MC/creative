@@ -39,23 +39,6 @@ import team.unnamed.creative.metadata.MetadataPart;
 public interface PackMeta extends MetadataPart {
 
     /**
-     * Returns the pack version. If this number does not match the
-     * current required number, the resource pack displays an error
-     * and requires additional confirmation to load the pack
-     *
-     * <p>There are format versions assigned to specific Minecraft
-     * client versions, e.g.: 7 for Minecraft 1.17 and 1.17.1, 8
-     * for Minecraft 1.18 and 1.18.1</p>
-     *
-     * @return The resource pack format number
-     * @since 1.0.0
-     * @deprecated Use {@link PackMeta#formats()} instead
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
-    int format();
-
-    /**
      * Returns the supported pack formats. The pack format specifies
      * how the resource-pack is structured and which features it
      * uses.
@@ -80,19 +63,6 @@ public interface PackMeta extends MetadataPart {
 
     /**
      * Creates a new {@link PackMeta} instance from
-     * the given values
-     *
-     * @param format      The pack format
-     * @param description The pack description
-     * @return A new {@link PackMeta} instance
-     * @since 1.0.0
-     */
-    static PackMeta of(int format, String description) {
-        return of(PackFormat.format(format), LegacyComponentSerializer.legacySection().deserialize(description));
-    }
-
-    /**
-     * Creates a new {@link PackMeta} instance from
      * the given values.
      *
      * @param format      The pack format
@@ -102,19 +72,6 @@ public interface PackMeta extends MetadataPart {
      */
     static @NotNull PackMeta of(final @NotNull PackFormat format, final @NotNull Component description) {
         return new PackMetaImpl(format, description);
-    }
-
-    /**
-     * Creates a new {@link PackMeta} instance from
-     * the given values.
-     *
-     * @param format      The pack format
-     * @param description The pack description
-     * @return A new {@link PackMeta} instance
-     * @since 1.1.0
-     */
-    static @NotNull PackMeta of(final int format, final @NotNull Component description) {
-        return of(PackFormat.format(format), description);
     }
 
 }

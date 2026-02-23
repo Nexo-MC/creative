@@ -26,7 +26,6 @@ package team.unnamed.creative.serialize.minecraft.equipment;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.equipment.Equipment;
-import team.unnamed.creative.metadata.pack.FormatVersion;
 import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.overlay.ResourceContainer;
 import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackStructure;
@@ -48,7 +47,7 @@ public final class EquipmentCategory implements ResourceCategory<Equipment> {
     public @NotNull String folder(PackFormat packFormat) {
         // In 1.21.4 (pack format 43), the equipment stuff was
         // moved from models/equipment to just equipment
-        return (packFormat.minVersion().major() >= 43 || packFormat.formatVersion().major() < 0) ? "equipment" : "models/equipment";
+        return (packFormat.min().major() >= 43 || packFormat.min().major() < 0) ? "equipment" : "models/equipment";
     }
 
     @Override

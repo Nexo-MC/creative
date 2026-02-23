@@ -27,17 +27,11 @@ import net.kyori.examination.ExaminableProperty;
 import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
 import java.util.stream.Stream;
 
-final class PackFormatImpl implements PackFormat {
+record PackFormatImpl(@NotNull FormatVersion min, @NotNull FormatVersion max) implements PackFormat {
 
-    private final @NotNull FormatVersion format;
-    private final @NotNull FormatVersion min;
-    private final @NotNull FormatVersion max;
-
-    PackFormatImpl(final @NotNull FormatVersion format, final @NotNull FormatVersion min, final @NotNull FormatVersion max) {
-        this.format = format;
+    PackFormatImpl(final @NotNull FormatVersion min, final @NotNull FormatVersion max) {
         this.min = min;
         this.max = max;
 
@@ -45,52 +39,21 @@ final class PackFormatImpl implements PackFormat {
         if (min.compareTo(max) > 0) {
             throw new IllegalArgumentException("Minimum " + min + " is greater than maximum " + max);
         }
-        if (format.compareTo(min) < 0 || format.compareTo(max) > 0) {
-            throw new IllegalArgumentException("Format " + format + " is not in the range [" + min + ", " + max + "]");
-        }
-    }
-
-    @Deprecated
-    PackFormatImpl(final int format, final int min, final int max) {
-        this(FormatVersion.of(format), FormatVersion.of(min), FormatVersion.of(max));
     }
 
     @Override
-    public FormatVersion formatVersion() {
-        return format;
-    }
-
-    @Override
-    @Deprecated
-    public int format() {
-        return format.major();
-    }
-
-    @Override
-    public FormatVersion minVersion() {
+    public FormatVersion min() {
         return min;
     }
 
     @Override
-    @Deprecated
-    public int min() {
-        return min.major();
-    }
-
-    @Override
-    public FormatVersion maxVersion() {
+    public FormatVersion max() {
         return max;
     }
 
     @Override
-    @Deprecated
-    public int max() {
-        return max.major();
-    }
-
-    @Override
     public boolean isSingle() {
-        return format.equals(min) && min.equals(max);
+        return min.equals(max);
     }
 
     @Override
@@ -107,7 +70,6 @@ final class PackFormatImpl implements PackFormat {
     @Override
     public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
         return Stream.of(
-                ExaminableProperty.of("format", format),
                 ExaminableProperty.of("min", min),
                 ExaminableProperty.of("max", max)
         );
@@ -123,14 +85,8 @@ final class PackFormatImpl implements PackFormat {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PackFormatImpl that = (PackFormatImpl) o;
-        if (!format.equals(that.format)) return false;
         if (!min.equals(that.min)) return false;
         return max.equals(that.max);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(format, min, max);
     }
 
 }

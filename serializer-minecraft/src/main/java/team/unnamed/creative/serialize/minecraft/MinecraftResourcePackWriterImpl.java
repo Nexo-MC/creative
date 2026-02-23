@@ -31,7 +31,6 @@ import team.unnamed.creative.base.Writable;
 import team.unnamed.creative.metadata.Metadata;
 import team.unnamed.creative.metadata.overlays.OverlayEntry;
 import team.unnamed.creative.metadata.overlays.OverlaysMeta;
-import team.unnamed.creative.metadata.pack.FormatVersion;
 import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.metadata.pack.PackMeta;
 import team.unnamed.creative.overlay.Overlay;
@@ -157,9 +156,9 @@ final class MinecraftResourcePackWriterImpl implements MinecraftResourcePackWrit
             // todo: find a better way to log warnings
             if (packMeta == null) {
                 System.err.println("Resource pack does not contain PackMeta, won't be recognized by Minecraft");
-            } else if (targetPackFormat != PackFormat.UNKNOWN && !packMeta.formats().isInRange(targetPackFormat.formatVersion())) {
+            } else if (targetPackFormat != PackFormat.UNKNOWN && !packMeta.formats().isInRange(targetPackFormat.min())) {
                 System.err.println("Resource pack format mismatch, the resource pack specifies formats "
-                        + packMeta.formats() + " but the target format specified to the writer is " + targetPackFormat.formatVersion());
+                        + packMeta.formats() + " but the target format specified to the writer is " + targetPackFormat.min());
             }
             writeToJson(target, MetadataSerializer.INSTANCE, metadata, PACK_METADATA_FILE, targetPackFormat);
         }

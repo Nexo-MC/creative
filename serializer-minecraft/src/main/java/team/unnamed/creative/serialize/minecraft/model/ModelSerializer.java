@@ -102,7 +102,7 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
         List<Element> elements = model.elements();
         if (!elements.isEmpty()) {
             writer.name("elements").beginArray();
-            boolean writeLegacy = packFormat.minVersion().major() < 75;
+            boolean writeLegacy = packFormat.min().major() < 75;
 
             if (writeLegacy) for (Element element : elements) {
                 ElementRotation rotation = element.rotation();
@@ -355,7 +355,7 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
             Axis3D axis = Axis3D.valueOf(objectNode.get("axis").getAsString().toUpperCase(Locale.ROOT));
             float angle = objectNode.get("angle").getAsFloat();
             float abs = Math.abs(angle);
-            if ((packFormat.minVersion().major() < 75) && (abs > 45f || abs < -45f)) {
+            if ((packFormat.min().major() < 75) && (abs > 45f || abs < -45f)) {
                 throw new IllegalArgumentException("Angle must be between [-45.0, 45.0] (inclusive), but was " + abs);
             }
             rotation = Vector3Float.ZERO.with(axis, angle);

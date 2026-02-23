@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative.serialize.minecraft.metadata;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.internal.Streams;
@@ -36,15 +35,12 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.metadata.pack.FormatVersion;
 import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.metadata.pack.PackMeta;
 import team.unnamed.creative.serialize.minecraft.base.PackFormatSerializer;
 
 import java.io.IOException;
-import java.text.Format;
-import java.util.Optional;
 
 final class PackMetaCodec implements MetadataPartCodec<PackMeta> {
 
@@ -65,17 +61,19 @@ final class PackMetaCodec implements MetadataPartCodec<PackMeta> {
 
     @Override
     public @NotNull PackMeta read(final @NotNull JsonObject node) {
-        final int mainFormat = node.has("pack_format") ? node.get("pack_format").getAsInt() : -1;
         final PackFormat format;
         if (node.has("min_format") && node.has("max_format")) {
             FormatVersion minFormat = PackFormatSerializer.deserializeFormat(node.get("min_format"));
             FormatVersion maxFormat = PackFormatSerializer.deserializeFormat(node.get("max_format"));
-            format = PackFormat.format(minFormat, minFormat, maxFormat);
-        } else if (node.has("supported_formats")) { // since Minecraft 1.20.2 (pack format 18)
-            JsonElement el = node.get("supported_formats");
-            format = PackFormatSerializer.deserialize(el, mainFormat);
+            format = PackFormat.format(minFormat, maxFormat);
         } else {
-            format = PackFormat.format(mainFormat);
+            final int mainFormat = node.has("pack_format") ? node.get("pack_format").getAsInt() : -1;
+            if (node.has("supported_formats")) { // since Minecraft 1.20.2 (pack format 18)
+                JsonElement el = node.get("supported_formats");
+                format = PackFormatSerializer.deserialize(el, mainFormat);
+            } else {
+                format = PackFormat.format(FormatVersion.of(mainFormat));
+            }
         }
 
         final JsonElement descriptionNode = node.get("description");
@@ -101,10 +99,10 @@ final class PackMetaCodec implements MetadataPartCodec<PackMeta> {
             Streams.write(GsonComponentSerializer.gson().serializeToTree(description), writer);
         }
 
-        if (pack.formats().minVersion().major() < 69) writer.name("pack_format").value(pack.formats().format());
+        if (pack.formats().min().major() < 69) writer.name("pack_format").value(pack.formats().min().major());
 
         // If Format is lower than 65, we should not add 'supported_formats'
-        if (!pack.formats().isSingle() && pack.formats().minVersion().major() < 65) { // since Minecraft 1.20.2 (pack format 18)
+        if (!pack.formats().isSingle() && pack.formats().min().major() < 65) { // since Minecraft 1.20.2 (pack format 18)
             // only write min and max values if not single
             // "supported_formats": [16, 17]
             writer.name("supported_formats");
@@ -112,11 +110,11 @@ final class PackMetaCodec implements MetadataPartCodec<PackMeta> {
         }
 
         // Formats higher than 64 are required to have min_format and max_format fields
-        if (pack.formats().min() > 64 || pack.formats().max() > 64) {
+        if (pack.formats().min().major() > 64 || pack.formats().max().major() > 64) {
             writer.name("min_format");
-            writer.value(pack.formats().min());
+            writer.value(pack.formats().min().major());
             writer.name("max_format");
-            writer.value(pack.formats().max());
+            writer.value(pack.formats().max().major());
         }
 
         writer.endObject();

@@ -134,10 +134,6 @@ public interface ResourcePack extends ResourceContainer {
         editMetadata(metadata -> metadata.addPart(packMeta));
     }
 
-    default void packMeta(final int format, final @NotNull String description) {
-        packMeta(PackMeta.of(format, description));
-    }
-
     /**
      * Sets the resource-pack metadata, which specifies the
      * pack supported format(s) and its description.
@@ -148,36 +144,6 @@ public interface ResourcePack extends ResourceContainer {
      */
     default void packMeta(final @NotNull PackFormat format, final @NotNull Component description) {
         packMeta(PackMeta.of(format, description));
-    }
-
-    /**
-     * Sets the resource-pack metadata, which specifies the
-     * pack supported format and its description.
-     *
-     * @param format      The supported pack format.
-     * @param description The pack description.
-     * @since 1.1.0
-     */
-    default void packMeta(final int format, final @NotNull Component description) {
-        packMeta(PackMeta.of(format, description));
-    }
-
-    /**
-     * Returns the pack format that this resource-pack uses.
-     *
-     * @return The pack format
-     * @since 1.0.0
-     * @deprecated Use {@link ResourcePack#formats()} instead
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
-    default int format() {
-        PackMeta meta = packMeta();
-        if (meta == null) {
-            return -1;
-        } else {
-            return meta.format();
-        }
     }
 
     /**

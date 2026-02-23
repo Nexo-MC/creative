@@ -57,11 +57,11 @@ public final class PackFormatSerializer {
 
     public static void serialize(PackFormat format, JsonWriter writer) throws IOException {
         // serialize using the shortest possible version
-        int minMajor = format.minVersion().major();
-        int maxMajor = format.maxVersion().major();
+        int minMajor = format.min().major();
+        int maxMajor = format.max().major();
 
         if (format.isSingle()) {
-            writer.value(format.formatVersion().major());
+            writer.value(format.min().major());
         } else {
             writer.beginArray();
             writer.value(minMajor);
@@ -79,8 +79,8 @@ public final class PackFormatSerializer {
 
     public static PackFormat deserialize(JsonElement el, @Nullable Integer format) {
         PackFormat f = deserialize(el);
-        FormatVersion mainFormat = format == null || format < 0 ? f.minVersion() : FormatVersion.of(format);
-        return PackFormat.format(mainFormat, f.minVersion(), f.maxVersion());
+        FormatVersion mainFormat = format == null || format < 0 ? f.min() : FormatVersion.of(format);
+        return PackFormat.format(f.min(), f.max());
     }
 
     public static PackFormat deserialize(JsonElement el) {
@@ -102,7 +102,7 @@ public final class PackFormatSerializer {
         } else {
             throw new IllegalStateException("Unsupported supported_formats type: " + el.getClass());
         }
-        return PackFormat.format(min, min, max);
+        return PackFormat.format(FormatVersion.of(min), FormatVersion.of(max));
     }
 
     public static FormatVersion deserializeFormat(JsonElement el) {
