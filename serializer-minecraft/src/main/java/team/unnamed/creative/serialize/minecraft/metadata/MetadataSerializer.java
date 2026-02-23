@@ -84,9 +84,8 @@ public class MetadataSerializer implements JsonResourceSerializer<Metadata> {
 
             MetadataPartCodec<?> codec = CODECS.get(partName);
             if (codec == null) {
-                throw new IllegalArgumentException("Unknown metadata part name: " + partName);
-            }
-            deserializeAndAdd(builder, codec, partObject);
+                System.err.println("Warning: Unknown metadata part name: " + partName + ". Skipping...");
+            } else deserializeAndAdd(builder, codec, partObject);
         }
         return builder.build();
     }

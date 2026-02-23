@@ -135,6 +135,9 @@ public interface MinecraftResourcePackReader extends ResourcePackReader<FileTree
         @Contract("_ -> this")
         @NotNull Builder lenient(final boolean lenient);
 
+        @Contract("_ -> this")
+        @NotNull Builder debugPrint(final boolean debugPrint);
+
         /**
          * Builds a new {@link MinecraftResourcePackReader} instance.
          *

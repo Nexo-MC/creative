@@ -64,14 +64,25 @@ import static team.unnamed.creative.serialize.minecraft.MinecraftResourcePackStr
 final class MinecraftResourcePackReaderImpl implements MinecraftResourcePackReader {
     static final MinecraftResourcePackReader INSTANCE = MinecraftResourcePackReader.builder()
             .lenient(false)
+            .debugPrint(false)
             .build();
 
     private final boolean lenient;
+    private final boolean debugPrint;
 
     private MinecraftResourcePackReaderImpl(
             final boolean lenient
     ) {
         this.lenient = lenient;
+        this.debugPrint = false;
+    }
+
+    private MinecraftResourcePackReaderImpl(
+            final boolean lenient,
+            final boolean debugPrint
+    ) {
+        this.lenient = lenient;
+        this.debugPrint = debugPrint;
     }
 
     @Override
@@ -302,7 +313,9 @@ final class MinecraftResourcePackReaderImpl implements MinecraftResourcePackRead
                     };
                     resource.addTo(container);
                 } catch (IOException e) {
-                    throw new UncheckedIOException("Failed to deserialize resource at: '" + path + "'", e);
+                    String message = "Failed to deserialize resource at: '" + path;
+                    if (debugPrint) message += "\n" + e.getMessage();
+                    throw new UncheckedIOException(message, e);
                 }
             }
         }
@@ -351,10 +364,17 @@ final class MinecraftResourcePackReaderImpl implements MinecraftResourcePackRead
 
     static final class BuilderImpl implements Builder {
         private boolean lenient = false;
+        private boolean debugPrint = false;
 
         @Override
         public @NotNull Builder lenient(final boolean lenient) {
             this.lenient = lenient;
+            return this;
+        }
+
+        @Override
+        public @NotNull Builder debugPrint(final boolean debugPrint) {
+            this.debugPrint = debugPrint;
             return this;
         }
 
