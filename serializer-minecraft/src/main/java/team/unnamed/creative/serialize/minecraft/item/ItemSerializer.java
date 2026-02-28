@@ -211,8 +211,7 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
                     int index = tintObject.has("index")
                             ? tintObject.get("index").getAsInt()
                             : CustomModelDataTintSource.DEFAULT_INDEX;
-                    int defaultTint = tintObject.get("default").getAsInt();
-                    tints.add(TintSource.customModelData(index, defaultTint));
+                    tints.add(TintSource.customModelData(index, GsonUtil.parseColor(tintObject.get("default"))));
                     break;
                 case "grass":
                     float temperature = tintObject.get("temperature").getAsFloat();
