@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import team.unnamed.creative.metadata.overlays.OverlayEntry;
 import team.unnamed.creative.metadata.overlays.OverlaysMeta;
 import team.unnamed.creative.metadata.pack.PackFormat;
+import team.unnamed.creative.metadata.pack.FormatVersion;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -37,8 +38,8 @@ class OverlaysMetaTest {
     @DisplayName("Test Overlays meta serialization")
     void test_simple_serialization() {
         final OverlaysMeta overlaysMeta = OverlaysMeta.of(
-                OverlayEntry.of(PackFormat.format(18), "v18"),
-                OverlayEntry.of(PackFormat.format(19), "v19")
+                OverlayEntry.of(PackFormat.format(FormatVersion.of(18)), "v18"),
+                OverlayEntry.of(PackFormat.format(FormatVersion.of(19)), "v19")
         );
         assertEquals(
                 "{\"entries\":[{\"formats\":18,\"directory\":\"v18\"},{\"formats\":19,\"directory\":\"v19\"}]}",
@@ -50,8 +51,8 @@ class OverlaysMetaTest {
     @DisplayName("Test overlays meta serialization with custom pack format range")
     void test_range_serialization() {
         final OverlaysMeta overlaysMeta = OverlaysMeta.of(
-                OverlayEntry.of(PackFormat.format(18, 20), "v18-20"),
-                OverlayEntry.of(PackFormat.format(21, 24), "v21-24")
+                OverlayEntry.of(PackFormat.format(FormatVersion.of(18), FormatVersion.of(20)), "v18-20"),
+                OverlayEntry.of(PackFormat.format(FormatVersion.of(21), FormatVersion.of(24)), "v21-24")
         );
         assertEquals(
                 "{\"entries\":[{\"formats\":[18,20],\"directory\":\"v18-20\"},{\"formats\":[21,24],\"directory\":\"v21-24\"}]}",
@@ -65,8 +66,8 @@ class OverlaysMetaTest {
         final OverlaysMeta overlaysMeta = OverlaysMetaCodec.INSTANCE.fromJson("{\"entries\":[{\"formats\":18,\"directory\":\"v18\"},{\"formats\":19,\"directory\":\"v19\"}]}");
         assertEquals(
                 OverlaysMeta.of(
-                        OverlayEntry.of(PackFormat.format(18), "v18"),
-                        OverlayEntry.of(PackFormat.format(19), "v19")
+                        OverlayEntry.of(PackFormat.format(FormatVersion.of(18)), "v18"),
+                        OverlayEntry.of(PackFormat.format(FormatVersion.of(19)), "v19")
                 ),
                 overlaysMeta
         );
@@ -78,8 +79,8 @@ class OverlaysMetaTest {
         final OverlaysMeta overlaysMeta = OverlaysMetaCodec.INSTANCE.fromJson("{\"entries\":[{\"formats\":[18,20],\"directory\":\"v18-20\"},{\"formats\":[21,24],\"directory\":\"v21-24\"}]}");
         assertEquals(
                 OverlaysMeta.of(
-                        OverlayEntry.of(PackFormat.format(18, 20), "v18-20"),
-                        OverlayEntry.of(PackFormat.format(21, 24), "v21-24")
+                        OverlayEntry.of(PackFormat.format(FormatVersion.of(18), FormatVersion.of(20)), "v18-20"),
+                        OverlayEntry.of(PackFormat.format(FormatVersion.of(21), FormatVersion.of(24)), "v21-24")
                 ),
                 overlaysMeta
         );

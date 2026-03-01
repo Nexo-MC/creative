@@ -23,9 +23,12 @@
  */
 package team.unnamed.creative.server;
 
+import net.kyori.adventure.text.Component;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import team.unnamed.creative.BuiltResourcePack;
+import team.unnamed.creative.metadata.pack.FormatVersion;
+import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackWriter;
 
 import java.io.ByteArrayOutputStream;
@@ -46,7 +49,7 @@ class LocalHttpTestBase {
     @BeforeAll
     static void setup() throws Exception {
         resourcePack = MinecraftResourcePackWriter.minecraft().build(resourcePack ->
-                resourcePack.packMeta(8, "Resource pack!"));
+                resourcePack.packMeta(PackFormat.format(FormatVersion.of(8)), Component.text("Resource pack!")));
         server = ResourcePackServer.server()
                 .address(new InetSocketAddress(PORT))
                 .pack(resourcePack, true)

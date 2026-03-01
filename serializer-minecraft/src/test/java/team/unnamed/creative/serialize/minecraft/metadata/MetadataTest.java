@@ -37,6 +37,7 @@ import team.unnamed.creative.metadata.language.LanguageMeta;
 import team.unnamed.creative.metadata.overlays.OverlayEntry;
 import team.unnamed.creative.metadata.overlays.OverlaysMeta;
 import team.unnamed.creative.metadata.pack.PackFormat;
+import team.unnamed.creative.metadata.pack.FormatVersion;
 import team.unnamed.creative.metadata.pack.PackMeta;
 import team.unnamed.creative.serialize.minecraft.GsonUtil;
 
@@ -57,7 +58,7 @@ class MetadataTest {
 
         assertEquals(
                 Metadata.metadata()
-                        .addPart(PackMeta.of(PackFormat.format(16, 17), Component.text("Description!")))
+                        .addPart(PackMeta.of(PackFormat.format(FormatVersion.of(16), FormatVersion.of(17)), Component.text("Description!")))
                         .addPart(LanguageMeta.language(new HashMap<>() {{
                             put("english", LanguageEntry.languageEntry("English", "US", false));
                         }}))
@@ -67,8 +68,8 @@ class MetadataTest {
                                 KeyPattern.of("fancy", "thing/.+")
                         ))
                         .addPart(OverlaysMeta.of(
-                                OverlayEntry.of(PackFormat.format(18), "abc"),
-                                OverlayEntry.of(PackFormat.format(19, 21), "def")
+                                OverlayEntry.of(PackFormat.format(FormatVersion.of(18)), "abc"),
+                                OverlayEntry.of(PackFormat.format(FormatVersion.of(19), FormatVersion.of(21)), "def")
                         ))
                         .addPart(AnimationMeta.animation()
                                 .width(16)

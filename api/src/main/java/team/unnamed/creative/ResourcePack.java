@@ -33,6 +33,7 @@ import team.unnamed.creative.metadata.filter.FilterMeta;
 import team.unnamed.creative.metadata.language.LanguageMeta;
 import team.unnamed.creative.metadata.overlays.OverlayEntry;
 import team.unnamed.creative.metadata.overlays.OverlaysMeta;
+import team.unnamed.creative.metadata.pack.FormatVersion;
 import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.metadata.pack.PackMeta;
 import team.unnamed.creative.metadata.sodium.SodiumMeta;
@@ -144,6 +145,18 @@ public interface ResourcePack extends ResourceContainer {
      */
     default void packMeta(final @NotNull PackFormat format, final @NotNull Component description) {
         packMeta(PackMeta.of(format, description));
+    }
+
+    /**
+     * Sets the resource-pack metadata, which specifies the
+     * pack supported format(s) and its description.
+     *
+     * @param format      The supported pack format(s).
+     * @param description The pack description.
+     * @since 1.1.0
+     */
+    default void packMeta(final @NotNull FormatVersion format, final @NotNull Component description) {
+        packMeta(PackMeta.of(PackFormat.format(format), description));
     }
 
     /**
