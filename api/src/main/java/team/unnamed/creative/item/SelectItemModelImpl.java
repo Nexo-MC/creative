@@ -37,12 +37,12 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
-record SelectItemModelImpl(ItemStringProperty property, List<Case> cases,
-                           ItemModel fallback) implements SelectItemModel {
-    SelectItemModelImpl(final @NotNull ItemStringProperty property, final @NotNull List<Case> cases, final @Nullable ItemModel fallback) {
+record SelectItemModelImpl(ItemStringProperty property, List<Case> cases, ItemModel fallback, Transformation transformation) implements SelectItemModel {
+    SelectItemModelImpl(final @NotNull ItemStringProperty property, final @NotNull List<Case> cases, final @Nullable ItemModel fallback, final @Nullable Transformation transformation) {
         this.property = requireNonNull(property, "property");
         this.cases = requireNonNull(cases, "cases");
         this.fallback = fallback;
+        this.transformation = transformation;
     }
 
     @Override
@@ -65,7 +65,8 @@ record SelectItemModelImpl(ItemStringProperty property, List<Case> cases,
         return Stream.of(
                 ExaminableProperty.of("property", property),
                 ExaminableProperty.of("cases", cases),
-                ExaminableProperty.of("fallback", fallback)
+                ExaminableProperty.of("fallback", fallback),
+                ExaminableProperty.of("transformation", transformation)
         );
     }
 
@@ -73,7 +74,7 @@ record SelectItemModelImpl(ItemStringProperty property, List<Case> cases,
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         SelectItemModelImpl that = (SelectItemModelImpl) o;
-        return property.equals(that.property) && cases.equals(that.cases) && Objects.equals(fallback, that.fallback);
+        return property.equals(that.property) && cases.equals(that.cases) && Objects.equals(fallback, that.fallback) && Objects.equals(transformation, that.transformation);
     }
 
     @Override
@@ -81,10 +82,11 @@ record SelectItemModelImpl(ItemStringProperty property, List<Case> cases,
         return examine(StringExaminer.simpleEscaping());
     }
 
-    record CaseImpl(List<JsonElement> when, ItemModel model) implements Case {
-        CaseImpl(final @NotNull List<JsonElement> when, final @NotNull ItemModel model) {
+    record CaseImpl(List<JsonElement> when, ItemModel model, Transformation transformation) implements Case {
+        CaseImpl(final @NotNull List<JsonElement> when, final @NotNull ItemModel model, final @Nullable Transformation transformation) {
             this.when = requireNonNull(when, "when");
             this.model = requireNonNull(model, "model");
+            this.transformation = transformation;
         }
 
         @Override
@@ -98,10 +100,16 @@ record SelectItemModelImpl(ItemStringProperty property, List<Case> cases,
         }
 
         @Override
+        public @Nullable Transformation transformation() {
+            return transformation;
+        }
+
+        @Override
         public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
             return Stream.of(
                     ExaminableProperty.of("when", when),
-                    ExaminableProperty.of("model", model)
+                    ExaminableProperty.of("model", model),
+                    ExaminableProperty.of("transformation", transformation)
             );
         }
 
@@ -109,7 +117,7 @@ record SelectItemModelImpl(ItemStringProperty property, List<Case> cases,
         public boolean equals(Object o) {
             if (o == null || getClass() != o.getClass()) return false;
             CaseImpl that = (CaseImpl) o;
-            return when.equals(that.when) && model.equals(that.model);
+            return when.equals(that.when) && model.equals(that.model) && Objects.equals(transformation, that.transformation);
         }
 
         @Override
@@ -122,6 +130,13 @@ record SelectItemModelImpl(ItemStringProperty property, List<Case> cases,
         private ItemStringProperty property;
         private final List<Case> cases = new ArrayList<>();
         private ItemModel fallback;
+        private Transformation transformation;
+
+        @Override
+        public @NotNull Builder transformation(@Nullable Transformation transformation) {
+            this.transformation = transformation;
+            return this;
+        }
 
         @Override
         public @NotNull Builder property(final @NotNull ItemStringProperty property) {
@@ -144,7 +159,7 @@ record SelectItemModelImpl(ItemStringProperty property, List<Case> cases,
 
         @Override
         public @NotNull SelectItemModel build() {
-            return new SelectItemModelImpl(requireNonNull(property, "property"), cases, fallback);
+            return new SelectItemModelImpl(requireNonNull(property, "property"), cases, fallback, transformation);
         }
     }
 }

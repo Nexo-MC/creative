@@ -43,6 +43,49 @@ import java.util.List;
  * @sincePackFormat 43
  */
 public interface ItemModel extends Examinable {
+
+    @Nullable Transformation transformation();
+
+//    /**
+//     * The Transformation info for this ItemModel.
+//     *
+//     * @return a Transformation that will be applied to the given ItemModel
+//     * @sinceMinecraft 26.1
+//     * @sincePackFormat 83
+//     * @since 1.13.0
+//     */
+//    static @NotNull Transformation transformation(final @NotNull Transformation transformation) {
+//        return new TransformationImpl(transformation.translation(), transformation.scale(), transformation.leftRotation(), transformation.rightRotation());
+//    }
+//
+//    /**
+//     * The Transformation info for this ItemModel.
+//     *
+//     * @return a Transformation that will be applied to the given ItemModel
+//     * @sinceMinecraft 26.1
+//     * @sincePackFormat 83
+//     * @since 1.13.0
+//     */
+//    static @NotNull Transformation transformation(final @NotNull Vector3Float translation, final @NotNull Vector3Float scale, final @NotNull QuaternionFloat leftRotation, final @NotNull QuaternionFloat rightRotation) {
+//        return new TransformationImpl(translation, scale, leftRotation, rightRotation);
+//    }
+
+    /**
+     * Creates a reference item model, which renders a plain model from the
+     * {@code models} directory.
+     *
+     * @param model The model key
+     * @param tints The list of tint sources
+     * @param transformation the Transformation
+     * @return A reference item model
+     * @since 1.13.0
+     * @sinceMinecraft 26.1
+     * @sincePackFormat 83
+     */
+    static @NotNull ReferenceItemModel reference(final @NotNull Key model, final @NotNull List<TintSource> tints, final @Nullable Transformation transformation) {
+        return new ReferenceItemModelImpl(model, tints, transformation);
+    }
+
     /**
      * Creates a reference item model, which renders a plain model from the
      * {@code models} directory.
@@ -55,7 +98,7 @@ public interface ItemModel extends Examinable {
      * @sincePackFormat 43
      */
     static @NotNull ReferenceItemModel reference(final @NotNull Key model, final @NotNull List<TintSource> tints) {
-        return new ReferenceItemModelImpl(model, tints);
+        return new ReferenceItemModelImpl(model, tints, null);
     }
 
     /**
@@ -117,13 +160,28 @@ public interface ItemModel extends Examinable {
      * All models are rendered in the same space.
      *
      * @param models The sub-models
+     * @param transformation The Transformation
+     * @return A composite item model
+     * @since 1.13.0
+     * @sinceMinecraft 26.1
+     * @sincePackFormat 83
+     */
+    static @NotNull CompositeItemModel composite(final @NotNull List<ItemModel> models, final @Nullable Transformation transformation) {
+        return new CompositeItemModelImpl(models, transformation);
+    }
+
+    /**
+     * Creates a composite item model, which renders multiple sub-models.
+     * All models are rendered in the same space.
+     *
+     * @param models The sub-models
      * @return A composite item model
      * @since 1.8.0
      * @sinceMinecraft 1.21.4
      * @sincePackFormat 43
      */
     static @NotNull CompositeItemModel composite(final @NotNull List<ItemModel> models) {
-        return new CompositeItemModelImpl(models);
+        return new CompositeItemModelImpl(models, null);
     }
 
     /**
@@ -137,7 +195,7 @@ public interface ItemModel extends Examinable {
      * @sincePackFormat 43
      */
     static @NotNull CompositeItemModel composite(final @NotNull ItemModel @NotNull ... models) {
-        return new CompositeItemModelImpl(Arrays.asList(models));
+        return new CompositeItemModelImpl(Arrays.asList(models), null);
     }
 
     /**
@@ -152,7 +210,23 @@ public interface ItemModel extends Examinable {
      * @sincePackFormat 43
      */
     static @NotNull ConditionItemModel conditional(final @NotNull ItemBooleanProperty condition, final @NotNull ItemModel onTrue, final @NotNull ItemModel onFalse) {
-        return new ConditionItemModelImpl(condition, onTrue, onFalse);
+        return new ConditionItemModelImpl(condition, onTrue, onFalse, null);
+    }
+
+    /**
+     * Creates a conditional item model, which renders a different item model based on a condition.
+     *
+     * @param condition The condition to check
+     * @param onTrue The item model to render if the condition is true
+     * @param onFalse The item model to render if the condition is false
+     * @param transformation The transformation
+     * @return A conditional item model
+     * @since 1.13.0
+     * @sinceMinecraft 26.1
+     * @sincePackFormat 83
+     */
+    static @NotNull ConditionItemModel conditional(final @NotNull ItemBooleanProperty condition, final @NotNull ItemModel onTrue, final @NotNull ItemModel onFalse, final @Nullable Transformation transformation) {
+        return new ConditionItemModelImpl(condition, onTrue, onFalse, transformation);
     }
 
     /**
@@ -174,6 +248,23 @@ public interface ItemModel extends Examinable {
      * @param property The string property to check
      * @param cases The cases to check
      * @param fallback The item model to render if no case matches
+     * @param transformation The transformation
+     * @return A select item model
+     * @since 1.13.0
+     * @sinceMinecraft 36.1
+     * @sincePackFormat 83
+     * @see SelectItemModel
+     */
+    static @NotNull SelectItemModel select(final @NotNull ItemStringProperty property, final @NotNull List<SelectItemModel.Case> cases, final @Nullable ItemModel fallback, final @Nullable Transformation transformation) {
+        return new SelectItemModelImpl(property, cases, fallback, transformation);
+    }
+
+    /**
+     * Creates a select item model, which renders a different item model based on a string property.
+     *
+     * @param property The string property to check
+     * @param cases The cases to check
+     * @param fallback The item model to render if no case matches
      * @return A select item model
      * @since 1.8.0
      * @sinceMinecraft 1.21.4
@@ -181,7 +272,7 @@ public interface ItemModel extends Examinable {
      * @see SelectItemModel
      */
     static @NotNull SelectItemModel select(final @NotNull ItemStringProperty property, final @NotNull List<SelectItemModel.Case> cases, final @Nullable ItemModel fallback) {
-        return new SelectItemModelImpl(property, cases, fallback);
+        return new SelectItemModelImpl(property, cases, fallback, null);
     }
 
     /**
@@ -219,17 +310,36 @@ public interface ItemModel extends Examinable {
      *
      * @param render The special render to use
      * @param base The base key to use
+     * @param transformation The transformation
+     * @return A special item model
+     * @since 1.13.0
+     * @sinceMinecraft 21.6
+     * @sincePackFormat 83
+     */
+    static @NotNull SpecialItemModel special(final @NotNull SpecialRender render, final @NotNull Key base, final @Nullable Transformation transformation) {
+        return new SpecialItemModelImpl(render, base, transformation);
+    }
+
+    /**
+     * Creates a special item model, which renders a special item model (not data-driven)
+     *
+     * @param render The special render to use
+     * @param base The base key to use
      * @return A special item model
      * @since 1.8.0
      * @sinceMinecraft 1.21.4
      * @sincePackFormat 43
      */
     static @NotNull SpecialItemModel special(final @NotNull SpecialRender render, final @NotNull Key base) {
-        return new SpecialItemModelImpl(render, base);
+        return new SpecialItemModelImpl(render, base, null);
+    }
+
+    static @NotNull RangeDispatchItemModel rangeDispatch(final @NotNull ItemNumericProperty property, final float scale, final @NotNull List<RangeDispatchItemModel.Entry> entries, final @Nullable ItemModel fallback, final @Nullable Transformation transformation) {
+        return new RangeDispatchItemModelImpl(property, scale, entries, fallback, transformation);
     }
 
     static @NotNull RangeDispatchItemModel rangeDispatch(final @NotNull ItemNumericProperty property, final float scale, final @NotNull List<RangeDispatchItemModel.Entry> entries, final @Nullable ItemModel fallback) {
-        return new RangeDispatchItemModelImpl(property, scale, entries, fallback);
+        return new RangeDispatchItemModelImpl(property, scale, entries, fallback, null);
     }
 
     static @NotNull RangeDispatchItemModel rangeDispatch(final @NotNull ItemNumericProperty property, final float scale, final @NotNull List<RangeDispatchItemModel.Entry> entries) {

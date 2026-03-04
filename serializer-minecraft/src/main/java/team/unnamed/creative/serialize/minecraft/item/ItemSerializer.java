@@ -33,6 +33,8 @@ import team.unnamed.creative.base.CubeFace;
 import team.unnamed.creative.base.DyeColor;
 import team.unnamed.creative.base.HeadType;
 import team.unnamed.creative.base.Pose;
+import team.unnamed.creative.base.QuaternionFloat;
+import team.unnamed.creative.base.Vector3Float;
 import team.unnamed.creative.base.WoodType;
 import team.unnamed.creative.item.*;
 import team.unnamed.creative.item.property.*;
@@ -62,6 +64,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Vector;
 
 public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonResourceDeserializer<Item> {
     public static final ItemSerializer INSTANCE;
@@ -97,7 +100,7 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
         writer.endObject();
     }
 
-    private @NotNull ItemModel deserializeItemModel(JsonElement unknownNode) throws IOException {
+    public @NotNull ItemModel deserializeItemModel(JsonElement unknownNode) throws IOException {
         final JsonObject node = unknownNode.getAsJsonObject();
         final Key type = Key.key(node.get("type").getAsString());
         if (!type.namespace().equals(Key.MINECRAFT_NAMESPACE)) {
@@ -191,6 +194,10 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
             writer.endObject();
         }
         writer.endArray();
+
+        if (model.transformation() != null && model.transformation() != Transformation.DEFAULT) {
+            TransformationSerializer.writeToWriter(writer, model.transformation());
+        }
     }
 
     private @NotNull ReferenceItemModel readReference(final @NotNull JsonObject node) {
@@ -234,7 +241,10 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
                     throw new IllegalArgumentException("Unknown tint source type: " + type);
             }
         }
-        return ItemModel.reference(model, tints);
+
+        final Transformation transformation = TransformationSerializer.readFromJson(node.get("transformation"));
+        
+        return ItemModel.reference(model, tints, transformation);
     }
 
     private void writeSpecial(final @NotNull JsonWriter writer, final @NotNull SpecialItemModel model) throws IOException {
@@ -305,6 +315,10 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
         }
         writer.endObject();
         writer.name("base").value(KeySerializer.toString(model.base()));
+        
+        if (model.transformation() != null && model.transformation() != Transformation.DEFAULT) {
+            TransformationSerializer.writeToWriter(writer, model.transformation());
+        }
     }
 
     private @NotNull SpecialItemModel readSpecial(final @NotNull JsonObject node) {
@@ -380,7 +394,10 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
             default:
                 throw new IllegalArgumentException("Unknown special render type: " + type);
         }
-        return ItemModel.special(render, Key.key(node.get("base").getAsString()));
+
+        final Transformation transformation = TransformationSerializer.readFromJson(node.get("transformation"));
+        
+        return ItemModel.special(render, Key.key(node.get("base").getAsString()), transformation);
     }
 
     private void writeComposite(final @NotNull JsonWriter writer, final @NotNull CompositeItemModel model, final PackFormat packFormat) throws IOException {
@@ -390,6 +407,10 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
             serializeItemModel(child, writer, packFormat);
         }
         writer.endArray();
+
+        if (model.transformation() != null && model.transformation() != Transformation.DEFAULT) {
+            TransformationSerializer.writeToWriter(writer, model.transformation());
+        }
     }
 
     private @NotNull CompositeItemModel readComposite(final @NotNull JsonObject node) throws IOException {
@@ -397,7 +418,9 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
         for (JsonElement childElement : node.getAsJsonArray("models")) {
             models.add(deserializeItemModel(childElement));
         }
-        return ItemModel.composite(models);
+
+        final Transformation transformation = TransformationSerializer.readFromJson(node.get("transformation"));
+        return ItemModel.composite(models, transformation);
     }
 
     private void writeCondition(final @NotNull JsonWriter writer, final @NotNull ConditionItemModel model, final PackFormat packFormat) throws IOException {
@@ -437,6 +460,10 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
         serializeItemModel(model.onTrue(), writer, packFormat);
         writer.name("on_false");
         serializeItemModel(model.onFalse(), writer, packFormat);
+
+        if (model.transformation() != null && model.transformation() != Transformation.DEFAULT) {
+            TransformationSerializer.writeToWriter(writer, model.transformation());
+        }
     }
 
     private @NotNull ConditionItemModel readCondition(final @NotNull JsonObject node) throws IOException {
@@ -497,10 +524,14 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
             default:
                 throw new IllegalArgumentException("Unknown condition property: " + property);
         }
+
+        final Transformation transformation = TransformationSerializer.readFromJson(node.get("transformation"));
+
         return ItemModel.conditional(
                 condition,
                 deserializeItemModel(node.get("on_true")),
-                deserializeItemModel(node.get("on_false"))
+                deserializeItemModel(node.get("on_false")),
+                transformation
         );
     }
 
@@ -557,6 +588,10 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
             writer.name("model");
             serializeItemModel(_case.model(), writer, packFormat);
             writer.endObject();
+
+            if (model.transformation() != null && model.transformation() != Transformation.DEFAULT) {
+                TransformationSerializer.writeToWriter(writer, model.transformation());
+            }
         }
         writer.endArray();
 
@@ -564,6 +599,10 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
         if (fallback != null) {
             writer.name("fallback");
             serializeItemModel(fallback, writer, packFormat);
+        }
+
+        if (model.transformation() != null && model.transformation() != Transformation.DEFAULT) {
+            TransformationSerializer.writeToWriter(writer, model.transformation());
         }
     }
 
@@ -629,14 +668,19 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
             } else {
                 when.add(whenNode);
             }
-            cases.add(SelectItemModel.Case._case(deserializeItemModel(caseObject.get("model")), when));
+
+            final Transformation transformation = TransformationSerializer.readFromJson(node.get("transformation"));
+
+            cases.add(SelectItemModel.Case._case(deserializeItemModel(caseObject.get("model")), when, transformation));
         }
 
         final ItemModel fallback = node.has("fallback")
                 ? deserializeItemModel(node.get("fallback"))
                 : null;
 
-        return ItemModel.select(property, cases, fallback);
+        final Transformation transformation = TransformationSerializer.readFromJson(node.get("transformation"));
+
+        return ItemModel.select(property, cases, fallback, transformation);
     }
 
     private void writeRangeDispatch(final @NotNull JsonWriter writer, final @NotNull RangeDispatchItemModel model, final PackFormat packFormat) throws IOException {
@@ -722,6 +766,10 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
             writer.name("fallback");
             serializeItemModel(fallback, writer, packFormat);
         }
+
+        if (model.transformation() != null && model.transformation() != Transformation.DEFAULT) {
+            TransformationSerializer.writeToWriter(writer, model.transformation());
+        }
     }
 
     private @NotNull RangeDispatchItemModel readRangeDispatch(final @NotNull JsonObject node) throws IOException {
@@ -804,7 +852,9 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
         final ItemModel fallback = node.has("fallback")
                 ? deserializeItemModel(node.get("fallback"))
                 : null;
-
-        return ItemModel.rangeDispatch(property, scale, entries, fallback);
+        
+        final Transformation transformation = TransformationSerializer.readFromJson(node.get("transformation"));
+        
+        return ItemModel.rangeDispatch(property, scale, entries, fallback, transformation);
     }
 }

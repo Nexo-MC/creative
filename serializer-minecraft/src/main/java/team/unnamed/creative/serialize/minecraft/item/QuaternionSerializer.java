@@ -21,30 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package team.unnamed.creative.item;
+package team.unnamed.creative.serialize.minecraft.item;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.google.gson.JsonElement;
+import com.google.gson.stream.JsonWriter;
+import net.kyori.adventure.key.Key;
+import team.unnamed.creative.base.QuaternionFloat;
+import team.unnamed.creative.metadata.pack.PackFormat;
+import team.unnamed.creative.serialize.minecraft.io.JsonResourceDeserializer;
+import team.unnamed.creative.serialize.minecraft.io.JsonResourceSerializer;
 
-import java.util.List;
+import java.io.IOException;
 
-/**
- * Represents a composite item model, which renders multiple sub-models.
- * All models are rendered in the same space.
- *
- * @since 1.8.0
- * @sinceMinecraft 1.21.4
- * @sincePackFormat 43
- * @see Item
- * @see ItemModel
- */
-public interface CompositeItemModel extends ItemModel {
-    /**
-     * Returns the sub-models that are rendered by this composite model.
-     *
-     * @return The sub-models
-     */
-    @NotNull List<ItemModel> models();
+public class QuaternionSerializer implements JsonResourceSerializer<QuaternionFloat>, JsonResourceDeserializer<QuaternionFloat> {
 
-    @Nullable Transformation transformation();
+    public static final QuaternionSerializer INSTANCE;
+
+    static {
+        INSTANCE = new QuaternionSerializer();
+    }
+
+    @Override
+    public QuaternionFloat deserializeFromJson(JsonElement node, Key key, PackFormat packFormat) throws IOException {
+        return null;
+    }
+
+    @Override
+    public void serializeToJson(QuaternionFloat object, JsonWriter writer, PackFormat packFormat) throws IOException {
+
+    }
 }

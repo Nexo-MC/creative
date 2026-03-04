@@ -58,12 +58,19 @@ public interface RangeDispatchItemModel extends ItemModel {
 
         @NotNull ItemModel model();
 
+        static @NotNull Entry entry(final float threshold, final @NotNull ItemModel model, final @Nullable Transformation transformation) {
+            return new RangeDispatchItemModelImpl.EntryImpl(threshold, model, transformation);
+        }
+
         static @NotNull Entry entry(final float threshold, final @NotNull ItemModel model) {
-            return new RangeDispatchItemModelImpl.EntryImpl(threshold, model);
+            return new RangeDispatchItemModelImpl.EntryImpl(threshold, model, null);
         }
     }
 
     interface Builder {
+        @Contract("_ -> this")
+        @NotNull Builder transformation(final @Nullable Transformation transformation);
+
         @Contract("_ -> this")
         @NotNull Builder property(final @NotNull ItemNumericProperty property);
 

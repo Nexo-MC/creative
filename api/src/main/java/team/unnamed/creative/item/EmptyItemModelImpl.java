@@ -55,4 +55,9 @@ final class EmptyItemModelImpl implements EmptyItemModel {
     public @NotNull String toString() {
         return examine(StringExaminer.simpleEscaping());
     }
+
+    @Override
+    public @Nullable Transformation transformation() {
+        return null;
+    }
 }

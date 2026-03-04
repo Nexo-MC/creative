@@ -23,6 +23,7 @@
  */
 package team.unnamed.creative.serialize.minecraft.item;
 
+import com.google.gson.JsonDeserializer;
 import net.kyori.adventure.key.Key;
 import org.intellij.lang.annotations.Language;
 import org.junit.jupiter.api.Test;
@@ -31,12 +32,121 @@ import team.unnamed.creative.item.Item;
 import team.unnamed.creative.item.ItemModel;
 import team.unnamed.creative.item.RangeDispatchItemModel;
 import team.unnamed.creative.item.ReferenceItemModel;
+import team.unnamed.creative.item.SelectItemModel;
+import team.unnamed.creative.item.Transformation;
 import team.unnamed.creative.item.property.ItemBooleanProperty;
 import team.unnamed.creative.item.property.ItemNumericProperty;
+import team.unnamed.creative.serialize.minecraft.GsonUtil;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ItemSerializationTest {
+
+
+    @Test
+    void test_transformation_deserialization() throws Exception {
+        @Language("JSON") String input = """
+                {
+                    "type": "minecraft:model",
+                    "model": "minecraft:item/air",
+                    "transformation": {
+                      "translation": [0,0,0],
+                      "scale": [1,1,1],
+                      "left_rotation": [0,0,0,1],
+                      "right_rotation": [0,0,0,1]
+                    }
+                }""";
+        ItemModel itemModel = ItemSerializer.INSTANCE.deserializeItemModel(GsonUtil.parseString(input));
+        assertEquals(Transformation.DEFAULT, itemModel.transformation());
+
+        input = """
+                {
+                    "type": "minecraft:condition",
+                    "property": "minecraft:broken",
+                    "on_true": {
+                      "type": "minecraft:model",
+                      "model": "minecraft:item/air",
+                      "transformation": {
+                        "translation": [0,0,0],
+                        "scale": [1,1,1],
+                        "left_rotation": [0,0,0,1],
+                        "right_rotation": [0,0,0,1]
+                      }
+                    },
+                    "on_false": {
+                      "type": "minecraft:model",
+                      "model": "minecraft:item/air",
+                      "transformation": {
+                        "translation": [0,0,0],
+                        "scale": [1,1,1],
+                        "left_rotation": [0,0,0,1],
+                        "right_rotation": [0,0,0,1]
+                      }
+                    },
+                    "transformation": {
+                      "translation": [0,0,0],
+                      "scale": [1,1,1],
+                      "left_rotation": [0,0,0,1],
+                      "right_rotation": [0,0,0,1]
+                    }
+                }""";
+        itemModel = ItemSerializer.INSTANCE.deserializeItemModel(GsonUtil.parseString(input));
+        assertInstanceOf(ConditionItemModel.class, itemModel);
+        assertEquals(Transformation.DEFAULT, itemModel.transformation());
+        assertEquals(Transformation.DEFAULT, ((ConditionItemModel) itemModel).onTrue().transformation());
+        assertEquals(Transformation.DEFAULT, ((ConditionItemModel) itemModel).onFalse().transformation());
+
+
+        input = """
+                {
+                    "type": "minecraft:select",
+                    "property": "minecraft:custom_model_data",
+                    "cases": [
+                      {
+                        "when": "test",
+                        "model": {
+                          "type": "minecraft:model",
+                          "model": "minecraft:item/air",
+                          "transformation": {
+                            "translation": [0,0,0],
+                            "scale": [1,1,1],
+                            "left_rotation": [0,0,0,1],
+                            "right_rotation": [0,0,0,1]
+                          }
+                        },
+                        "transformation": {
+                          "translation": [0,0,0],
+                          "scale": [1,1,1],
+                          "left_rotation": [0,0,0,1],
+                          "right_rotation": [0,0,0,1]
+                        }
+                      }
+                    ],
+                    "fallback": {
+                      "type": "minecraft:model",
+                      "model": "minecraft:item/air",
+                      "transformation": {
+                        "translation": [0,0,0],
+                        "scale": [1,1,1],
+                        "left_rotation": [0,0,0,1],
+                        "right_rotation": [0,0,0,1]
+                      }
+                    },
+                    "transformation": {
+                      "translation": [0,0,0],
+                      "scale": [1,1,1],
+                      "left_rotation": [0,0,0,1],
+                      "right_rotation": [0,0,0,1]
+                    }
+                }""";
+
+        itemModel = ItemSerializer.INSTANCE.deserializeItemModel(GsonUtil.parseString(input));
+        assertInstanceOf(SelectItemModel.class, itemModel);
+        assertEquals(Transformation.DEFAULT, itemModel.transformation());
+        assertEquals(Transformation.DEFAULT, ((SelectItemModel) itemModel).fallback().transformation());
+        assertEquals(Transformation.DEFAULT, ((SelectItemModel) itemModel).cases().getFirst().transformation());
+        assertEquals(Transformation.DEFAULT, ((SelectItemModel) itemModel).cases().getFirst().model().transformation());
+    }
 
 
     @Test

@@ -27,6 +27,7 @@ import net.kyori.adventure.key.Key;
 import net.kyori.examination.ExaminableProperty;
 import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.item.tint.TintSource;
 
 import java.util.List;
@@ -34,10 +35,11 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
-record ReferenceItemModelImpl(Key model, List<TintSource> tints) implements ReferenceItemModel {
-    ReferenceItemModelImpl(final @NotNull Key model, final @NotNull List<TintSource> tints) {
+record ReferenceItemModelImpl(Key model, List<TintSource> tints, Transformation transformation) implements ReferenceItemModel {
+    ReferenceItemModelImpl(final @NotNull Key model, final @NotNull List<TintSource> tints, final @Nullable Transformation transformation) {
         this.model = requireNonNull(model, "model");
         this.tints = requireNonNull(tints, "tints");
+        this.transformation = transformation;
     }
 
     @Override
@@ -51,10 +53,16 @@ record ReferenceItemModelImpl(Key model, List<TintSource> tints) implements Refe
     }
 
     @Override
+    public @Nullable Transformation transformation() {
+        return transformation;
+    }
+
+    @Override
     public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
         return Stream.of(
                 ExaminableProperty.of("model", model),
-                ExaminableProperty.of("tints", tints)
+                ExaminableProperty.of("tints", tints),
+                ExaminableProperty.of("transformation", transformation)
         );
     }
 

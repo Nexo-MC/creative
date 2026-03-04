@@ -24,7 +24,6 @@
 package team.unnamed.creative.item;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
 import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -64,8 +63,14 @@ public interface SelectItemModel extends ItemModel {
 
         @NotNull ItemModel model();
 
+        @Nullable Transformation transformation();
+
+        static @NotNull Case _case(final @NotNull ItemModel model, final @NotNull List<JsonElement> when, final @Nullable Transformation transformation) {
+            return new SelectItemModelImpl.CaseImpl(when, model, transformation);
+        }
+
         static @NotNull Case _case(final @NotNull ItemModel model, final @NotNull List<JsonElement> when) {
-            return new SelectItemModelImpl.CaseImpl(when, model);
+            return new SelectItemModelImpl.CaseImpl(when, model, null);
         }
 
         static @NotNull Case _case(final @NotNull ItemModel model, final @NotNull JsonElement @NotNull ... when) {
@@ -74,6 +79,9 @@ public interface SelectItemModel extends ItemModel {
     }
 
     interface Builder {
+        @Contract("_ -> this")
+        @NotNull Builder transformation(final @Nullable Transformation transformation);
+
         @Contract("_ -> this")
         @NotNull Builder property(final @NotNull ItemStringProperty property);
 
