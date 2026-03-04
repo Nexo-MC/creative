@@ -25,6 +25,7 @@ package team.unnamed.creative.item;
 
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.item.tint.TintSource;
 
 import java.util.List;
@@ -54,4 +55,6 @@ public interface ReferenceItemModel extends ItemModel {
      * @return The list of tint sources
      */
     @NotNull List<TintSource> tints();
+
+    @Nullable Transformation transformation();
 }

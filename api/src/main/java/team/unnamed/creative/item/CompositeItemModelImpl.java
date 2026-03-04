@@ -34,9 +34,10 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
-record CompositeItemModelImpl(List<ItemModel> models) implements CompositeItemModel {
-    CompositeItemModelImpl(final @NotNull List<ItemModel> models) {
+record CompositeItemModelImpl(List<ItemModel> models, @Nullable Transformation transformation) implements CompositeItemModel {
+     CompositeItemModelImpl(final @NotNull List<ItemModel> models, final @Nullable Transformation transformation) {
         this.models = requireNonNull(models, "models");
+        this.transformation = transformation;
     }
 
     @Override
@@ -47,7 +48,8 @@ record CompositeItemModelImpl(List<ItemModel> models) implements CompositeItemMo
     @Override
     public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
         return Stream.of(
-                ExaminableProperty.of("models", models)
+                ExaminableProperty.of("models", models),
+                ExaminableProperty.of("transformation", transformation)
         );
     }
 
@@ -55,7 +57,7 @@ record CompositeItemModelImpl(List<ItemModel> models) implements CompositeItemMo
     public boolean equals(final @Nullable Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         CompositeItemModelImpl that = (CompositeItemModelImpl) o;
-        return Objects.equals(models, that.models);
+        return Objects.equals(models, that.models) && Objects.equals(transformation, that.transformation);
     }
 
     @Override

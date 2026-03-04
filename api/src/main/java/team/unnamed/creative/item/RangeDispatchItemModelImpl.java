@@ -36,13 +36,13 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
-record RangeDispatchItemModelImpl(ItemNumericProperty property, float scale, List<Entry> entries,
-                                  ItemModel fallback) implements RangeDispatchItemModel {
-    RangeDispatchItemModelImpl(final @NotNull ItemNumericProperty property, final float scale, final @NotNull List<Entry> entries, final @Nullable ItemModel fallback) {
+record RangeDispatchItemModelImpl(ItemNumericProperty property, float scale, List<Entry> entries, ItemModel fallback, Transformation transformation) implements RangeDispatchItemModel {
+    RangeDispatchItemModelImpl(final @NotNull ItemNumericProperty property, final float scale, final @NotNull List<Entry> entries, final @Nullable ItemModel fallback, final @Nullable Transformation transformation) {
         this.property = requireNonNull(property, "property");
         this.scale = scale;
         this.entries = requireNonNull(entries, "entries");
         this.fallback = fallback;
+        this.transformation = transformation;
     }
 
     @Override
@@ -85,10 +85,11 @@ record RangeDispatchItemModelImpl(ItemNumericProperty property, float scale, Lis
         return examine(StringExaminer.simpleEscaping());
     }
 
-    record EntryImpl(float threshold, ItemModel model) implements Entry {
-        EntryImpl(final float threshold, final @NotNull ItemModel model) {
+    record EntryImpl(float threshold, ItemModel model, Transformation transformation) implements Entry {
+        EntryImpl(final float threshold, final @NotNull ItemModel model, final @Nullable Transformation transformation) {
             this.threshold = threshold;
             this.model = requireNonNull(model, "model");
+            this.transformation = transformation;
         }
 
         @Override
@@ -100,7 +101,8 @@ record RangeDispatchItemModelImpl(ItemNumericProperty property, float scale, Lis
         public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
             return Stream.of(
                     ExaminableProperty.of("threshold", threshold),
-                    ExaminableProperty.of("model", model)
+                    ExaminableProperty.of("model", model),
+                    ExaminableProperty.of("transformation", transformation)
             );
         }
 
@@ -109,7 +111,8 @@ record RangeDispatchItemModelImpl(ItemNumericProperty property, float scale, Lis
             if (o == null || getClass() != o.getClass()) return false;
             EntryImpl entry = (EntryImpl) o;
             return Float.compare(entry.threshold, threshold) == 0 &&
-                    model.equals(entry.model);
+                    model.equals(entry.model) &&
+                    transformation.equals(entry.transformation);
         }
 
         @Override
@@ -123,6 +126,13 @@ record RangeDispatchItemModelImpl(ItemNumericProperty property, float scale, Lis
         private float scale = DEFAULT_SCALE;
         private final List<Entry> entries = new ArrayList<>();
         private ItemModel fallback;
+        private Transformation transformation;
+
+        @Override
+        public @NotNull Builder transformation(@Nullable Transformation transformation) {
+            this.transformation = transformation;
+            return this;
+        }
 
         @Override
         public @NotNull Builder property(@NotNull ItemNumericProperty property) {
@@ -150,7 +160,7 @@ record RangeDispatchItemModelImpl(ItemNumericProperty property, float scale, Lis
 
         @Override
         public @NotNull RangeDispatchItemModel build() {
-            return new RangeDispatchItemModelImpl(property, scale, entries, fallback);
+            return new RangeDispatchItemModelImpl(property, scale, entries, fallback, transformation);
         }
     }
 }

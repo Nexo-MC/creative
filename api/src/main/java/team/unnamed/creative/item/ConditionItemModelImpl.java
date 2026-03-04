@@ -33,12 +33,12 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
-record ConditionItemModelImpl(ItemBooleanProperty condition, ItemModel onTrue,
-                              ItemModel onFalse) implements ConditionItemModel {
-    ConditionItemModelImpl(final @NotNull ItemBooleanProperty condition, final @NotNull ItemModel onTrue, final @NotNull ItemModel onFalse) {
+record ConditionItemModelImpl(ItemBooleanProperty condition, ItemModel onTrue, ItemModel onFalse, Transformation transformation) implements ConditionItemModel {
+    ConditionItemModelImpl(final @NotNull ItemBooleanProperty condition, final @NotNull ItemModel onTrue, final @NotNull ItemModel onFalse, final @Nullable Transformation transformation) {
         this.condition = requireNonNull(condition, "condition");
         this.onTrue = requireNonNull(onTrue, "onTrue");
         this.onFalse = requireNonNull(onFalse, "onFalse");
+        this.transformation = transformation;
     }
 
     @Override
@@ -61,7 +61,8 @@ record ConditionItemModelImpl(ItemBooleanProperty condition, ItemModel onTrue,
         return Stream.of(
                 ExaminableProperty.of("condition", condition),
                 ExaminableProperty.of("onTrue", onTrue),
-                ExaminableProperty.of("onFalse", onFalse)
+                ExaminableProperty.of("onFalse", onFalse),
+                ExaminableProperty.of("transformation", transformation)
         );
     }
 
@@ -69,7 +70,7 @@ record ConditionItemModelImpl(ItemBooleanProperty condition, ItemModel onTrue,
     public boolean equals(final @Nullable Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         final ConditionItemModelImpl that = (ConditionItemModelImpl) o;
-        return condition.equals(that.condition) && onTrue.equals(that.onTrue) && onFalse.equals(that.onFalse);
+        return condition.equals(that.condition) && onTrue.equals(that.onTrue) && onFalse.equals(that.onFalse) && transformation.equals(that.transformation);
     }
 
     @Override

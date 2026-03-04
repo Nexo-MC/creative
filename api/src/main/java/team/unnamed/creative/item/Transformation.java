@@ -23,28 +23,24 @@
  */
 package team.unnamed.creative.item;
 
+import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import team.unnamed.creative.base.QuaternionFloat;
+import team.unnamed.creative.base.Vector3Float;
 
-import java.util.List;
+public interface Transformation extends Examinable {
 
-/**
- * Represents a composite item model, which renders multiple sub-models.
- * All models are rendered in the same space.
- *
- * @since 1.8.0
- * @sinceMinecraft 1.21.4
- * @sincePackFormat 43
- * @see Item
- * @see ItemModel
- */
-public interface CompositeItemModel extends ItemModel {
-    /**
-     * Returns the sub-models that are rendered by this composite model.
-     *
-     * @return The sub-models
-     */
-    @NotNull List<ItemModel> models();
+    Transformation DEFAULT = TransformationImpl.DEFAULT;
 
-    @Nullable Transformation transformation();
+    @NotNull Vector3Float translation();
+    @NotNull Transformation translation(Vector3Float translation);
+
+    @NotNull Vector3Float scale();
+    @NotNull Transformation scale(Vector3Float scale);
+
+    @NotNull QuaternionFloat leftRotation();
+    @NotNull Transformation leftRotation(QuaternionFloat leftRotation);
+
+    @NotNull QuaternionFloat rightRotation();
+    @NotNull Transformation rightRotation(QuaternionFloat rightRotation);
 }

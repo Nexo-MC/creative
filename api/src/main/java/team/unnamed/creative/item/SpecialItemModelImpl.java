@@ -27,16 +27,18 @@ import net.kyori.adventure.key.Key;
 import net.kyori.examination.ExaminableProperty;
 import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.item.special.SpecialRender;
 
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
-record SpecialItemModelImpl(SpecialRender render, Key base) implements SpecialItemModel {
-    SpecialItemModelImpl(final @NotNull SpecialRender render, final @NotNull Key base) {
+record SpecialItemModelImpl(SpecialRender render, Key base, Transformation transformation) implements SpecialItemModel {
+    SpecialItemModelImpl(final @NotNull SpecialRender render, final @NotNull Key base, final @Nullable Transformation transformation) {
         this.render = requireNonNull(render, "render");
         this.base = requireNonNull(base, "base");
+        this.transformation = transformation;
     }
 
     @Override
@@ -67,5 +69,10 @@ record SpecialItemModelImpl(SpecialRender render, Key base) implements SpecialIt
     @Override
     public @NotNull String toString() {
         return examine(StringExaminer.simpleEscaping());
+    }
+
+    @Override
+    public @Nullable Transformation transformation() {
+        return null;
     }
 }
