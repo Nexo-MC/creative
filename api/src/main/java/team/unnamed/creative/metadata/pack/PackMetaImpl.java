@@ -29,15 +29,11 @@ import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.metadata.MetadataPart;
 
-import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
-final class PackMetaImpl implements PackMeta {
-
-    private final PackFormat format;
-    private final Component description;
+record PackMetaImpl(PackFormat format, Component description) implements PackMeta {
 
     PackMetaImpl(
             final @NotNull PackFormat format,
@@ -82,11 +78,6 @@ final class PackMetaImpl implements PackMeta {
         PackMetaImpl packMeta = (PackMetaImpl) o;
         return format.equals(packMeta.format)
                 && description.equals(packMeta.description);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(format, description);
     }
 
 }

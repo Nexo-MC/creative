@@ -32,9 +32,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-final class OverlaysMetaImpl implements OverlaysMeta {
-
-    private final List<OverlayEntry> overlays;
+record OverlaysMetaImpl(List<OverlayEntry> overlays) implements OverlaysMeta {
 
     OverlaysMetaImpl(final @NotNull List<OverlayEntry> overlays) {
         this.overlays = Objects.requireNonNull(overlays, "overlays");
@@ -68,11 +66,6 @@ final class OverlaysMetaImpl implements OverlaysMeta {
         if (o == null || getClass() != o.getClass()) return false;
         OverlaysMetaImpl that = (OverlaysMetaImpl) o;
         return overlays.equals(that.overlays);
-    }
-
-    @Override
-    public int hashCode() {
-        return overlays.hashCode();
     }
 
 }

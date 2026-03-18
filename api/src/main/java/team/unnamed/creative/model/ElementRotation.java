@@ -29,6 +29,7 @@ import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.base.Axis3D;
 import team.unnamed.creative.base.Vector3Float;
+import team.unnamed.creative.metadata.pack.FormatVersion;
 
 import java.util.stream.Stream;
 
@@ -54,7 +55,7 @@ public record ElementRotation(Vector3Float origin, Vector3Float rotation, boolea
         this.rescale = rescale;
     }
 
-    public boolean containsLegacyRotation(boolean writeLegacy) {
+    public boolean containsLegacyRotation(boolean writeLegacy, int minPackFormat) {
         float x = rotation.x();
         float y = rotation.y();
         float z = rotation.z();
@@ -79,10 +80,10 @@ public record ElementRotation(Vector3Float origin, Vector3Float rotation, boolea
         if (Math.abs(z) > epsilon) nonZeroCount++;
         if (nonZeroCount > 1) return false;
 
-        // Must be increment of 22.5
-        if (!isMultipleOfStep(x, step, epsilon)) return false;
-        if (!isMultipleOfStep(y, step, epsilon)) return false;
-        if (!isMultipleOfStep(z, step, epsilon)) return false;
+        // Must be increment of 22.5 unless aimed at 1.21.6+
+        if (!isMultipleOfStep(x, step, epsilon) && minPackFormat > FormatVersion.FORMAT_1_21_6) return false;
+        if (!isMultipleOfStep(y, step, epsilon) && minPackFormat > FormatVersion.FORMAT_1_21_6) return false;
+        if (!isMultipleOfStep(z, step, epsilon) && minPackFormat > FormatVersion.FORMAT_1_21_6) return false;
 
         return writeLegacy;
     }

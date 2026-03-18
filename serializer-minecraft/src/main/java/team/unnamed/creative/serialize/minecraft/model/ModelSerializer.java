@@ -34,6 +34,7 @@ import team.unnamed.creative.base.Axis3D;
 import team.unnamed.creative.base.CubeFace;
 import team.unnamed.creative.base.Vector2Float;
 import team.unnamed.creative.base.Vector3Float;
+import team.unnamed.creative.metadata.pack.FormatVersion;
 import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.model.Element;
 import team.unnamed.creative.model.ElementFace;
@@ -102,12 +103,13 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
         List<Element> elements = model.elements();
         if (!elements.isEmpty()) {
             writer.name("elements").beginArray();
-            boolean writeLegacy = packFormat.min().major() < 75;
+            int minPackFormat = packFormat.min().major();
+            boolean writeLegacy = minPackFormat < FormatVersion.FORMAT_1_21_11;
 
             if (writeLegacy) for (Element element : elements) {
                 ElementRotation rotation = element.rotation();
                 if (rotation == null) continue;
-                writeLegacy = rotation.containsLegacyRotation(writeLegacy);
+                writeLegacy = rotation.containsLegacyRotation(writeLegacy, minPackFormat);
             }
             for (Element element : elements) {
                 writeElement(writer, element, writeLegacy);
@@ -355,7 +357,7 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
             Axis3D axis = Axis3D.valueOf(objectNode.get("axis").getAsString().toUpperCase(Locale.ROOT));
             float angle = objectNode.get("angle").getAsFloat();
             float abs = Math.abs(angle);
-            if ((packFormat.min().major() < 75) && (abs > 45f || abs < -45f)) {
+            if ((packFormat.min().major() < FormatVersion.FORMAT_1_21_11) && (abs > 45f || abs < -45f)) {
                 throw new IllegalArgumentException("Angle must be between [-45.0, 45.0] (inclusive), but was " + abs);
             }
             rotation = Vector3Float.ZERO.with(axis, angle);

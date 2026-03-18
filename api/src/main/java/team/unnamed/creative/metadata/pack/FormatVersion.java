@@ -25,8 +25,6 @@ package team.unnamed.creative.metadata.pack;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 /**
  * Represents a pack-format version with <em>major</em> and <em>minor</em> components
  * (for example, {@code 65.2} or {@code 68.0}).
@@ -38,9 +36,15 @@ import java.util.Objects;
  * @sincePackFormat 86
  * @since 1.8.4
  */
-public class FormatVersion implements Comparable<FormatVersion> {
-    private final int major;
-    private final int minor;
+public record FormatVersion(int major, int minor) implements Comparable<FormatVersion> {
+
+    public static final int FORMAT_1_21_1 = 34;
+    public static final int FORMAT_1_21_3 = 42;
+    public static final int FORMAT_1_21_4 = 46;
+    public static final int FORMAT_1_21_5 = 55;
+    public static final int FORMAT_1_21_6 = 63;
+    public static final int FORMAT_1_21_10 = 69;
+    public static final int FORMAT_1_21_11 = 75;
 
     /**
      * Creates a new {@link FormatVersion}.
@@ -51,12 +55,10 @@ public class FormatVersion implements Comparable<FormatVersion> {
      * @param minor The minor component.
      * @throws IllegalArgumentException If {@code major} or {@code minor} is negative.
      */
-    private FormatVersion(final int major, final int minor) {
+    public FormatVersion {
         if (major < 0 || minor < 0) {
             throw new IllegalArgumentException("PackVersion cannot be negative: " + major + "." + minor);
         }
-        this.major = major;
-        this.minor = minor;
     }
 
     /**
@@ -120,6 +122,7 @@ public class FormatVersion implements Comparable<FormatVersion> {
      * @sincePackFormat 86
      * @since 1.8.4
      */
+    @Override
     public int major() {
         return this.major;
     }
@@ -132,6 +135,7 @@ public class FormatVersion implements Comparable<FormatVersion> {
      * @sincePackFormat 86
      * @since 1.8.4
      */
+    @Override
     public int minor() {
         return this.minor;
     }
@@ -171,7 +175,7 @@ public class FormatVersion implements Comparable<FormatVersion> {
      *
      * @param o The version to be compared.
      * @return A negative integer, zero, or a positive integer as this version
-     *         is less than, equal to, or greater than the specified version.
+     * is less than, equal to, or greater than the specified version.
      * @sinceMinecraft 1.21.9
      * @sincePackFormat 86
      * @since 1.8.4
@@ -194,7 +198,7 @@ public class FormatVersion implements Comparable<FormatVersion> {
      * @since 1.8.4
      */
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return this.minor == 0 ? Integer.toString(this.major) : (this.major + "." + this.minor);
     }
 
@@ -206,8 +210,4 @@ public class FormatVersion implements Comparable<FormatVersion> {
         return this.major == that.major && this.minor == that.minor;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.major, this.minor);
-    }
 }
