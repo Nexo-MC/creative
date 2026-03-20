@@ -81,9 +81,10 @@ public record ElementRotation(Vector3Float origin, Vector3Float rotation, boolea
         if (nonZeroCount > 1) return false;
 
         // Must be increment of 22.5 unless aimed at 1.21.6+
-        if (!isMultipleOfStep(x, step, epsilon) && minPackFormat > FormatVersion.FORMAT_1_21_6) return false;
-        if (!isMultipleOfStep(y, step, epsilon) && minPackFormat > FormatVersion.FORMAT_1_21_6) return false;
-        if (!isMultipleOfStep(z, step, epsilon) && minPackFormat > FormatVersion.FORMAT_1_21_6) return false;
+        boolean isSemiLegacy = minPackFormat >= FormatVersion.FORMAT_1_21_6 && minPackFormat < FormatVersion.FORMAT_1_21_11;
+        if (!isMultipleOfStep(x, step, epsilon)) return isSemiLegacy;
+        if (!isMultipleOfStep(y, step, epsilon)) return isSemiLegacy;
+        if (!isMultipleOfStep(z, step, epsilon)) return isSemiLegacy;
 
         return writeLegacy;
     }
