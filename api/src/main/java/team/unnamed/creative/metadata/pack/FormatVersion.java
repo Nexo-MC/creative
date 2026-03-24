@@ -45,6 +45,7 @@ public record FormatVersion(int major, int minor) implements Comparable<FormatVe
     public static final int FORMAT_1_21_6 = 63;
     public static final int FORMAT_1_21_10 = 69;
     public static final int FORMAT_1_21_11 = 75;
+    public static final int FORMAT_26_1 = 84;
 
     /**
      * Creates a new {@link FormatVersion}.
