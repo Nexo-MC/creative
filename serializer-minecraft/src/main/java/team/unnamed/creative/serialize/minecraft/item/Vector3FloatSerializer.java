@@ -43,11 +43,20 @@ public class Vector3FloatSerializer implements JsonResourceSerializer<Vector3Flo
 
     @Override
     public Vector3Float deserializeFromJson(JsonElement node, Key key, PackFormat packFormat) throws IOException {
-        return null;
+        var array = node.getAsJsonArray();
+        return new Vector3Float(
+                array.get(0).getAsFloat(),
+                array.get(1).getAsFloat(),
+                array.get(2).getAsFloat()
+        );
     }
 
     @Override
     public void serializeToJson(Vector3Float object, JsonWriter writer, PackFormat packFormat) throws IOException {
-
+        writer.beginArray();
+        writer.value(object.x());
+        writer.value(object.y());
+        writer.value(object.z());
+        writer.endArray();
     }
 }

@@ -43,11 +43,22 @@ public class QuaternionSerializer implements JsonResourceSerializer<QuaternionFl
 
     @Override
     public QuaternionFloat deserializeFromJson(JsonElement node, Key key, PackFormat packFormat) throws IOException {
-        return null;
+        var array = node.getAsJsonArray();
+        return new QuaternionFloat(
+                array.get(0).getAsFloat(),
+                array.get(1).getAsFloat(),
+                array.get(2).getAsFloat(),
+                array.get(3).getAsFloat()
+        );
     }
 
     @Override
     public void serializeToJson(QuaternionFloat object, JsonWriter writer, PackFormat packFormat) throws IOException {
-
+        writer.beginArray();
+        writer.value(object.x());
+        writer.value(object.y());
+        writer.value(object.z());
+        writer.value(object.w());
+        writer.endArray();
     }
 }
