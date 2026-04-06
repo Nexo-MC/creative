@@ -532,20 +532,17 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
 
         for (Map.Entry<String, JsonElement> entry : objectNode.entrySet()) {
             String key = entry.getKey();
-            String value = entry.getValue().getAsString();
-            ModelTexture texture = value.charAt(0) == '#'
-                    ? ModelTexture.ofReference(value.substring(1))
-                    : ModelTexture.ofKey(Key.key(value));
+            JsonElement value = entry.getValue();
 
-            if ("particle".equals(key)) {
-                particle = texture;
-            } else if (key.startsWith("layer")) {
-                int layer = Integer.parseInt(key.substring("layer".length()));
-                // TODO: Fix
-                layers.add(texture);
-            } else {
-                variables.put(key, texture);
-            }
+            String sprite;
+            boolean forceTranslucent = ModelTexture.DEFAULT_FORCE_TRANSLUCENT;
+            if (value.isJsonPrimitive()) {
+                sprite = value.getAsString();
+            } else if (value instanceof JsonObject jsonObject) {
+                sprite = jsonObject.get("sprite").getAsString();
+                forceTranslucent = jsonObject.get("force_translucent").getAsBoolean();
+            } else sprite = "#missingno";
+            readTextureField(sprite, forceTranslucent, key, particle, layers,  variables);
         }
 
         return ModelTextures.builder()
@@ -553,6 +550,24 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
                 .layers(layers)
                 .variables(variables)
                 .build();
+    }
+
+    private static ModelTexture readTextureField(String valueString, boolean translucent, String key, ModelTexture particle, List<ModelTexture> layers, Map<String, ModelTexture> variables) {
+        ModelTexture texture = valueString.charAt(0) == '#'
+                ? ModelTexture.ofReference(valueString.substring(1))
+                : ModelTexture.ofKey(Key.key(valueString));
+
+        if ("particle".equals(key)) {
+            return texture;
+        } else if (key.startsWith("layer")) {
+            int layer = Integer.parseInt(key.substring("layer".length()));
+            // TODO: Fix
+            layers.add(texture);
+        } else {
+            variables.put(key, texture);
+        }
+
+        return null;
     }
 
 }
