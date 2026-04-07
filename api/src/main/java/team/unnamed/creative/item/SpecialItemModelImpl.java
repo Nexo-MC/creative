@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.item.special.SpecialRender;
 
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
@@ -55,7 +56,8 @@ record SpecialItemModelImpl(SpecialRender render, Key base, Transformation trans
     public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
         return Stream.of(
                 ExaminableProperty.of("base", base),
-                ExaminableProperty.of("render", render)
+                ExaminableProperty.of("render", render),
+                ExaminableProperty.of("transformation", transformation)
         );
     }
 
@@ -63,7 +65,7 @@ record SpecialItemModelImpl(SpecialRender render, Key base, Transformation trans
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         SpecialItemModelImpl that = (SpecialItemModelImpl) o;
-        return render.equals(that.render) && base.equals(that.base);
+        return render.equals(that.render) && base.equals(that.base) && Objects.equals(transformation, that.transformation);
     }
 
     @Override

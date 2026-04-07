@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.item.property.ItemBooleanProperty;
 
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
@@ -70,7 +71,7 @@ record ConditionItemModelImpl(ItemBooleanProperty condition, ItemModel onTrue, I
     public boolean equals(final @Nullable Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         final ConditionItemModelImpl that = (ConditionItemModelImpl) o;
-        return condition.equals(that.condition) && onTrue.equals(that.onTrue) && onFalse.equals(that.onFalse) && transformation.equals(that.transformation);
+        return condition.equals(that.condition) && onTrue.equals(that.onTrue) && onFalse.equals(that.onFalse) && Objects.equals(transformation, that.transformation);
     }
 
     @Override

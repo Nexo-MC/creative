@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.item.tint.TintSource;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
@@ -70,7 +71,7 @@ record ReferenceItemModelImpl(Key model, List<TintSource> tints, Transformation 
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         ReferenceItemModelImpl that = (ReferenceItemModelImpl) o;
-        return model.equals(that.model) && tints.equals(that.tints);
+        return model.equals(that.model) && tints.equals(that.tints) && Objects.equals(transformation, that.transformation);
     }
 
     @Override

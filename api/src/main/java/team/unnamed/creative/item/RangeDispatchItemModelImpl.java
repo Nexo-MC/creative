@@ -66,7 +66,8 @@ record RangeDispatchItemModelImpl(ItemNumericProperty property, float scale, Lis
                 ExaminableProperty.of("property", property),
                 ExaminableProperty.of("scale", scale),
                 ExaminableProperty.of("entries", entries),
-                ExaminableProperty.of("fallback", fallback)
+                ExaminableProperty.of("fallback", fallback),
+                ExaminableProperty.of("transformation", transformation)
         );
     }
 
@@ -77,6 +78,7 @@ record RangeDispatchItemModelImpl(ItemNumericProperty property, float scale, Lis
         return Float.compare(that.scale, scale) == 0 &&
                 property.equals(that.property) &&
                 entries.equals(that.entries) &&
+                Objects.equals(transformation, that.transformation) &&
                 Objects.equals(fallback, that.fallback);
     }
 
@@ -112,7 +114,7 @@ record RangeDispatchItemModelImpl(ItemNumericProperty property, float scale, Lis
             EntryImpl entry = (EntryImpl) o;
             return Float.compare(entry.threshold, threshold) == 0 &&
                     model.equals(entry.model) &&
-                    transformation.equals(entry.transformation);
+                    Objects.equals(transformation, entry.transformation);
         }
 
         @Override
