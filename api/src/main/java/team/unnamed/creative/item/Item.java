@@ -51,6 +51,9 @@ public interface Item extends Keyed, ResourcePackPart, Examinable {
     @ApiStatus.Internal
     float DEFAULT_SWAP_ANIMATION_SCALE = 1.0f;
 
+    @ApiStatus.Internal
+    Transformation DEFAULT_TRANSFORMATION = Transformation.DEFAULT;
+
     /**
      * Describes if down-and-up animation should be played in first-person view
      * when item stack is changed (either type, count or components).

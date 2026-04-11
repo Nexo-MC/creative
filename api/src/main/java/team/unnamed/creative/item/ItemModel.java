@@ -46,30 +46,6 @@ public interface ItemModel extends Examinable {
 
     @Nullable Transformation transformation();
 
-//    /**
-//     * The Transformation info for this ItemModel.
-//     *
-//     * @return a Transformation that will be applied to the given ItemModel
-//     * @sinceMinecraft 26.1
-//     * @sincePackFormat 83
-//     * @since 1.13.0
-//     */
-//    static @NotNull Transformation transformation(final @NotNull Transformation transformation) {
-//        return new TransformationImpl(transformation.translation(), transformation.scale(), transformation.leftRotation(), transformation.rightRotation());
-//    }
-//
-//    /**
-//     * The Transformation info for this ItemModel.
-//     *
-//     * @return a Transformation that will be applied to the given ItemModel
-//     * @sinceMinecraft 26.1
-//     * @sincePackFormat 83
-//     * @since 1.13.0
-//     */
-//    static @NotNull Transformation transformation(final @NotNull Vector3Float translation, final @NotNull Vector3Float scale, final @NotNull QuaternionFloat leftRotation, final @NotNull QuaternionFloat rightRotation) {
-//        return new TransformationImpl(translation, scale, leftRotation, rightRotation);
-//    }
-
     /**
      * Creates a reference item model, which renders a plain model from the
      * {@code models} directory.

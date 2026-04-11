@@ -75,6 +75,6 @@ record SpecialItemModelImpl(SpecialRender render, Key base, Transformation trans
 
     @Override
     public @Nullable Transformation transformation() {
-        return null;
+        return transformation;
     }
 }

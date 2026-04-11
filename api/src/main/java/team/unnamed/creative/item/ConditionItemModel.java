@@ -58,6 +58,4 @@ public interface ConditionItemModel extends ItemModel {
      * @return The item model to render if the condition is false
      */
     @NotNull ItemModel onFalse();
-
-    @Nullable Transformation transformation();
 }

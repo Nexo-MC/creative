@@ -55,6 +55,4 @@ public interface ReferenceItemModel extends ItemModel {
      * @return The list of tint sources
      */
     @NotNull List<TintSource> tints();
-
-    @Nullable Transformation transformation();
 }

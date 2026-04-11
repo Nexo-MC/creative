@@ -45,6 +45,4 @@ public interface CompositeItemModel extends ItemModel {
      * @return The sub-models
      */
     @NotNull List<ItemModel> models();
-
-    @Nullable Transformation transformation();
 }
