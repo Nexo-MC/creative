@@ -24,23 +24,138 @@
 package team.unnamed.creative.item;
 
 import net.kyori.examination.Examinable;
+import net.kyori.examination.ExaminableProperty;
+import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.base.QuaternionFloat;
 import team.unnamed.creative.base.Vector3Float;
 
-public interface Transformation extends Examinable {
+import java.util.stream.Stream;
 
-    Transformation DEFAULT = TransformationImpl.DEFAULT;
+import static java.util.Objects.requireNonNull;
 
-    @NotNull Vector3Float translation();
-    @NotNull Transformation translation(Vector3Float translation);
+public record Transformation(Vector3Float translation, Vector3Float scale, QuaternionFloat leftRotation, QuaternionFloat rightRotation) implements Examinable {
 
-    @NotNull Vector3Float scale();
-    @NotNull Transformation scale(Vector3Float scale);
+    public static final Transformation DEFAULT = new Transformation(Vector3Float.ZERO, Vector3Float.ONE, QuaternionFloat.DEFAULT, QuaternionFloat.DEFAULT);
 
-    @NotNull QuaternionFloat leftRotation();
-    @NotNull Transformation leftRotation(QuaternionFloat leftRotation);
+    public Transformation(
+            final @NotNull Vector3Float translation,
+            final @NotNull Vector3Float scale,
+            final @NotNull QuaternionFloat leftRotation,
+            final @NotNull QuaternionFloat rightRotation
+    ) {
+        this.translation = requireNonNull(translation, "translation");
+        this.scale = requireNonNull(scale, "scale");
+        this.leftRotation = requireNonNull(leftRotation, "leftRotation");
+        this.rightRotation = requireNonNull(rightRotation, "rightRotation");
+    }
 
-    @NotNull QuaternionFloat rightRotation();
-    @NotNull Transformation rightRotation(QuaternionFloat rightRotation);
+    public @NotNull Vector3Float translation() {
+        return translation;
+    }
+
+    public @NotNull Transformation translation(Vector3Float translation) {
+        if (this.translation == translation) return this;
+        return new Transformation(translation, this.scale, this.leftRotation, this.rightRotation);
+    }
+
+    public @NotNull Vector3Float scale() {
+        return scale;
+    }
+
+    public @NotNull Transformation scale(Vector3Float scale) {
+        if (this.scale == scale) return this;
+        return new Transformation(this.translation, scale, this.leftRotation, this.rightRotation);
+    }
+
+    public @NotNull QuaternionFloat leftRotation() {
+        return leftRotation;
+    }
+
+    public @NotNull Transformation leftRotation(QuaternionFloat leftRotation) {
+        if (this.leftRotation == leftRotation) return this;
+        return new Transformation(this.translation, this.scale, leftRotation, this.rightRotation);
+    }
+
+    public @NotNull QuaternionFloat rightRotation() {
+        return rightRotation;
+    }
+
+    public @NotNull Transformation rightRotation(QuaternionFloat rightRotation) {
+        if (this.rightRotation == rightRotation) return this;
+        return new Transformation(this.translation, this.scale, this.leftRotation, rightRotation);
+    }
+
+    public @NotNull Builder toBuilder() {
+        return builder()
+                .translation(translation)
+                .scale(scale)
+                .leftRotation(leftRotation)
+                .rightRotation(rightRotation);
+    }
+
+    @Override
+    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
+        return Stream.of(
+                ExaminableProperty.of("translation", translation),
+                ExaminableProperty.of("scale", scale),
+                ExaminableProperty.of("leftRotation", leftRotation),
+                ExaminableProperty.of("rightRotation", rightRotation)
+        );
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transformation that = (Transformation) o;
+        return translation.equals(that.translation)
+                && scale.equals(that.scale)
+                && leftRotation.equals(that.leftRotation)
+                && rightRotation.equals(that.rightRotation);
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return examine(StringExaminer.simpleEscaping());
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private Vector3Float translation = Vector3Float.ZERO;
+        private Vector3Float scale = Vector3Float.ONE;
+        private QuaternionFloat leftRotation = QuaternionFloat.DEFAULT;
+        private QuaternionFloat rightRotation = QuaternionFloat.DEFAULT;
+
+        private Builder() {
+        }
+
+        public Builder translation(Vector3Float translation) {
+            this.translation = requireNonNull(translation, "translation");
+            return this;
+        }
+
+        public Builder scale(Vector3Float scale) {
+            this.scale = requireNonNull(scale, "scale");
+            return this;
+        }
+
+        public Builder leftRotation(QuaternionFloat leftRotation) {
+            this.leftRotation = requireNonNull(leftRotation, "leftRotation");
+            return this;
+        }
+
+        public Builder rightRotation(QuaternionFloat rightRotation) {
+            this.rightRotation = requireNonNull(rightRotation, "rightRotation");
+            return this;
+        }
+
+        public Transformation build() {
+            return new Transformation(translation, scale, leftRotation, rightRotation);
+        }
+    }
 }
