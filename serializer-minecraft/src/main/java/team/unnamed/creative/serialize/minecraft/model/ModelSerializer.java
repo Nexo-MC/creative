@@ -542,7 +542,8 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
                 sprite = jsonObject.get("sprite").getAsString();
                 forceTranslucent = jsonObject.get("force_translucent").getAsBoolean();
             } else sprite = "#missingno";
-            readTextureField(sprite, forceTranslucent, key, particle, layers,  variables);
+            ModelTexture parsed = readTextureField(sprite, forceTranslucent, key, layers, variables);
+            if ("particle".equals(key)) particle = parsed;
         }
 
         return ModelTextures.builder()
@@ -552,10 +553,10 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
                 .build();
     }
 
-    private static ModelTexture readTextureField(String valueString, boolean translucent, String key, ModelTexture particle, List<ModelTexture> layers, Map<String, ModelTexture> variables) {
+    private static ModelTexture readTextureField(String valueString, boolean translucent, String key, List<ModelTexture> layers, Map<String, ModelTexture> variables) {
         ModelTexture texture = valueString.charAt(0) == '#'
-                ? ModelTexture.ofReference(valueString.substring(1))
-                : ModelTexture.ofKey(Key.key(valueString));
+                ? ModelTexture.ofReference(valueString.substring(1), translucent)
+                : ModelTexture.ofKey(Key.key(valueString), translucent);
 
         if ("particle".equals(key)) {
             return texture;
