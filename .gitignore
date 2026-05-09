@@ -18,6 +18,7 @@
 .idea/**/shelf
 .idea/**/copilot/
 .idea/material_theme_project_new.xml
+.idea/
 
 # AWS User-specific
 .idea/**/aws.xml

@@ -1,6 +1,5 @@
 plugins {
     `java-library`
-    id("org.cadixdev.licenser")
 }
 
 repositories {
@@ -27,11 +26,6 @@ java {
     }
 }
 
-license {
-    header.set(rootProject.resources.text.fromFile("header.txt"))
-    include("**/*.java")
-    newLine.set(false)
-}
 
 tasks {
     //javadoc {
