@@ -32,6 +32,7 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
+@Deprecated(since = "1.14.0")
 record BedSpecialRenderImpl(Key texture) implements BedSpecialRender {
     BedSpecialRenderImpl(final @NotNull Key texture) {
         this.texture = requireNonNull(texture, "texture");

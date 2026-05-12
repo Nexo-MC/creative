@@ -64,16 +64,26 @@ public interface Atlas extends ResourcePackPart, Keyed, Examinable {
 
     Key BLOCKS = Key.key("blocks");
     Key BANNER_PATTERNS = Key.key("banner_patterns");
-    Key BEDS = Key.key("beds");
     Key CHESTS = Key.key("chests");
     Key SHIELD_PATTERNS = Key.key("shield_patterns");
     Key SHULKER_BOXES = Key.key("shulker_boxes");
-    Key SIGNS = Key.key("signs");
     Key MOB_EFFECTS = Key.key("mob_effects");
     Key PAINTINGS = Key.key("paintings");
     Key PARTICLES = Key.key("particles");
     Key ARMOR_TRIMS = Key.key("armor_trims");
     Key DECORATED_POT = Key.key("decorated_pot");
+
+    
+    /**
+     * @deprecated Removed in Minecraft 26.2+
+     */
+    @Deprecated
+    Key SIGNS = Key.key("signs");
+    /**
+     * @deprecated Removed in Minecraft 26.2+
+     */
+    @Deprecated
+    Key BEDS = Key.key("beds");
 
     /**
      * Key for the GUI texture atlas.

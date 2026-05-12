@@ -35,6 +35,7 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
+@Deprecated(since = "1.14.0")
 record SignSpecialRenderImpl(boolean hanging, WoodType woodType, Key texture) implements SignSpecialRender {
     SignSpecialRenderImpl(final boolean hanging, final @NotNull WoodType woodType, final @Nullable Key texture) {
         this.hanging = hanging;

@@ -34,7 +34,9 @@ import team.unnamed.creative.base.WoodType;
  * @since 1.8.0
  * @sinceMinecraft 1.21.4
  * @sincePackFormat 43
+ * @deprecated For Minecraft 26.2+, signs use Block-Models & Textures
  */
+@Deprecated(since = "1.14.0")
 public interface SignSpecialRender extends SpecialRender {
     /**
      * Determines whether the sign is hanging or standing.

@@ -32,7 +32,9 @@ import org.jetbrains.annotations.NotNull;
  * @since 1.8.0
  * @sinceMinecraft 1.21.4
  * @sincePackFormat 43
+ * @deprecated For Minecraft 26.2+, beds use Block-Models & Textures
  */
+@Deprecated(since = "1.14.0")
 public interface BedSpecialRender extends SpecialRender {
     /**
      * Returns the key for the texture to use, without {@code textures/entity/bed} and

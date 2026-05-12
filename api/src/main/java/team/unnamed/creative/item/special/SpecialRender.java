@@ -178,7 +178,9 @@ public interface SpecialRender extends Examinable {
      * @since 1.8.0
      * @sinceMinecraft 1.21.4
      * @sincePackFormat 43
+     * @deprecated For Minecraft 26.2+, signs use Block-Models & Textures
      */
+    @Deprecated(since = "1.14.0")
     static @NotNull SignSpecialRender hangingSign(final @NotNull WoodType woodType, final @Nullable Key texture) {
         return new SignSpecialRenderImpl(true, woodType, texture);
     }
