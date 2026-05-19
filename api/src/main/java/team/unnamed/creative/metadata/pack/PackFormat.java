@@ -93,6 +93,21 @@ public interface PackFormat extends Examinable {
     boolean isInRange(final FormatVersion version);
 
     /**
+     * Determines whether the given {@link PackFormat} is in the
+     * range of this pack format.
+     *
+     * <p>The check is inclusive; it returns {@code true} when the given version
+     * equals {@link #min()} or {@link #max()}.</p>
+     *
+     * @param format The format to check.
+     * @return True if the versions for this format is in the range.
+     * @sinceMinecraft 1.21.9
+     * @sincePackFormat 86
+     * @since 1.13.7
+     */
+    boolean isInRange(final PackFormat format);
+
+    /**
      * Determines whether the given {@code format} is in the
      * range of this pack format.
      *

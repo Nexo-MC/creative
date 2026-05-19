@@ -62,6 +62,11 @@ record PackFormatImpl(@NotNull FormatVersion min, @NotNull FormatVersion max) im
     }
 
     @Override
+    public boolean isInRange(final @NotNull PackFormat format) {
+        return isInRange(format.min()) || isInRange(format.max());
+    }
+
+    @Override
     @Deprecated
     public boolean isInRange(int format) {
         return isInRange(FormatVersion.of(format));
