@@ -74,6 +74,42 @@ class OverlaysMetaTest {
     }
 
     @Test
+    @DisplayName("Test overlays meta serialization omits deprecated 'formats' for pack format 65+")
+    void test_modern_format_serialization() {
+        final OverlaysMeta overlaysMeta = OverlaysMeta.of(
+                OverlayEntry.of(PackFormat.format(FormatVersion.of(75), FormatVersion.of(76)), "v75-76")
+        );
+        assertEquals(
+                "{\"entries\":[{\"directory\":\"v75-76\",\"min_format\":75,\"max_format\":76}]}",
+                OverlaysMetaCodec.INSTANCE.toJson(overlaysMeta)
+        );
+    }
+
+    @Test
+    @DisplayName("Test overlays meta serialization keeps both fields for ranges spanning format 64/65")
+    void test_spanning_format_serialization() {
+        final OverlaysMeta overlaysMeta = OverlaysMeta.of(
+                OverlayEntry.of(PackFormat.format(FormatVersion.of(60), FormatVersion.of(70)), "v60-70")
+        );
+        assertEquals(
+                "{\"entries\":[{\"formats\":[60,70],\"directory\":\"v60-70\",\"min_format\":60,\"max_format\":70}]}",
+                OverlaysMetaCodec.INSTANCE.toJson(overlaysMeta)
+        );
+    }
+
+    @Test
+    @DisplayName("Test overlays meta deserialization for pack format 65+ without 'formats' field")
+    void test_modern_format_deserialization() {
+        final OverlaysMeta overlaysMeta = OverlaysMetaCodec.INSTANCE.fromJson("{\"entries\":[{\"directory\":\"v75-76\",\"min_format\":75,\"max_format\":76}]}");
+        assertEquals(
+                OverlaysMeta.of(
+                        OverlayEntry.of(PackFormat.format(FormatVersion.of(75), FormatVersion.of(76)), "v75-76")
+                ),
+                overlaysMeta
+        );
+    }
+
+    @Test
     @DisplayName("Test overlays meta deserialization with custom pack format range")
     void test_range_deserialization() {
         final OverlaysMeta overlaysMeta = OverlaysMetaCodec.INSTANCE.fromJson("{\"entries\":[{\"formats\":[18,20],\"directory\":\"v18-20\"},{\"formats\":[21,24],\"directory\":\"v21-24\"}]}");

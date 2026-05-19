@@ -31,6 +31,7 @@ import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.metadata.overlays.OverlayEntry;
 import team.unnamed.creative.metadata.overlays.OverlaysMeta;
+import team.unnamed.creative.metadata.pack.FormatVersion;
 import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.serialize.minecraft.base.PackFormatSerializer;
 
@@ -61,7 +62,15 @@ final class OverlaysMetaCodec implements MetadataPartCodec<OverlaysMeta> {
         final List<OverlayEntry> overlays = new ArrayList<>();
         for (final JsonElement entryNode : entries) {
             final JsonObject entryObject = entryNode.getAsJsonObject();
-            final PackFormat formats = PackFormatSerializer.deserialize(entryObject.get("formats"));
+            final PackFormat formats;
+            if (entryObject.has("formats")) {
+                formats = PackFormatSerializer.deserialize(entryObject.get("formats"));
+            } else {
+                // pack format 65+ deprecates "formats" in favor of min_format/max_format
+                final int min = entryObject.get("min_format").getAsInt();
+                final int max = entryObject.get("max_format").getAsInt();
+                formats = PackFormat.format(FormatVersion.of(min), FormatVersion.of(max));
+            }
             @Subst("dir") final String directory = entryObject.get("directory").getAsString();
             overlays.add(OverlayEntry.of(formats, directory));
         }
@@ -75,16 +84,20 @@ final class OverlaysMetaCodec implements MetadataPartCodec<OverlaysMeta> {
         writer.beginArray();
         for (final OverlayEntry overlay : overlays.entries()) {
             writer.beginObject();
-            writer.name("formats");
-            PackFormatSerializer.serialize(overlay.formats(), writer);
-            writer.name("directory").value(overlay.directory());
+            final int minMajor = overlay.formats().min().major();
+            final int maxMajor = overlay.formats().max().major();
 
-            // Formats higher than 64 are required to have min_format and max_format fields for overlays
-            if (overlay.formats().min().major() > 64 || overlay.formats().max().major() > 64) {
-                writer.name("min_format");
-                writer.value(overlay.formats().min().major());
-                writer.name("max_format");
-                writer.value(overlay.formats().max().major());
+            // pack format 65+ deprecates "formats" in favor of min_format/max_format.
+            // only emit "formats" if any part of the range is <= 64 (so old clients
+            // can still read it); only emit min_format/max_format if any part is > 64.
+            if (minMajor <= 64) {
+                writer.name("formats");
+                PackFormatSerializer.serialize(overlay.formats(), writer);
+            }
+            writer.name("directory").value(overlay.directory());
+            if (maxMajor > 64) {
+                writer.name("min_format").value(minMajor);
+                writer.name("max_format").value(maxMajor);
             }
 
             writer.endObject();
