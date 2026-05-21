@@ -296,7 +296,9 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
                 float v1 = array.get(1).getAsFloat();
                 float u2 = array.get(2).getAsFloat();
                 float v2 = array.get(3).getAsFloat();
-                if (u1 < 0 || v1 < 0 || u2 < 0 || v2 < 0) LOGGER.warning("""
+
+                boolean shouldCheckClamp = packFormat.isInRange(FormatVersion.of(FormatVersion.FORMAT_26_1));
+                if (shouldCheckClamp) if (u1 < 0 || v1 < 0 || u2 < 0 || v2 < 0) throw new IllegalArgumentException("""
                     Negative UV found in model '%s' on face '%s': [%s,%s,%s,%s]
                     Minecraft 26.1+ rejects out-of-bounds UVs and the model will fail to load
                     Likely a Blockbench export rounding artifact, clamp negative values to 0
