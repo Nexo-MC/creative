@@ -297,13 +297,13 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
                 float u2 = array.get(2).getAsFloat();
                 float v2 = array.get(3).getAsFloat();
 
-                boolean shouldCheckClamp = packFormat.isInRange(FormatVersion.of(FormatVersion.FORMAT_26_1));
-                if (shouldCheckClamp) if (u1 < 0 || v1 < 0 || u2 < 0 || v2 < 0) throw new IllegalArgumentException("""
-                    Negative UV found in model '%s' on face '%s': [%s,%s,%s,%s]
-                    Minecraft 26.1+ rejects out-of-bounds UVs and the model will fail to load
-                    Likely a Blockbench export rounding artifact, clamp negative values to 0
-                    """.formatted(modelKey, face, u1, v1, u2, v2)
-                );
+                //boolean shouldCheckClamp = packFormat.isInRange(FormatVersion.of(FormatVersion.FORMAT_26_1));
+                //if (shouldCheckClamp) if (u1 < 0 || v1 < 0 || u2 < 0 || v2 < 0) throw new IllegalArgumentException("""
+                //    Negative UV found in model '%s' on face '%s': [%s,%s,%s,%s]
+                //    Minecraft 26.1+ rejects out-of-bounds UVs and the model will fail to load
+                //    Likely a Blockbench export rounding artifact, clamp negative values to 0
+                //    """.formatted(modelKey, face, u1, v1, u2, v2)
+                //);
 
                 uv = TextureUV.uv(
                     new Vector2Float(u1, v1).divide(MINECRAFT_UV_UNIT),
