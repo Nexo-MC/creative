@@ -87,13 +87,11 @@ final class OverlaysMetaCodec implements MetadataPartCodec<OverlaysMeta> {
             final int minMajor = overlay.formats().min().major();
             final int maxMajor = overlay.formats().max().major();
 
-            // pack format 65+ deprecates "formats" in favor of min_format/max_format.
-            // only emit "formats" if any part of the range is <= 64 (so old clients
-            // can still read it); only emit min_format/max_format if any part is > 64.
-            if (minMajor <= 64) {
-                writer.name("formats");
-                PackFormatSerializer.serialize(overlay.formats(), writer);
-            }
+            // "formats" must be present in every overlay entry when any entry needs
+            // backwards compatibility, and must mirror min_format/max_format. Always
+            // emit it. For pack format 65+, also emit min_format/max_format.
+            writer.name("formats");
+            PackFormatSerializer.serialize(overlay.formats(), writer);
             writer.name("directory").value(overlay.directory());
             if (maxMajor > 64) {
                 writer.name("min_format").value(minMajor);

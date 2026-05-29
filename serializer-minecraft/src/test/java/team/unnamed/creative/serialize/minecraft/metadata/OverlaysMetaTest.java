@@ -74,13 +74,13 @@ class OverlaysMetaTest {
     }
 
     @Test
-    @DisplayName("Test overlays meta serialization omits deprecated 'formats' for pack format 65+")
+    @DisplayName("Test overlays meta serialization always emits 'formats' alongside min/max_format for pack format 65+")
     void test_modern_format_serialization() {
         final OverlaysMeta overlaysMeta = OverlaysMeta.of(
                 OverlayEntry.of(PackFormat.format(FormatVersion.of(75), FormatVersion.of(76)), "v75-76")
         );
         assertEquals(
-                "{\"entries\":[{\"directory\":\"v75-76\",\"min_format\":75,\"max_format\":76}]}",
+                "{\"entries\":[{\"formats\":[75,76],\"directory\":\"v75-76\",\"min_format\":75,\"max_format\":76}]}",
                 OverlaysMetaCodec.INSTANCE.toJson(overlaysMeta)
         );
     }
