@@ -69,7 +69,7 @@ public class MetadataSerializer implements JsonResourceSerializer<Metadata> {
             }
 
             writer.name(codec.name());
-            codec.write(writer, part);
+            codec.write(writer, part, packFormat);
         }
         writer.endObject();
     }

@@ -27,6 +27,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.metadata.MetadataPart;
+import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.serialize.minecraft.GsonUtil;
 
 import java.io.IOException;
@@ -46,6 +47,16 @@ interface MetadataPartCodec<T extends MetadataPart> {
     }
 
     void write(final @NotNull JsonWriter writer, final @NotNull T part) throws IOException;
+
+    /**
+     * Writes the part with knowledge of the target (main) pack format the metadata is
+     * being serialized for. Codecs whose output depends on the main pack format (e.g.
+     * overlays, where the deprecated {@code formats} key must be omitted for 65+ packs)
+     * override this; others fall back to the format-agnostic {@link #write}.
+     */
+    default void write(final @NotNull JsonWriter writer, final @NotNull T part, final @NotNull PackFormat targetFormat) throws IOException {
+        write(writer, part);
+    }
 
     default @NotNull String toJson(final @NotNull T part) {
         StringWriter writer = new StringWriter();

@@ -79,25 +79,45 @@ final class OverlaysMetaCodec implements MetadataPartCodec<OverlaysMeta> {
 
     @Override
     public void write(final @NotNull JsonWriter writer, final @NotNull OverlaysMeta overlays) throws IOException {
+        // No target pack format known here (e.g. direct toJson) - keep "formats" so
+        // the output stays readable by pre-65 clients. UNKNOWN's min major is 0 (< 65).
+        write(writer, overlays, PackFormat.UNKNOWN);
+    }
+
+    @Override
+    public void write(final @NotNull JsonWriter writer, final @NotNull OverlaysMeta overlays, final @NotNull PackFormat targetFormat) throws IOException {
+        // Minecraft reads the whole pack.mcmeta with a single overlay schema, chosen
+        // for all entries at once:
+        //   - "formats" is understood by every version but is deprecated (warns) on 65+
+        //   - "min_format"/"max_format" only exist on pack format 65+
+        // The legacy "formats" schema must be used for EVERY entry if a pre-65 client
+        // can read the pack (main format starts below 65) or if any overlay entry itself
+        // targets below 65. Only when the main format and all entries are 65+ can the new
+        // "min_format"/"max_format" schema be used exclusively (and stay warning-free).
+        boolean useLegacyFormats = targetFormat.min().major() < 65;
+        if (!useLegacyFormats) {
+            for (final OverlayEntry overlay : overlays.entries()) {
+                if (overlay.formats().min().major() < 65) {
+                    useLegacyFormats = true;
+                    break;
+                }
+            }
+        }
+
         writer.beginObject();
         writer.name("entries");
         writer.beginArray();
         for (final OverlayEntry overlay : overlays.entries()) {
             writer.beginObject();
-            final int minMajor = overlay.formats().min().major();
-            final int maxMajor = overlay.formats().max().major();
-
-            // "formats" must be present in every overlay entry when any entry needs
-            // backwards compatibility, and must mirror min_format/max_format. Always
-            // emit it. For pack format 65+, also emit min_format/max_format.
-            writer.name("formats");
-            PackFormatSerializer.serialize(overlay.formats(), writer);
-            writer.name("directory").value(overlay.directory());
-            if (maxMajor > 64) {
-                writer.name("min_format").value(minMajor);
-                writer.name("max_format").value(maxMajor);
+            if (useLegacyFormats) {
+                writer.name("formats");
+                PackFormatSerializer.serialize(overlay.formats(), writer);
+                writer.name("directory").value(overlay.directory());
+            } else {
+                writer.name("directory").value(overlay.directory());
+                writer.name("min_format").value(overlay.formats().min().major());
+                writer.name("max_format").value(overlay.formats().max().major());
             }
-
             writer.endObject();
         }
         writer.endArray();
