@@ -109,15 +109,23 @@ final class OverlaysMetaCodec implements MetadataPartCodec<OverlaysMeta> {
         writer.beginArray();
         for (final OverlayEntry overlay : overlays.entries()) {
             writer.beginObject();
+            final int minMajor = overlay.formats().min().major();
+            final int maxMajor = overlay.formats().max().major();
+
+            // "formats" is only written when the legacy schema is in use (some pre-65
+            // client could read this pack), so newer-only packs stay warning-free.
             if (useLegacyFormats) {
                 writer.name("formats");
                 PackFormatSerializer.serialize(overlay.formats(), writer);
-                writer.name("directory").value(overlay.directory());
-            } else {
-                writer.name("directory").value(overlay.directory());
-                writer.name("min_format").value(overlay.formats().min().major());
-                writer.name("max_format").value(overlay.formats().max().major());
             }
+            writer.name("directory").value(overlay.directory());
+            // min_format/max_format are always written for 65+ entries so newer clients
+            // get the explicit fields even within a cross-version (legacy schema) pack.
+            if (maxMajor > 64) {
+                writer.name("min_format").value(minMajor);
+                writer.name("max_format").value(maxMajor);
+            }
+
             writer.endObject();
         }
         writer.endArray();

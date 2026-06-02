@@ -89,14 +89,15 @@ class OverlaysMetaTest {
     }
 
     @Test
-    @DisplayName("Test overlays meta serialization falls back to legacy 'formats' when target format is unknown")
+    @DisplayName("Test overlays meta serialization falls back to legacy 'formats' (plus min/max) when target format is unknown")
     void test_modern_format_serialization() {
         final OverlaysMeta overlaysMeta = OverlaysMeta.of(
                 OverlayEntry.of(PackFormat.format(FormatVersion.of(75), FormatVersion.of(76)), "v75-76")
         );
-        // Unknown target (main format 0) is treated as pre-65, so the legacy schema is used
+        // Unknown target (main format 0) is treated as pre-65, so the legacy schema is used,
+        // while min/max are still emitted for the 65+ entry
         assertEquals(
-                "{\"entries\":[{\"formats\":[75,76],\"directory\":\"v75-76\"}]}",
+                "{\"entries\":[{\"formats\":[75,76],\"directory\":\"v75-76\",\"min_format\":75,\"max_format\":76}]}",
                 OverlaysMetaCodec.INSTANCE.toJson(overlaysMeta)
         );
     }
@@ -121,9 +122,10 @@ class OverlaysMetaTest {
         final OverlaysMeta overlaysMeta = OverlaysMeta.of(
                 OverlayEntry.of(PackFormat.format(FormatVersion.of(75), FormatVersion.of(76)), "v75-76")
         );
-        // Main pack format 63 must stay parseable by pre-65 clients, so the legacy schema is used
+        // Main pack format 63 must stay parseable by pre-65 clients, so the legacy schema is
+        // used, while min/max are still emitted for the 65+ entry
         assertEquals(
-                "{\"entries\":[{\"formats\":[75,76],\"directory\":\"v75-76\"}]}",
+                "{\"entries\":[{\"formats\":[75,76],\"directory\":\"v75-76\",\"min_format\":75,\"max_format\":76}]}",
                 toJson(overlaysMeta, PackFormat.format(FormatVersion.of(63)))
         );
     }
@@ -135,22 +137,23 @@ class OverlaysMetaTest {
                 OverlayEntry.of(PackFormat.format(FormatVersion.of(34), FormatVersion.of(45)), "v34-45"),
                 OverlayEntry.of(PackFormat.format(FormatVersion.of(75), FormatVersion.of(76)), "v75-76")
         );
-        // The 34-45 entry targets pre-65 clients, so every entry must use the legacy schema
+        // The 34-45 entry targets pre-65 clients, so every entry uses the legacy schema; the
+        // 65+ entry additionally gets explicit min/max, the pre-65 entry does not
         assertEquals(
-                "{\"entries\":[{\"formats\":[34,45],\"directory\":\"v34-45\"},{\"formats\":[75,76],\"directory\":\"v75-76\"}]}",
+                "{\"entries\":[{\"formats\":[34,45],\"directory\":\"v34-45\"},{\"formats\":[75,76],\"directory\":\"v75-76\",\"min_format\":75,\"max_format\":76}]}",
                 toJson(overlaysMeta, PackFormat.format(FormatVersion.of(75)))
         );
     }
 
     @Test
-    @DisplayName("Test overlays meta uses legacy 'formats' for ranges spanning format 64/65")
+    @DisplayName("Test overlays meta uses legacy 'formats' (plus min/max) for ranges spanning format 64/65")
     void test_spanning_format_serialization() {
         final OverlaysMeta overlaysMeta = OverlaysMeta.of(
                 OverlayEntry.of(PackFormat.format(FormatVersion.of(60), FormatVersion.of(70)), "v60-70")
         );
-        // The entry dips below 65, so the legacy schema is used
+        // The entry dips below 65, so the legacy schema is used, with min/max emitted since max > 64
         assertEquals(
-                "{\"entries\":[{\"formats\":[60,70],\"directory\":\"v60-70\"}]}",
+                "{\"entries\":[{\"formats\":[60,70],\"directory\":\"v60-70\",\"min_format\":60,\"max_format\":70}]}",
                 OverlaysMetaCodec.INSTANCE.toJson(overlaysMeta)
         );
     }
