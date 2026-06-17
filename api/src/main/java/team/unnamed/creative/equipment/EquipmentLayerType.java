@@ -137,4 +137,9 @@ public enum EquipmentLayerType {
      * @sinceMinecraft 1.21.11
      */
     CAMEL_HUSK_SADDLE, // camel_husk_saddle
+    /**
+     * @since 1.14.0
+     * @sinceMinecraft 26.2
+     */
+    HUMANOID_BABY, // humanoid_baby
 }

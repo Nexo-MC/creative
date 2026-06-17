@@ -364,6 +364,19 @@ public interface Equipment extends ResourcePackPart, Keyed, Examinable {
         default @NotNull Builder addCamelHuskSaddle(@NotNull EquipmentLayer layer) {
             return addLayer(EquipmentLayerType.CAMEL_HUSK_SADDLE, layer);
         }
+
+        /**
+         * Adds a humanoid baby layer to the equipment.
+         *
+         * @param layer The layer to add
+         * @return This builder
+         * @since 1.14.0
+         * @sinceMinecraft 26.2
+         */
+        @Contract("_ -> this")
+        default @NotNull Builder addHumanoidBaby(@NotNull EquipmentLayer layer) {
+            return addLayer(EquipmentLayerType.HUMANOID_BABY, layer);
+        }
         //#endregion
 
         /**
