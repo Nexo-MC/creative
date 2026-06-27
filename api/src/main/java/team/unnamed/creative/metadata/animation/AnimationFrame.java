@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative.metadata.animation;
 
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @since 1.0.0
  */
-public interface AnimationFrame extends Examinable {
+public interface AnimationFrame {
     /**
      * Creates a new animation frame with the specified
      * index and frame time

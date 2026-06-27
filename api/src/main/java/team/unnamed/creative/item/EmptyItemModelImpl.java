@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.item;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,18 +40,13 @@ final class EmptyItemModelImpl implements EmptyItemModel {
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.empty();
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{}";
     }
 
     @Override
     public int hashCode() {
         return EmptyItemModelImpl.class.hashCode();
-    }
-
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
     }
 
     @Override

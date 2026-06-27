@@ -23,9 +23,6 @@
  */
 package team.unnamed.creative.model;
 
-import net.kyori.examination.Examinable;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.item.RangeDispatchItemModel;
 
@@ -45,7 +42,7 @@ import static java.util.Objects.requireNonNull;
  * in {@link ItemOverride}.
  */
 @Deprecated
-public class ItemPredicate implements Examinable {
+public class ItemPredicate {
 
     private final String name;
     private final Object value;
@@ -76,16 +73,8 @@ public class ItemPredicate implements Examinable {
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("name", name),
-                ExaminableProperty.of("value", value)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "name=" + name + ", value=" + value + "}";
     }
 
     @Override

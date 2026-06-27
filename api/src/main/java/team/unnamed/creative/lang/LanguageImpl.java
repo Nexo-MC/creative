@@ -24,8 +24,6 @@
 package team.unnamed.creative.lang;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
@@ -63,16 +61,8 @@ record LanguageImpl(Key key, Map<String, String> translations) implements Langua
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("key", key),
-                ExaminableProperty.of("translations", translations)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "key=" + key + ", translations=" + translations + "}";
     }
 
     @Override

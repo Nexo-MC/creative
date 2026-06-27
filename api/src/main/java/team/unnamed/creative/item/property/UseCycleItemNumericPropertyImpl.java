@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.item.property;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
@@ -38,10 +36,8 @@ record UseCycleItemNumericPropertyImpl(float period) implements UseCycleItemNume
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("period", period)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "period=" + period + "}";
     }
 
     @Override
@@ -51,8 +47,4 @@ record UseCycleItemNumericPropertyImpl(float period) implements UseCycleItemNume
         return Float.compare(period, that.period) == 0;
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

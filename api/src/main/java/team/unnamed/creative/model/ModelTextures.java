@@ -24,9 +24,6 @@
 package team.unnamed.creative.model;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.Examinable;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,7 +49,7 @@ import static team.unnamed.creative.util.MoreCollections.immutableMapOf;
  *
  * @since 1.0.0
  */
-public class ModelTextures implements Examinable {
+public class ModelTextures {
     static final ModelTextures EMPTY = new ModelTextures(Collections.emptyList(), null, Collections.emptyMap());
 
     @Unmodifiable private final List<ModelTexture> layers;
@@ -121,17 +118,8 @@ public class ModelTextures implements Examinable {
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("layers", layers),
-                ExaminableProperty.of("particle", particle),
-                ExaminableProperty.of("variables", variables)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "layers=" + layers + ", particle=" + particle + ", variables=" + variables + "}";
     }
 
     @Override

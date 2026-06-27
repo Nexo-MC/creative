@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.item.tint;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
@@ -32,15 +30,8 @@ import java.util.stream.Stream;
 record CustomModelDataTintSourceImpl(int index, int defaultTint) implements CustomModelDataTintSource {
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("index", index),
-                ExaminableProperty.of("defaultTint", defaultTint)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "index=" + index + ", defaultTint=" + defaultTint + "}";
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

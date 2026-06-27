@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.font;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
@@ -78,15 +76,8 @@ public class SpaceFontProvider implements FontProvider {
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("advances", advances)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "advances=" + advances + "}";
     }
 
     @Override

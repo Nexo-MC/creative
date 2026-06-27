@@ -23,9 +23,6 @@
  */
 package team.unnamed.creative.base;
 
-import net.kyori.examination.Examinable;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +37,7 @@ import java.util.stream.Stream;
  *
  * @since 1.0.0
  */
-public record QuaternionFloat(float x, float y, float z, float w) implements Examinable, Iterable<Float> {
+public record QuaternionFloat(float x, float y, float z, float w) implements Iterable<Float> {
 
     /**
      * Constant for {@link QuaternionFloat} value with
@@ -345,18 +342,8 @@ public record QuaternionFloat(float x, float y, float z, float w) implements Exa
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("x", x),
-                ExaminableProperty.of("y", y),
-                ExaminableProperty.of("z", z),
-                ExaminableProperty.of("w", w)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "x=" + x + ", y=" + y + ", z=" + z + ", w=" + w + "}";
     }
 
     @Override

@@ -27,8 +27,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
@@ -52,11 +50,8 @@ record ComponentItemBooleanPropertyImpl(String predicate, JsonElement value) imp
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("predicate", predicate),
-                ExaminableProperty.of("value", value)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "predicate=" + predicate + ", value=" + value + "}";
     }
 
     @Override
@@ -66,8 +61,4 @@ record ComponentItemBooleanPropertyImpl(String predicate, JsonElement value) imp
         return predicate.equals(that.predicate) && value.equals(that.value);
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

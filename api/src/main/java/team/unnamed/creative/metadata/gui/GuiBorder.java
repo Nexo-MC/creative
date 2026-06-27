@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative.metadata.gui;
 
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -36,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
  * @sincePackFormat 18
  * @since 1.2.0
  */
-public interface GuiBorder extends Examinable {
+public interface GuiBorder {
     /**
      * Returns a {@link GuiBorder} instance that will have the
      * specified border sizes on each side, all sizes must must

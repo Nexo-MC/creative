@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.item.tint;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
@@ -42,11 +40,8 @@ record GrassTintSourceImpl(float temperature, float downfall) implements GrassTi
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("temperature", temperature),
-                ExaminableProperty.of("downfall", downfall)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "temperature=" + temperature + ", downfall=" + downfall + "}";
     }
 
     @Override
@@ -56,8 +51,4 @@ record GrassTintSourceImpl(float temperature, float downfall) implements GrassTi
         return Float.compare(temperature, that.temperature) == 0 && Float.compare(downfall, that.downfall) == 0;
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

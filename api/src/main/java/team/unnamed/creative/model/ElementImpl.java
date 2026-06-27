@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative.model;
 
-import net.kyori.examination.ExaminableProperty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -98,15 +97,8 @@ record ElementImpl(Vector3Float from, Vector3Float to, ElementRotation rotation,
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("from", from),
-                ExaminableProperty.of("to", to),
-                ExaminableProperty.of("rotation", rotation),
-                ExaminableProperty.of("shade", shade),
-                ExaminableProperty.of("faces", faces),
-                ExaminableProperty.of("light_emission", lightEmission)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "from=" + from + ", to=" + to + ", rotation=" + rotation + ", shade=" + shade + ", faces=" + faces + ", light_emission=" + lightEmission + "}";
     }
 
     @Override
@@ -135,7 +127,6 @@ record ElementImpl(Vector3Float from, Vector3Float to, ElementRotation rotation,
         private boolean shade = DEFAULT_SHADE;
         private Map<CubeFace, ElementFace> faces = new LinkedHashMap<>();
         private int lightEmission = 0;
-
 
         @Override
         public @NotNull Builder from(final @NotNull Vector3Float from) {

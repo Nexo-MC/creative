@@ -24,7 +24,6 @@
 package team.unnamed.creative.equipment;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
  * @sinceMinecraft 1.21.2
  * @see Equipment
  */
-public interface EquipmentLayer extends Examinable {
+public interface EquipmentLayer {
     /**
      * The default value for the {@link #usePlayerTexture()} method.
      */

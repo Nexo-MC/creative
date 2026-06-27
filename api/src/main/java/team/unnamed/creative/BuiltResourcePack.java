@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative;
 
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.base.Writable;
@@ -42,7 +41,7 @@ import java.util.Objects;
  * @since 1.0.0
  */
 @ApiStatus.NonExtendable
-public interface BuiltResourcePack extends Examinable {
+public interface BuiltResourcePack {
     /**
      * Creates a new {@link BuiltResourcePack} instance
      * from the given data and hash.

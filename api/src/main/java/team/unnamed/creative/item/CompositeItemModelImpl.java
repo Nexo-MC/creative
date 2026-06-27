@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.item;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,11 +44,8 @@ record CompositeItemModelImpl(List<ItemModel> models, @Nullable Transformation t
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("models", models),
-                ExaminableProperty.of("transformation", transformation)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "models=" + models + ", transformation=" + transformation + "}";
     }
 
     @Override
@@ -60,8 +55,4 @@ record CompositeItemModelImpl(List<ItemModel> models, @Nullable Transformation t
         return Objects.equals(models, that.models) && Objects.equals(transformation, that.transformation);
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

@@ -25,7 +25,6 @@ package team.unnamed.creative.font;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +44,7 @@ import java.util.List;
  * @since 1.0.0
  */
 @ApiStatus.NonExtendable
-public interface Font extends ResourcePackPart, Keyed, Examinable {
+public interface Font extends ResourcePackPart, Keyed {
     Key MINECRAFT_DEFAULT = Key.key("default");
     Key MINECRAFT_ALT = Key.key("alt");
     Key MINECRAFT_ILLAGERALT = Key.key("illageralt");

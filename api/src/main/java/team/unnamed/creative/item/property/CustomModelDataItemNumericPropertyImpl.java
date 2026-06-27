@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.item.property;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
@@ -38,8 +36,8 @@ record CustomModelDataItemNumericPropertyImpl(int index) implements CustomModelD
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(ExaminableProperty.of("index", index));
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "index=" + index + "}";
     }
 
     @Override
@@ -49,8 +47,4 @@ record CustomModelDataItemNumericPropertyImpl(int index) implements CustomModelD
         return index == that.index;
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

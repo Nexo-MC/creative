@@ -24,7 +24,6 @@
 package team.unnamed.creative.item;
 
 import com.google.gson.JsonElement;
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,7 +57,7 @@ public interface SelectItemModel extends ItemModel {
                 .addCases(cases());
     }
 
-    interface Case extends Examinable {
+    interface Case {
         @NotNull List<JsonElement> when();
 
         @NotNull ItemModel model();

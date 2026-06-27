@@ -24,8 +24,6 @@
 package team.unnamed.creative.item.special;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
@@ -48,11 +46,8 @@ record ChestSpecialRenderImpl(Key texture, float openness) implements ChestSpeci
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("texture", texture),
-                ExaminableProperty.of("openness", openness)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "texture=" + texture + ", openness=" + openness + "}";
     }
 
     @Override
@@ -62,8 +57,4 @@ record ChestSpecialRenderImpl(Key texture, float openness) implements ChestSpeci
         return Float.compare(that.openness, openness) == 0 && texture.equals(that.texture);
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

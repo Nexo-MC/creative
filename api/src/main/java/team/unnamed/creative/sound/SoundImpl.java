@@ -24,8 +24,6 @@
 package team.unnamed.creative.sound;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.base.Writable;
 
@@ -50,11 +48,6 @@ record SoundImpl(Key key, Writable data) implements Sound {
     }
 
     @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -63,10 +56,7 @@ record SoundImpl(Key key, Writable data) implements Sound {
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("key", key),
-                ExaminableProperty.of("data", data)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "key=" + key + ", data=" + data + "}";
     }
 }

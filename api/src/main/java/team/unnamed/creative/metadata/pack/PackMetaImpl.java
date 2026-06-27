@@ -24,8 +24,6 @@
 package team.unnamed.creative.metadata.pack;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.metadata.MetadataPart;
 
@@ -59,16 +57,8 @@ record PackMetaImpl(PackFormat format, Component description) implements PackMet
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("format", format),
-                ExaminableProperty.of("description", description)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "format=" + format + ", description=" + description + "}";
     }
 
     @Override

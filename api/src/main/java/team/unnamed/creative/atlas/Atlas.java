@@ -25,7 +25,6 @@ package team.unnamed.creative.atlas;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +59,7 @@ import java.util.List;
  * @since 1.0.0
  */
 @ApiStatus.NonExtendable
-public interface Atlas extends ResourcePackPart, Keyed, Examinable {
+public interface Atlas extends ResourcePackPart, Keyed {
 
     Key BLOCKS = Key.key("blocks");
     Key BANNER_PATTERNS = Key.key("banner_patterns");

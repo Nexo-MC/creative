@@ -24,7 +24,6 @@
 package team.unnamed.creative.base;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.Examinable;
 import org.intellij.lang.annotations.RegExp;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +37,7 @@ import java.util.regex.Pattern;
  *
  * @since 1.0.0
  */
-public interface KeyPattern extends Examinable {
+public interface KeyPattern {
 
     /**
      * Returns the {@link Key#namespace() key's namespace}

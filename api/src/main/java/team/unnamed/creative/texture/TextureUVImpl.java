@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative.texture;
 
-import net.kyori.examination.ExaminableProperty;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.base.Vector2Float;
 
@@ -48,11 +47,8 @@ record TextureUVImpl(Vector2Float from, Vector2Float to) implements TextureUV {
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("from", from),
-                ExaminableProperty.of("to", to)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "from=" + from + ", to=" + to + "}";
     }
 
     @Override

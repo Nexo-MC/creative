@@ -25,7 +25,6 @@ package team.unnamed.creative.waypoint;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +42,7 @@ import java.util.List;
  * @sinceMinecraft 1.21.6
  * @since 1.9.1
  */
-public interface WaypointStyle extends ResourcePackPart, Keyed, Examinable {
+public interface WaypointStyle extends ResourcePackPart, Keyed {
     @ApiStatus.Internal
     int DEFAULT_NEAR_DISTANCE = 128;
 

@@ -24,7 +24,6 @@
 package team.unnamed.creative.item;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.item.property.ItemBooleanProperty;
@@ -42,7 +41,7 @@ import java.util.List;
  * @sinceMinecraft 1.21.4
  * @sincePackFormat 43
  */
-public interface ItemModel extends Examinable {
+public interface ItemModel {
 
     @Nullable Transformation transformation();
 

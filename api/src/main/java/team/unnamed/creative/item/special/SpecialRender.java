@@ -24,7 +24,6 @@
 package team.unnamed.creative.item.special;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.base.CubeFace;
@@ -41,7 +40,7 @@ import team.unnamed.creative.base.WoodType;
  * @sinceMinecraft 1.21.4
  * @sincePackFormat 43
  */
-public interface SpecialRender extends Examinable {
+public interface SpecialRender {
     /**
      * Returns a special renderer which renders a banner with
      * patterns from the {@code minecraft:banner_patterns} component

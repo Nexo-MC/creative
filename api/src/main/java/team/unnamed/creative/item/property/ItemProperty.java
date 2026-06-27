@@ -23,15 +23,13 @@
  */
 package team.unnamed.creative.item.property;
 
-import net.kyori.examination.Examinable;
-
 /**
  * Represents an item property that can be checked using item model
  * conditions, range dispatch or selects.
  *
  * @since 1.8.0
  */
-public interface ItemProperty extends Examinable {
+public interface ItemProperty {
     /**
      * Determines if the item property is a boolean property.
      *

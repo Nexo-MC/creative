@@ -25,7 +25,6 @@ package team.unnamed.creative.texture;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +53,7 @@ import team.unnamed.creative.part.ResourcePackPart;
  * @since 1.0.0
  */
 @ApiStatus.NonExtendable
-public interface Texture extends ResourcePackPart, Keyed, Examinable, Metadatable {
+public interface Texture extends ResourcePackPart, Keyed, Metadatable {
     /**
      * Creates a texture.
      *

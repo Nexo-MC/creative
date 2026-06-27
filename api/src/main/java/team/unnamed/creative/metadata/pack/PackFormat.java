@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative.metadata.pack;
 
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
  * @since 1.1.0
  */
 @ApiStatus.NonExtendable
-public interface PackFormat extends Examinable {
+public interface PackFormat {
 
     PackFormat UNKNOWN = new PackFormatImpl(FormatVersion.of(0), FormatVersion.of(0));
 

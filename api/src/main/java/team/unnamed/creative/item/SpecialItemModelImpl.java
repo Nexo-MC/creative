@@ -24,8 +24,6 @@
 package team.unnamed.creative.item;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.item.special.SpecialRender;
@@ -53,12 +51,8 @@ record SpecialItemModelImpl(SpecialRender render, Key base, Transformation trans
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("base", base),
-                ExaminableProperty.of("render", render),
-                ExaminableProperty.of("transformation", transformation)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "base=" + base + ", render=" + render + ", transformation=" + transformation + "}";
     }
 
     @Override
@@ -66,11 +60,6 @@ record SpecialItemModelImpl(SpecialRender render, Key base, Transformation trans
         if (o == null || getClass() != o.getClass()) return false;
         SpecialItemModelImpl that = (SpecialItemModelImpl) o;
         return render.equals(that.render) && base.equals(that.base) && Objects.equals(transformation, that.transformation);
-    }
-
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
     }
 
     @Override

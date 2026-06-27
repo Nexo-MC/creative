@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative.model;
 
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +34,7 @@ import team.unnamed.creative.base.Vector3Float;
  *
  * @since 1.0.0
  */
-public interface ItemTransform extends Examinable {
+public interface ItemTransform {
 
     float MIN_TRANSLATION = -80F;
     float MAX_TRANSLATION = 80F;

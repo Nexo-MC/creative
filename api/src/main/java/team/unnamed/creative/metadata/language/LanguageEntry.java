@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative.metadata.language;
 
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +41,7 @@ import org.jetbrains.annotations.NotNull;
  * @sinceMinecraft 1.6.1
  * @since 1.0.0
  */
-public interface LanguageEntry extends Examinable {
+public interface LanguageEntry {
     /**
      * Creates a new Minecraft {@link LanguageEntry} instance
      *

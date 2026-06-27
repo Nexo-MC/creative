@@ -24,7 +24,6 @@
 package team.unnamed.creative.atlas;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +47,7 @@ import java.util.Map;
  * @since 1.0.0
  */
 @ApiStatus.NonExtendable
-public interface AtlasSource extends Examinable {
+public interface AtlasSource {
 
     /**
      * Creates a new {@link SingleAtlasSource}, single

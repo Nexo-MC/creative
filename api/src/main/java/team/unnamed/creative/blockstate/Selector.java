@@ -23,9 +23,6 @@
  */
 package team.unnamed.creative.blockstate;
 
-import net.kyori.examination.Examinable;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -43,7 +40,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @since 1.0.0
  */
-public class Selector implements Examinable {
+public class Selector {
 
     private final Condition condition;
     @Unmodifiable private final MultiVariant variant;
@@ -65,16 +62,8 @@ public class Selector implements Examinable {
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("condition", condition),
-                ExaminableProperty.of("variant", variant)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "condition=" + condition + ", variant=" + variant + "}";
     }
 
     @Override

@@ -24,8 +24,6 @@
 package team.unnamed.creative.sound;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
@@ -89,22 +87,8 @@ record SoundEntryImpl(Key key, float volume, float pitch, int weight, boolean st
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("key", key),
-                ExaminableProperty.of("volume", volume),
-                ExaminableProperty.of("pitch", pitch),
-                ExaminableProperty.of("weight", weight),
-                ExaminableProperty.of("stream", stream),
-                ExaminableProperty.of("attenuationDistance", attenuationDistance),
-                ExaminableProperty.of("preload", preload),
-                ExaminableProperty.of("type", type)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "key=" + key + ", volume=" + volume + ", pitch=" + pitch + ", weight=" + weight + ", stream=" + stream + ", attenuationDistance=" + attenuationDistance + ", preload=" + preload + ", type=" + type + "}";
     }
 
     @Override

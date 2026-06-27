@@ -24,8 +24,6 @@
 package team.unnamed.creative.atlas;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 import team.unnamed.creative.util.MoreCollections;
@@ -68,17 +66,8 @@ record PalettedPermutationsAtlasSourceImpl(List<Key> textures, Key paletteKey,
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("textures", textures),
-                ExaminableProperty.of("paletteKey", paletteKey),
-                ExaminableProperty.of("permutations", permutations)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "textures=" + textures + ", paletteKey=" + paletteKey + ", permutations=" + permutations + "}";
     }
 
     @Override

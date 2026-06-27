@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative.item;
 
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +52,7 @@ public interface RangeDispatchItemModel extends ItemModel {
                 .addEntries(entries());
     }
 
-    interface Entry extends Examinable {
+    interface Entry {
         float threshold();
 
         @NotNull ItemModel model();

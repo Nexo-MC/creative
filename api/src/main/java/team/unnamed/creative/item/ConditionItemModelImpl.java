@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.item;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.item.property.ItemBooleanProperty;
@@ -58,13 +56,8 @@ record ConditionItemModelImpl(ItemBooleanProperty condition, ItemModel onTrue, I
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("condition", condition),
-                ExaminableProperty.of("onTrue", onTrue),
-                ExaminableProperty.of("onFalse", onFalse),
-                ExaminableProperty.of("transformation", transformation)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "condition=" + condition + ", onTrue=" + onTrue + ", onFalse=" + onFalse + ", transformation=" + transformation + "}";
     }
 
     @Override
@@ -74,8 +67,4 @@ record ConditionItemModelImpl(ItemBooleanProperty condition, ItemModel onTrue, I
         return condition.equals(that.condition) && onTrue.equals(that.onTrue) && onFalse.equals(that.onFalse) && Objects.equals(transformation, that.transformation);
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

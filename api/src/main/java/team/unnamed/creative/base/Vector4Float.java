@@ -23,9 +23,6 @@
  */
 package team.unnamed.creative.base;
 
-import net.kyori.examination.Examinable;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +42,7 @@ import java.util.stream.Stream;
  */
 @Deprecated
 @ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
-public record Vector4Float(float x, float y, float x2, float y2) implements Examinable, Iterable<Float> {
+public record Vector4Float(float x, float y, float x2, float y2) implements Iterable<Float> {
 
     /**
      * Constant for {@link Vector2Float} value with
@@ -121,18 +118,8 @@ public record Vector4Float(float x, float y, float x2, float y2) implements Exam
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("x", x),
-                ExaminableProperty.of("y", y),
-                ExaminableProperty.of("x2", x2),
-                ExaminableProperty.of("y2", y2)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "x=" + x + ", y=" + y + ", x2=" + x2 + ", y2=" + y2 + "}";
     }
 
     @Override

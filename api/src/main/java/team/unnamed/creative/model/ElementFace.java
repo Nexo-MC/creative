@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative.model;
 
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +38,7 @@ import team.unnamed.creative.texture.TextureUV;
  *
  * @since 1.0.0
  */
-public interface ElementFace extends Examinable {
+public interface ElementFace {
 
     /**
      * The Minecraft UV unit, UV coordinates in Minecraft

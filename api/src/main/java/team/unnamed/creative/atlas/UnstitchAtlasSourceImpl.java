@@ -24,8 +24,6 @@
 package team.unnamed.creative.atlas;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 import team.unnamed.creative.base.Vector2Float;
@@ -65,17 +63,8 @@ record UnstitchAtlasSourceImpl(Key resource, List<Region> regions,
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("resource", resource),
-                ExaminableProperty.of("regions", regions),
-                ExaminableProperty.of("divisor", divisor)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "resource=" + resource + ", regions=" + regions + ", divisor=" + divisor + "}";
     }
 
     @Override
@@ -116,12 +105,8 @@ record UnstitchAtlasSourceImpl(Key resource, List<Region> regions,
         }
 
         @Override
-        public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-            return Stream.of(
-                    ExaminableProperty.of("sprite", sprite),
-                    ExaminableProperty.of("position", position),
-                    ExaminableProperty.of("dimensions", dimensions)
-            );
+        public @NotNull String toString() {
+            return getClass().getSimpleName() + "{" + "sprite=" + sprite + ", position=" + position + ", dimensions=" + dimensions + "}";
         }
 
     }

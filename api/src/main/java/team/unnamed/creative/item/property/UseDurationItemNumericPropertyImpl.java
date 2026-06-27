@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.item.property;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
@@ -32,10 +30,8 @@ import java.util.stream.Stream;
 record UseDurationItemNumericPropertyImpl(boolean remaining) implements UseDurationItemNumericProperty {
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("remaining", remaining)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "remaining=" + remaining + "}";
     }
 
     @Override
@@ -45,8 +41,4 @@ record UseDurationItemNumericPropertyImpl(boolean remaining) implements UseDurat
         return remaining == that.remaining;
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

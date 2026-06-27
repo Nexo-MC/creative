@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.atlas;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
@@ -52,16 +50,8 @@ record DirectoryAtlasSourceImpl(String source, String prefix) implements Directo
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("source", source),
-                ExaminableProperty.of("prefix", prefix)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "source=" + source + ", prefix=" + prefix + "}";
     }
 
     @Override

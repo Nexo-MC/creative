@@ -24,8 +24,6 @@
 package team.unnamed.creative.font;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -67,11 +65,8 @@ record FontImpl(Key key, List<FontProvider> providers) implements Font {
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("key", key),
-                ExaminableProperty.of("providers", providers)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "key=" + key + ", providers=" + providers + "}";
     }
 
     @Override
@@ -81,11 +76,6 @@ record FontImpl(Key key, List<FontProvider> providers) implements Font {
         FontImpl that = (FontImpl) o;
         return key.equals(that.key)
                 && providers.equals(that.providers);
-    }
-
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
     }
 
     static final class BuilderImpl implements Builder {

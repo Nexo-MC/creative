@@ -23,9 +23,6 @@
  */
 package team.unnamed.creative.item;
 
-import net.kyori.examination.Examinable;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.base.QuaternionFloat;
 import team.unnamed.creative.base.Vector3Float;
@@ -34,7 +31,7 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
-public record Transformation(Vector3Float translation, Vector3Float scale, QuaternionFloat leftRotation, QuaternionFloat rightRotation) implements Examinable {
+public record Transformation(Vector3Float translation, Vector3Float scale, QuaternionFloat leftRotation, QuaternionFloat rightRotation) {
 
     public static final Transformation DEFAULT = new Transformation(Vector3Float.ZERO, Vector3Float.ONE, QuaternionFloat.DEFAULT, QuaternionFloat.DEFAULT);
 
@@ -95,13 +92,8 @@ public record Transformation(Vector3Float translation, Vector3Float scale, Quate
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("translation", translation),
-                ExaminableProperty.of("scale", scale),
-                ExaminableProperty.of("leftRotation", leftRotation),
-                ExaminableProperty.of("rightRotation", rightRotation)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "translation=" + translation + ", scale=" + scale + ", leftRotation=" + leftRotation + ", rightRotation=" + rightRotation + "}";
     }
 
     @Override
@@ -113,11 +105,6 @@ public record Transformation(Vector3Float translation, Vector3Float scale, Quate
                 && scale.equals(that.scale)
                 && leftRotation.equals(that.leftRotation)
                 && rightRotation.equals(that.rightRotation);
-    }
-
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
     }
 
     public static Builder builder() {

@@ -25,7 +25,6 @@ package team.unnamed.creative.blockstate;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.overlay.ResourceContainer;
@@ -49,7 +48,7 @@ import java.util.Map;
  * @since 1.0.0
  */
 @ApiStatus.NonExtendable
-public interface BlockState extends ResourcePackPart, Keyed, Examinable {
+public interface BlockState extends ResourcePackPart, Keyed {
 
     @Override
     @NotNull Key key();

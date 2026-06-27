@@ -24,8 +24,6 @@
 package team.unnamed.creative.item;
 
 import com.google.gson.JsonElement;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.item.property.ItemStringProperty;
@@ -61,13 +59,8 @@ record SelectItemModelImpl(ItemStringProperty property, List<Case> cases, ItemMo
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("property", property),
-                ExaminableProperty.of("cases", cases),
-                ExaminableProperty.of("fallback", fallback),
-                ExaminableProperty.of("transformation", transformation)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "property=" + property + ", cases=" + cases + ", fallback=" + fallback + ", transformation=" + transformation + "}";
     }
 
     @Override
@@ -75,11 +68,6 @@ record SelectItemModelImpl(ItemStringProperty property, List<Case> cases, ItemMo
         if (o == null || getClass() != o.getClass()) return false;
         SelectItemModelImpl that = (SelectItemModelImpl) o;
         return property.equals(that.property) && cases.equals(that.cases) && Objects.equals(fallback, that.fallback) && Objects.equals(transformation, that.transformation);
-    }
-
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
     }
 
     record CaseImpl(List<JsonElement> when, ItemModel model, Transformation transformation) implements Case {
@@ -105,12 +93,8 @@ record SelectItemModelImpl(ItemStringProperty property, List<Case> cases, ItemMo
         }
 
         @Override
-        public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-            return Stream.of(
-                    ExaminableProperty.of("when", when),
-                    ExaminableProperty.of("model", model),
-                    ExaminableProperty.of("transformation", transformation)
-            );
+        public @NotNull String toString() {
+            return getClass().getSimpleName() + "{" + "when=" + when + ", model=" + model + ", transformation=" + transformation + "}";
         }
 
         @Override
@@ -120,10 +104,6 @@ record SelectItemModelImpl(ItemStringProperty property, List<Case> cases, ItemMo
             return when.equals(that.when) && model.equals(that.model) && Objects.equals(transformation, that.transformation);
         }
 
-        @Override
-        public @NotNull String toString() {
-            return examine(StringExaminer.simpleEscaping());
-        }
     }
 
     static final class BuilderImpl implements Builder {

@@ -24,7 +24,6 @@
 package team.unnamed.creative.font;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -82,7 +81,7 @@ public interface UnihexFontProvider extends FontProvider {
      * @sincePackFormat 15
      * @since 1.0.0
      */
-    interface SizeOverride extends Examinable {
+    interface SizeOverride {
         /**
          * Creates a new {@link SizeOverride} instance
          * with the given parameters.

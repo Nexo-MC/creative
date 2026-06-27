@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.metadata.animation;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
@@ -32,16 +30,8 @@ import java.util.stream.Stream;
 record AnimationFrameImpl(int index, int frameTime) implements AnimationFrame {
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("index", index),
-                ExaminableProperty.of("frameTime", frameTime)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "index=" + index + ", frameTime=" + frameTime + "}";
     }
 
 }

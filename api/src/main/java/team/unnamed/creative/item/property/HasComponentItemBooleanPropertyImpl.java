@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.item.property;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,11 +43,8 @@ record HasComponentItemBooleanPropertyImpl(String component,
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("component", component),
-                ExaminableProperty.of("ignoreDefault", ignoreDefault)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "component=" + component + ", ignoreDefault=" + ignoreDefault + "}";
     }
 
     @Override
@@ -59,8 +54,4 @@ record HasComponentItemBooleanPropertyImpl(String component,
         return ignoreDefault == that.ignoreDefault && component.equals(that.component);
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

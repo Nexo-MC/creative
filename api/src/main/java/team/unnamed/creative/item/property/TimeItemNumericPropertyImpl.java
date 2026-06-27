@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.item.property;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
@@ -43,11 +41,8 @@ record TimeItemNumericPropertyImpl(boolean wobble, Source source) implements Tim
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("wobble", wobble),
-                ExaminableProperty.of("source", source)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "wobble=" + wobble + ", source=" + source + "}";
     }
 
     @Override
@@ -57,8 +52,4 @@ record TimeItemNumericPropertyImpl(boolean wobble, Source source) implements Tim
         return wobble == that.wobble && source == that.source;
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

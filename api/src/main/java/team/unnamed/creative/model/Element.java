@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative.model;
 
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +41,7 @@ import java.util.Map;
  *
  * @since 1.0.0
  */
-public interface Element extends Examinable {
+public interface Element {
     /**
      * Creates a new {@link Element} builder
      *

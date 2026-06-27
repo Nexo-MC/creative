@@ -23,9 +23,6 @@
  */
 package team.unnamed.creative.part;
 
-import net.kyori.examination.Examinable;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.overlay.ResourceContainer;
 
@@ -34,7 +31,7 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
-final class ResourcePackPartCompound implements ResourcePackPart, Examinable {
+final class ResourcePackPartCompound implements ResourcePackPart {
 
     private final List<ResourcePackPart> parts;
 
@@ -50,15 +47,8 @@ final class ResourcePackPartCompound implements ResourcePackPart, Examinable {
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("parts", parts)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "parts=" + parts + "}";
     }
 
     @Override

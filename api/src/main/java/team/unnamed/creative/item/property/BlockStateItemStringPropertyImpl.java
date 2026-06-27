@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.item.property;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,8 +41,8 @@ record BlockStateItemStringPropertyImpl(String property) implements BlockStateIt
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(ExaminableProperty.of("property", property));
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "property=" + property + "}";
     }
 
     @Override
@@ -54,8 +52,4 @@ record BlockStateItemStringPropertyImpl(String property) implements BlockStateIt
         return property.equals(that.property);
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

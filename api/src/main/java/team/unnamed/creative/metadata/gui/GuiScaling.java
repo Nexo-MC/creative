@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative.metadata.gui;
 
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
  * @since 1.2.0
  */
 @ApiStatus.NonExtendable
-public interface GuiScaling extends Examinable {
+public interface GuiScaling {
     /**
      * Returns a {@link GuiScaling} instance that makes the sprite
      * stretch across the desired space.

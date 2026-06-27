@@ -24,8 +24,6 @@
 package team.unnamed.creative.sound;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -75,17 +73,8 @@ record SoundEventImpl(Key key, boolean replace, String subtitle, List<SoundEntry
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("replace", replace),
-                ExaminableProperty.of("subtitle", subtitle),
-                ExaminableProperty.of("sounds", sounds)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "replace=" + replace + ", subtitle=" + subtitle + ", sounds=" + sounds + "}";
     }
 
     @Override

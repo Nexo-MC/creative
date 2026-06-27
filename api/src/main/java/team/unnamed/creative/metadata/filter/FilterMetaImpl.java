@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.metadata.filter;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -64,15 +62,8 @@ record FilterMetaImpl(List<KeyPattern> patterns) implements FilterMeta {
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("patterns", patterns)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "patterns=" + patterns + "}";
     }
 
     @Override

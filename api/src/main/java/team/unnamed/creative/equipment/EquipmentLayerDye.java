@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative.equipment;
 
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
  * @sinceMinecraft 1.21.2
  * @see EquipmentLayer
  */
-public interface EquipmentLayerDye extends Examinable {
+public interface EquipmentLayerDye {
     /**
      * Returns the (optional) RGB color used to tint the
      * item, if the item is not dyed.

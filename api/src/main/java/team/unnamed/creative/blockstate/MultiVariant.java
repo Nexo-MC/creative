@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.blockstate;
 
-import net.kyori.examination.Examinable;
-import net.kyori.examination.ExaminableProperty;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -33,7 +31,7 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
-public class MultiVariant implements Examinable {
+public class MultiVariant {
 
     private final List<Variant> variants;
 
@@ -53,10 +51,8 @@ public class MultiVariant implements Examinable {
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("variants", variants)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "variants=" + variants + "}";
     }
 
     public static MultiVariant of(List<Variant> variants) {

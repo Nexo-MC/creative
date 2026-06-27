@@ -26,7 +26,6 @@ package team.unnamed.creative.lang;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
 import net.kyori.adventure.translation.Translatable;
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +50,7 @@ import static java.util.Objects.requireNonNull;
  * @since 1.0.0
  */
 @ApiStatus.NonExtendable
-public interface Language extends ResourcePackPart, Keyed, Examinable {
+public interface Language extends ResourcePackPart, Keyed {
     /**
      * Creates a new {@link Language} object which holds
      * the given translations in a Map.

@@ -25,7 +25,6 @@ package team.unnamed.creative.sound;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +45,7 @@ import static java.util.Objects.requireNonNull;
  * @since 1.0.0
  */
 @ApiStatus.NonExtendable
-public interface SoundEvent extends ResourcePackPart, Sound.Type, Examinable {
+public interface SoundEvent extends ResourcePackPart, Sound.Type {
     /**
      * Creates a new {@link SoundEvent} from the
      * given values

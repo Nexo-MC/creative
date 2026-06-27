@@ -25,7 +25,6 @@ package team.unnamed.creative.sound;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
-import net.kyori.examination.Examinable;
 import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -39,7 +38,7 @@ import org.jetbrains.annotations.NotNull;
  * @since 1.0.0
  */
 @ApiStatus.NonExtendable
-public interface SoundEntry extends Keyed, Examinable {
+public interface SoundEntry extends Keyed {
     /**
      * Creates a new {@link SoundEntry} from the given
      * properties, using {@link Type#FILE} as

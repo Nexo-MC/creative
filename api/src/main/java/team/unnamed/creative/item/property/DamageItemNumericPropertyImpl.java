@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.item.property;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
@@ -32,8 +30,8 @@ import java.util.stream.Stream;
 record DamageItemNumericPropertyImpl(boolean normalize) implements DamageItemNumericProperty {
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(ExaminableProperty.of("normalize", normalize));
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "normalize=" + normalize + "}";
     }
 
     @Override
@@ -43,8 +41,4 @@ record DamageItemNumericPropertyImpl(boolean normalize) implements DamageItemNum
         return normalize == that.normalize;
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

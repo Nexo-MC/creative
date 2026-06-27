@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative.item.tint;
 
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.item.ReferenceItemModel;
 
@@ -37,7 +36,7 @@ import team.unnamed.creative.item.ReferenceItemModel;
  * @sincePackFormat 43
  * @see ReferenceItemModel
  */
-public interface TintSource extends Examinable {
+public interface TintSource {
     /**
      * Returns a tint source that always returns the same color.
      * (constant RGB color)

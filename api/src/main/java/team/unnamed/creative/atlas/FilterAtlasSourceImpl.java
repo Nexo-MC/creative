@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.atlas;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.base.KeyPattern;
 
@@ -43,15 +41,8 @@ record FilterAtlasSourceImpl(KeyPattern pattern) implements FilterAtlasSource {
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("pattern", pattern)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "pattern=" + pattern + "}";
     }
 
     @Override

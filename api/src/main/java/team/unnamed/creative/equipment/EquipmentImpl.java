@@ -24,8 +24,6 @@
 package team.unnamed.creative.equipment;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -53,16 +51,8 @@ record EquipmentImpl(Key key, Map<EquipmentLayerType, List<EquipmentLayer>> laye
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("key", key),
-                ExaminableProperty.of("layers", layers)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "key=" + key + ", layers=" + layers + "}";
     }
 
     static final class BuilderImpl implements Builder {

@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative.metadata;
 
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -34,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @since 1.0.0
  */
-public interface MetadataPart extends Examinable {
+public interface MetadataPart {
     /**
      * Returns the type of this metadata part.
      *

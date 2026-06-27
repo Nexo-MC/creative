@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative.server.request;
 
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +39,7 @@ import java.util.UUID;
  * @since 1.2.0
  */
 @ApiStatus.NonExtendable
-public interface ResourcePackDownloadRequest extends Examinable {
+public interface ResourcePackDownloadRequest {
     /**
      * Creates a new {@link ResourcePackDownloadRequest} instance
      * with the given parameters.

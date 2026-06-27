@@ -24,8 +24,6 @@
 package team.unnamed.creative.font;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -99,18 +97,8 @@ record BitMapFontProviderImpl(Key file, int height, int ascent,
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("height", height),
-                ExaminableProperty.of("ascent", ascent),
-                ExaminableProperty.of("file", file),
-                ExaminableProperty.of("chars", characters)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "height=" + height + ", ascent=" + ascent + ", file=" + file + ", chars=" + characters + "}";
     }
 
     @Override

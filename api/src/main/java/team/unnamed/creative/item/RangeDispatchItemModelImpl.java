@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.item;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.item.property.ItemNumericProperty;
@@ -61,14 +59,8 @@ record RangeDispatchItemModelImpl(ItemNumericProperty property, float scale, Lis
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("property", property),
-                ExaminableProperty.of("scale", scale),
-                ExaminableProperty.of("entries", entries),
-                ExaminableProperty.of("fallback", fallback),
-                ExaminableProperty.of("transformation", transformation)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "property=" + property + ", scale=" + scale + ", entries=" + entries + ", fallback=" + fallback + ", transformation=" + transformation + "}";
     }
 
     @Override
@@ -80,11 +72,6 @@ record RangeDispatchItemModelImpl(ItemNumericProperty property, float scale, Lis
                 entries.equals(that.entries) &&
                 Objects.equals(transformation, that.transformation) &&
                 Objects.equals(fallback, that.fallback);
-    }
-
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
     }
 
     record EntryImpl(float threshold, ItemModel model, Transformation transformation) implements Entry {
@@ -100,12 +87,8 @@ record RangeDispatchItemModelImpl(ItemNumericProperty property, float scale, Lis
         }
 
         @Override
-        public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-            return Stream.of(
-                    ExaminableProperty.of("threshold", threshold),
-                    ExaminableProperty.of("model", model),
-                    ExaminableProperty.of("transformation", transformation)
-            );
+        public @NotNull String toString() {
+            return getClass().getSimpleName() + "{" + "threshold=" + threshold + ", model=" + model + ", transformation=" + transformation + "}";
         }
 
         @Override
@@ -117,10 +100,6 @@ record RangeDispatchItemModelImpl(ItemNumericProperty property, float scale, Lis
                     Objects.equals(transformation, entry.transformation);
         }
 
-        @Override
-        public @NotNull String toString() {
-            return examine(StringExaminer.simpleEscaping());
-        }
     }
 
     static final class BuilderImpl implements Builder {

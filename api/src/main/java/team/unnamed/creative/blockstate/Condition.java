@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.blockstate;
 
-import net.kyori.examination.Examinable;
-import net.kyori.examination.ExaminableProperty;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -40,7 +38,7 @@ import java.util.stream.Stream;
  * @see Selector
  * @since 1.0.0
  */
-public interface Condition extends Examinable {
+public interface Condition {
 
     Condition NONE = new Condition() {
 
@@ -84,10 +82,8 @@ public interface Condition extends Examinable {
         }
 
         @Override
-        public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-            return Stream.of(
-                    ExaminableProperty.of("conditions", conditions)
-            );
+        public @NotNull String toString() {
+            return getClass().getSimpleName() + "{" + "conditions=" + conditions + "}";
         }
 
     }
@@ -105,10 +101,8 @@ public interface Condition extends Examinable {
         }
 
         @Override
-        public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-            return Stream.of(
-                    ExaminableProperty.of("conditions", conditions)
-            );
+        public @NotNull String toString() {
+            return getClass().getSimpleName() + "{" + "conditions=" + conditions + "}";
         }
 
     }
@@ -132,11 +126,8 @@ public interface Condition extends Examinable {
         }
 
         @Override
-        public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-            return Stream.of(
-                    ExaminableProperty.of("key", key),
-                    ExaminableProperty.of("value", value)
-            );
+        public @NotNull String toString() {
+            return getClass().getSimpleName() + "{" + "key=" + key + ", value=" + value + "}";
         }
 
     }

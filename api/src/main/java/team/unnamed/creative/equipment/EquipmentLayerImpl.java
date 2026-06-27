@@ -24,8 +24,6 @@
 package team.unnamed.creative.equipment;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,12 +50,8 @@ record EquipmentLayerImpl(Key texture, EquipmentLayerDye dye, boolean usePlayerT
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("texture", texture),
-                ExaminableProperty.of("dye", dye),
-                ExaminableProperty.of("usePlayerTexture", usePlayerTexture)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "texture=" + texture + ", dye=" + dye + ", usePlayerTexture=" + usePlayerTexture + "}";
     }
 
     @Override
@@ -69,8 +63,4 @@ record EquipmentLayerImpl(Key texture, EquipmentLayerDye dye, boolean usePlayerT
                 && usePlayerTexture == that.usePlayerTexture;
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

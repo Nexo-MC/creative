@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative.metadata.overlays;
 
-import net.kyori.examination.Examinable;
 import org.intellij.lang.annotations.Pattern;
 import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.ApiStatus;
@@ -50,7 +49,7 @@ import static java.lang.annotation.ElementType.*;
  * @sincePackFormat 18
  */
 @ApiStatus.NonExtendable
-public interface OverlayEntry extends Examinable {
+public interface OverlayEntry {
 
     /**
      * Gets the pack formats range that this overlay

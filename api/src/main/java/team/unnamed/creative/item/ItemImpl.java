@@ -24,8 +24,6 @@
 package team.unnamed.creative.item;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
@@ -52,14 +50,8 @@ record ItemImpl(Key key, ItemModel model, boolean handAnimationOnSwap, boolean o
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("key", key),
-                ExaminableProperty.of("model", model),
-                ExaminableProperty.of("handAnimationOnSwap", handAnimationOnSwap),
-                ExaminableProperty.of("oversized_in_gui", oversizedInGui),
-                ExaminableProperty.of("swap_animation_scale", swapAnimationScale)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "key=" + key + ", model=" + model + ", handAnimationOnSwap=" + handAnimationOnSwap + ", oversized_in_gui=" + oversizedInGui + ", swap_animation_scale=" + swapAnimationScale + "}";
     }
 
     @Override
@@ -73,8 +65,4 @@ record ItemImpl(Key key, ItemModel model, boolean handAnimationOnSwap, boolean o
                 && swapAnimationScale == item.swapAnimationScale;
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

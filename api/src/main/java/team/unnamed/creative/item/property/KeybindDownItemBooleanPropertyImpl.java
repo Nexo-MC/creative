@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.item.property;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,10 +41,8 @@ record KeybindDownItemBooleanPropertyImpl(String key) implements KeybindDownItem
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("key", key)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "key=" + key + "}";
     }
 
     @Override
@@ -56,8 +52,4 @@ record KeybindDownItemBooleanPropertyImpl(String key) implements KeybindDownItem
         return key.equals(that.key);
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

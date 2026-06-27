@@ -24,8 +24,6 @@
 package team.unnamed.creative.item.special;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,8 +54,8 @@ record NoFieldSpecialRenderImpl(Key key) implements NoFieldSpecialRender {
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(ExaminableProperty.of("key", key));
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "key=" + key + "}";
     }
 
     @Override
@@ -67,8 +65,4 @@ record NoFieldSpecialRenderImpl(Key key) implements NoFieldSpecialRender {
         return key.equals(that.key);
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

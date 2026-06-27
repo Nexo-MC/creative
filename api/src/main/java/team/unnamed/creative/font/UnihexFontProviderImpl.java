@@ -24,8 +24,6 @@
 package team.unnamed.creative.font;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -54,16 +52,8 @@ record UnihexFontProviderImpl(Key file, List<SizeOverride> sizes) implements Uni
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("file", file),
-                ExaminableProperty.of("sizes", sizes)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "file=" + file + ", sizes=" + sizes + "}";
     }
 
     @Override
@@ -135,18 +125,8 @@ record UnihexFontProviderImpl(Key file, List<SizeOverride> sizes) implements Uni
         }
 
         @Override
-        public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-            return Stream.of(
-                    ExaminableProperty.of("from", from),
-                    ExaminableProperty.of("to", to),
-                    ExaminableProperty.of("left", left),
-                    ExaminableProperty.of("right", right)
-            );
-        }
-
-        @Override
         public @NotNull String toString() {
-            return examine(StringExaminer.simpleEscaping());
+            return getClass().getSimpleName() + "{" + "from=" + from + ", to=" + to + ", left=" + left + ", right=" + right + "}";
         }
 
         @Override

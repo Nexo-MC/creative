@@ -24,8 +24,6 @@
 package team.unnamed.creative.model;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -98,22 +96,8 @@ record ModelImpl(Key key, Key parent, boolean ambientOcclusion, Map<ItemTransfor
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("key", key),
-                ExaminableProperty.of("parent", parent),
-                ExaminableProperty.of("ambientocclusion", ambientOcclusion),
-                ExaminableProperty.of("display", display),
-                ExaminableProperty.of("textures", textures),
-                ExaminableProperty.of("guiLight", guiLight),
-                ExaminableProperty.of("elements", elements),
-                ExaminableProperty.of("overrides", overrides)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "key=" + key + ", parent=" + parent + ", ambientocclusion=" + ambientOcclusion + ", display=" + display + ", textures=" + textures + ", guiLight=" + guiLight + ", elements=" + elements + ", overrides=" + overrides + "}";
     }
 
     @Override

@@ -24,8 +24,6 @@
 package team.unnamed.creative.item.special;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.base.CubeFace;
 
@@ -56,12 +54,8 @@ record ShulkerBoxSpecialRenderImpl(Key texture, float openness,
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("texture", texture),
-                ExaminableProperty.of("openness", openness),
-                ExaminableProperty.of("orientation", orientation)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "texture=" + texture + ", openness=" + openness + ", orientation=" + orientation + "}";
     }
 
     @Override
@@ -73,8 +67,4 @@ record ShulkerBoxSpecialRenderImpl(Key texture, float openness,
                 orientation == that.orientation;
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

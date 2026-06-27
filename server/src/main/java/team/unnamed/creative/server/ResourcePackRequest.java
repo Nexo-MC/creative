@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.server;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.server.request.ResourcePackDownloadRequest;
@@ -121,19 +119,8 @@ public record ResourcePackRequest(UUID uuid, String username, String clientVersi
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("uuid", uuid),
-                ExaminableProperty.of("username", username),
-                ExaminableProperty.of("clientVersion", clientVersion),
-                ExaminableProperty.of("clientVersionId", clientVersionId),
-                ExaminableProperty.of("packFormat", packFormat)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "uuid=" + uuid + ", username=" + username + ", clientVersion=" + clientVersion + ", clientVersionId=" + clientVersionId + ", packFormat=" + packFormat + "}";
     }
 
     @Override

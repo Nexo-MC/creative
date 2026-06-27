@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.item.property;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,12 +55,8 @@ record LocalTimeItemStringPropertyImpl(String locale, String timezone,
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("locale", locale),
-                ExaminableProperty.of("timezone", timezone),
-                ExaminableProperty.of("pattern", pattern)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "locale=" + locale + ", timezone=" + timezone + ", pattern=" + pattern + "}";
     }
 
     @Override
@@ -72,8 +66,4 @@ record LocalTimeItemStringPropertyImpl(String locale, String timezone,
         return locale.equals(that.locale) && pattern.equals(that.pattern) && Objects.equals(timezone, that.timezone);
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

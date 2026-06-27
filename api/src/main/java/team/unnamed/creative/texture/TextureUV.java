@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative.texture;
 
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.base.Vector2Float;
@@ -43,7 +42,7 @@ import team.unnamed.creative.base.Vector2Float;
  *
  * @since 1.1.0
  */
-public interface TextureUV extends Examinable {
+public interface TextureUV {
     /**
      * Creates a new {@link TextureUV} instance with the
      * given start and end points.

@@ -24,8 +24,6 @@
 package team.unnamed.creative.item.special;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.base.Pose;
 
@@ -44,11 +42,8 @@ record CopperGolemStatueSpecialRenderImpl(Pose pose, Key texture) implements Cop
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("pose", pose),
-                ExaminableProperty.of("texture", texture)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "pose=" + pose + ", texture=" + texture + "}";
     }
 
     @Override
@@ -57,8 +52,4 @@ record CopperGolemStatueSpecialRenderImpl(Pose pose, Key texture) implements Cop
         return pose == that.pose() && Objects.equals(texture, that.texture());
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

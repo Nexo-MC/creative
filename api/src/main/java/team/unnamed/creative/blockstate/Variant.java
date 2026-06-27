@@ -24,9 +24,6 @@
 package team.unnamed.creative.blockstate;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.Examinable;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.item.ItemModel;
 import team.unnamed.creative.item.SelectItemModel;
@@ -42,7 +39,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @since 1.0.0
  */
-public class Variant implements Examinable {
+public class Variant {
 
     public static final int DEFAULT_X_ROTATION = 0;
     public static final int DEFAULT_Y_ROTATION = 0;
@@ -140,19 +137,8 @@ public class Variant implements Examinable {
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("model", model),
-                ExaminableProperty.of("x", x),
-                ExaminableProperty.of("y", y),
-                ExaminableProperty.of("uvlock", uvLock),
-                ExaminableProperty.of("weight", weight)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "model=" + model + ", x=" + x + ", y=" + y + ", uvlock=" + uvLock + ", weight=" + weight + "}";
     }
 
     @Override

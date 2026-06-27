@@ -25,7 +25,6 @@ package team.unnamed.creative.item;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +40,7 @@ import team.unnamed.creative.part.ResourcePackPart;
  * @sinceMinecraft 1.21.4
  * @sincePackFormat 43
  */
-public interface Item extends Keyed, ResourcePackPart, Examinable {
+public interface Item extends Keyed, ResourcePackPart {
     @ApiStatus.Internal
     boolean DEFAULT_HAND_ANIMATION_ON_SWAP = true;
 

@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.metadata.villager;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.metadata.MetadataPart;
@@ -49,15 +47,8 @@ record VillagerMetaImpl(Hat hat) implements VillagerMeta {
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("hat", hat)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "hat=" + hat + "}";
     }
 
     @Override

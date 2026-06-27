@@ -24,7 +24,6 @@
 package team.unnamed.creative.atlas;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -142,7 +141,7 @@ public interface UnstitchAtlasSource extends AtlasSource {
      * @since 1.0.0
      */
     @ApiStatus.NonExtendable
-    interface Region extends Examinable {
+    interface Region {
 
         /**
          * Gets the sprite name.

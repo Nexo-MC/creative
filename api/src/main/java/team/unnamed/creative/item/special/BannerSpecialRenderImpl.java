@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.item.special;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.base.DyeColor;
 
@@ -43,10 +41,8 @@ record BannerSpecialRenderImpl(DyeColor color) implements BannerSpecialRender {
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("color", color)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "color=" + color + "}";
     }
 
     @Override
@@ -56,8 +52,4 @@ record BannerSpecialRenderImpl(DyeColor color) implements BannerSpecialRender {
         return color == that.color;
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

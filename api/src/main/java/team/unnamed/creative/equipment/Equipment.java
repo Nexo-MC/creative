@@ -25,7 +25,6 @@ package team.unnamed.creative.equipment;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.overlay.ResourceContainer;
@@ -43,7 +42,7 @@ import java.util.Map;
  * @since 1.8.0
  * @sinceMinecraft 1.21.2
  */
-public interface Equipment extends ResourcePackPart, Keyed, Examinable {
+public interface Equipment extends ResourcePackPart, Keyed {
     /**
      * Returns the key of this equipment, which can
      * be referenced by the {@code equippable} component

@@ -25,7 +25,6 @@ package team.unnamed.creative.model;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +46,7 @@ import static java.util.Objects.requireNonNull;
  * @since 1.0.0
  */
 @ApiStatus.NonExtendable
-public interface Model extends ResourcePackPart, Keyed, Examinable {
+public interface Model extends ResourcePackPart, Keyed {
     @Contract("-> new")
     static @NotNull Builder model() {
         return new ModelImpl.BuilderImpl();

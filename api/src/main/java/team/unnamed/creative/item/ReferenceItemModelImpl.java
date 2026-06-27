@@ -24,8 +24,6 @@
 package team.unnamed.creative.item;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.item.tint.TintSource;
@@ -59,12 +57,8 @@ record ReferenceItemModelImpl(Key model, List<TintSource> tints, Transformation 
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("model", model),
-                ExaminableProperty.of("tints", tints),
-                ExaminableProperty.of("transformation", transformation)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "model=" + model + ", tints=" + tints + ", transformation=" + transformation + "}";
     }
 
     @Override
@@ -74,8 +68,4 @@ record ReferenceItemModelImpl(Key model, List<TintSource> tints, Transformation 
         return model.equals(that.model) && tints.equals(that.tints) && Objects.equals(transformation, that.transformation);
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }

@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.metadata.texture;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.metadata.MetadataPart;
 
@@ -38,16 +36,8 @@ record TextureMetaImpl(boolean blur, boolean clamp) implements TextureMeta {
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("blur", blur),
-                ExaminableProperty.of("clamp", clamp)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "blur=" + blur + ", clamp=" + clamp + "}";
     }
 
 }

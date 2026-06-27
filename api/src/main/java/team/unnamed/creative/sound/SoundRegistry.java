@@ -25,7 +25,6 @@ package team.unnamed.creative.sound;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Namespaced;
-import net.kyori.examination.Examinable;
 import org.intellij.lang.annotations.Pattern;
 import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.ApiStatus;
@@ -44,7 +43,7 @@ import java.util.Set;
  *
  * @since 1.0.0
  */
-public interface SoundRegistry extends ResourcePackPart, Namespaced, Examinable {
+public interface SoundRegistry extends ResourcePackPart, Namespaced {
     /**
      * Creates a new registry from the given
      * sounds.

@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative.metadata;
 
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +48,7 @@ import java.util.Collection;
  * @since 1.0.0
  */
 @ApiStatus.NonExtendable
-public interface Metadata extends Examinable {
+public interface Metadata {
     /**
      * Creates a new {@link Metadata} builder.
      *

@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.metadata.language;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,17 +56,8 @@ record LanguageEntryImpl(String name, String region, boolean bidirectional) impl
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("name", name),
-                ExaminableProperty.of("region", region),
-                ExaminableProperty.of("bidirectional", bidirectional)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "name=" + name + ", region=" + region + ", bidirectional=" + bidirectional + "}";
     }
 
     @Override

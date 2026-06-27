@@ -24,8 +24,6 @@
 package team.unnamed.creative.blockstate;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -59,17 +57,8 @@ record BlockStateImpl(Key key, Map<String, MultiVariant> variants, List<Selector
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("key", key),
-                ExaminableProperty.of("variants", variants),
-                ExaminableProperty.of("multipart", multipart)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "key=" + key + ", variants=" + variants + ", multipart=" + multipart + "}";
     }
 
     @Override

@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.model;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.base.CubeFace;
@@ -64,19 +62,8 @@ record ElementFaceImpl(@Nullable TextureUV uv, String texture, @Nullable CubeFac
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("uv", uv),
-                ExaminableProperty.of("texture", texture),
-                ExaminableProperty.of("cullFace", cullFace),
-                ExaminableProperty.of("rotation", rotation),
-                ExaminableProperty.of("tintIndex", tintIndex)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "uv=" + uv + ", texture=" + texture + ", cullFace=" + cullFace + ", rotation=" + rotation + ", tintIndex=" + tintIndex + "}";
     }
 
     @Override

@@ -23,8 +23,6 @@
  */
 package team.unnamed.creative.metadata.overlays;
 
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.metadata.MetadataPart;
 
@@ -49,15 +47,8 @@ record OverlaysMetaImpl(List<OverlayEntry> overlays) implements OverlaysMeta {
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("overlays", overlays)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "overlays=" + overlays + "}";
     }
 
     @Override

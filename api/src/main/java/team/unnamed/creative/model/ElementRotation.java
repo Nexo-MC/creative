@@ -23,9 +23,6 @@
  */
 package team.unnamed.creative.model;
 
-import net.kyori.examination.Examinable;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.base.Axis3D;
 import team.unnamed.creative.base.Vector3Float;
@@ -41,7 +38,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @since 1.0.0
  */
-public record ElementRotation(Vector3Float origin, Vector3Float rotation, boolean rescale) implements Examinable {
+public record ElementRotation(Vector3Float origin, Vector3Float rotation, boolean rescale) {
 
     public static final boolean DEFAULT_RESCALE = false;
 
@@ -160,17 +157,8 @@ public record ElementRotation(Vector3Float origin, Vector3Float rotation, boolea
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("origin", origin),
-                ExaminableProperty.of("rotation", rotation),
-                ExaminableProperty.of("rescale", rescale)
-        );
-    }
-
-    @Override
     public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
+        return getClass().getSimpleName() + "{" + "origin=" + origin + ", rotation=" + rotation + ", rescale=" + rescale + "}";
     }
 
     @Override

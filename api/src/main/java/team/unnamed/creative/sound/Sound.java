@@ -25,7 +25,6 @@ package team.unnamed.creative.sound;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
-import net.kyori.examination.Examinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.base.Writable;
@@ -40,7 +39,7 @@ import team.unnamed.creative.texture.Texture;
  * @since 1.0.0
  */
 @ApiStatus.NonExtendable
-public interface Sound extends ResourcePackPart, Keyed, Examinable {
+public interface Sound extends ResourcePackPart, Keyed {
     /**
      * Creates a new sound instance with the given key and data.
      *

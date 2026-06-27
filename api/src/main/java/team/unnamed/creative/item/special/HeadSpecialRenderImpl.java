@@ -24,8 +24,6 @@
 package team.unnamed.creative.item.special;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.examination.ExaminableProperty;
-import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.base.HeadType;
@@ -53,12 +51,8 @@ record HeadSpecialRenderImpl(HeadType kind, Key texture, float animation) implem
     }
 
     @Override
-    public @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
-        return Stream.of(
-                ExaminableProperty.of("kind", kind),
-                ExaminableProperty.of("texture", texture),
-                ExaminableProperty.of("animation", animation)
-        );
+    public @NotNull String toString() {
+        return getClass().getSimpleName() + "{" + "kind=" + kind + ", texture=" + texture + ", animation=" + animation + "}";
     }
 
     @Override
@@ -70,8 +64,4 @@ record HeadSpecialRenderImpl(HeadType kind, Key texture, float animation) implem
                 Objects.equals(texture, that.texture);
     }
 
-    @Override
-    public @NotNull String toString() {
-        return examine(StringExaminer.simpleEscaping());
-    }
 }
