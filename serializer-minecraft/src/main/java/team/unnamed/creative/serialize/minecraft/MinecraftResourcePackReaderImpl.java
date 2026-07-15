@@ -104,6 +104,11 @@ final class MinecraftResourcePackReaderImpl implements MinecraftResourcePackRead
         while (reader.hasNext()) {
             String path = reader.next();
 
+            if (isIgnorableFile(path)) {
+                // junk file created by the operating system (e.g. .DS_Store), ignore it
+                continue;
+            }
+
             // tokenize path in sections, e.g.: [ assets, minecraft, textures, ... ]
             Queue<String> tokens = tokenize(path);
 
