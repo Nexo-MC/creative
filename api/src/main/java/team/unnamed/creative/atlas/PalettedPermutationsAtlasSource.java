@@ -43,6 +43,16 @@ import java.util.Map;
 public interface PalettedPermutationsAtlasSource extends AtlasSource {
 
     /**
+     * The separator used between the base texture name and the permutation
+     * suffix when the source does not specify one.
+     *
+     * @sincePackFormat 13
+     * @sinceMinecraft 1.19.4
+     * @since 1.14.3
+     */
+    String DEFAULT_SEPARATOR = "_";
+
+    /**
      * Gets the list of keys of the base textures. These textures will be used
      * to generate variants of them that have been modified by color palettes.
      *
@@ -67,8 +77,8 @@ public interface PalettedPermutationsAtlasSource extends AtlasSource {
     /**
      * Gets the map of permutations from suffix to a key of a color palette file.
      *
-     * <p>The suffix is prepended to the key of the output variant textures, with a {@code _}
-     * character separating the suffix and the base texture name.</p>
+     * <p>The suffix is prepended to the key of the output variant textures, with the
+     * {@link #separator()} separating the suffix and the base texture name.</p>
      *
      * <p>The number of pixels in each color palette must be the same as that of the {@link #paletteKey()}
      * defined for this source. Pixels are compared by RGB value. The alpha channel is ignored for key
@@ -82,5 +92,16 @@ public interface PalettedPermutationsAtlasSource extends AtlasSource {
      * @since 1.0.0
      */
     @NotNull @Unmodifiable Map<String, Key> permutations();
+
+    /**
+     * Gets the separator placed between the base texture name and the permutation
+     * suffix when generating the output variant texture keys.
+     *
+     * @return The separator, {@link #DEFAULT_SEPARATOR} if unset.
+     * @sincePackFormat 13
+     * @sinceMinecraft 1.19.4
+     * @since 1.14.3
+     */
+    @NotNull String separator();
 
 }

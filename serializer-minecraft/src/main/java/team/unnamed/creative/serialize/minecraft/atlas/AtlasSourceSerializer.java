@@ -92,7 +92,8 @@ final class AtlasSourceSerializer {
     //     "palette_key": <key>,
     //     "permutations": <{
     //         <string>: <key>
-    //     }>
+    //     }>,
+    //     "separator": <optional string = "_">
     // }
 
     static void serialize(AtlasSource source, JsonWriter writer) throws IOException {
@@ -155,6 +156,10 @@ final class AtlasSourceSerializer {
                     writer.name(entry.getKey()).value(KeySerializer.toString(entry.getValue()));
                 }
                 writer.endObject();
+                String separator = ppSource.separator();
+                if (!separator.equals(PalettedPermutationsAtlasSource.DEFAULT_SEPARATOR)) {
+                    writer.name("separator").value(separator);
+                }
             }
             case null, default -> throw new IllegalArgumentException("Unknown atlas source type: '" + source + "'.");
         }
@@ -220,7 +225,10 @@ final class AtlasSourceSerializer {
                 String value = entry.getValue().getAsString();
                 permutations.put(entry.getKey(), Key.key(value));
             }
-            return AtlasSource.palettedPermutations(textures, paletteKey, permutations);
+            String separator = node.has("separator")
+                    ? node.get("separator").getAsString()
+                    : PalettedPermutationsAtlasSource.DEFAULT_SEPARATOR;
+            return AtlasSource.palettedPermutations(textures, paletteKey, permutations, separator);
         } else {
             throw new IllegalArgumentException("Unknown atlas source type: '" + type + "'.");
         }

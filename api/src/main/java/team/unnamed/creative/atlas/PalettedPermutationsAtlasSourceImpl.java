@@ -35,19 +35,23 @@ import java.util.stream.Stream;
 import static java.util.Objects.requireNonNull;
 
 record PalettedPermutationsAtlasSourceImpl(List<Key> textures, Key paletteKey,
-                                           Map<String, Key> permutations) implements PalettedPermutationsAtlasSource {
+                                           Map<String, Key> permutations,
+                                           String separator) implements PalettedPermutationsAtlasSource {
 
     PalettedPermutationsAtlasSourceImpl(
             final @NotNull List<Key> textures,
             final @NotNull Key paletteKey,
-            final @NotNull Map<String, Key> permutations
+            final @NotNull Map<String, Key> permutations,
+            final @NotNull String separator
     ) {
         requireNonNull(textures, "textures");
         requireNonNull(paletteKey, "paletteKey");
         requireNonNull(permutations, "permutations");
+        requireNonNull(separator, "separator");
         this.textures = MoreCollections.immutableListOf(textures);
         this.paletteKey = paletteKey;
         this.permutations = MoreCollections.immutableMapOf(permutations);
+        this.separator = separator;
     }
 
     @Override
@@ -66,8 +70,13 @@ record PalettedPermutationsAtlasSourceImpl(List<Key> textures, Key paletteKey,
     }
 
     @Override
+    public @NotNull String separator() {
+        return separator;
+    }
+
+    @Override
     public @NotNull String toString() {
-        return getClass().getSimpleName() + "{" + "textures=" + textures + ", paletteKey=" + paletteKey + ", permutations=" + permutations + "}";
+        return getClass().getSimpleName() + "{" + "textures=" + textures + ", paletteKey=" + paletteKey + ", permutations=" + permutations + ", separator=" + separator + "}";
     }
 
     @Override
@@ -77,6 +86,7 @@ record PalettedPermutationsAtlasSourceImpl(List<Key> textures, Key paletteKey,
         PalettedPermutationsAtlasSourceImpl that = (PalettedPermutationsAtlasSourceImpl) o;
         if (!textures.equals(that.textures)) return false;
         if (!paletteKey.equals(that.paletteKey)) return false;
+        if (!separator.equals(that.separator)) return false;
         return permutations.equals(that.permutations);
     }
 

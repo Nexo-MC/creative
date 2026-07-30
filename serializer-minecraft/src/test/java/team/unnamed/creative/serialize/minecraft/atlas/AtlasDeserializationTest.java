@@ -127,4 +127,24 @@ class AtlasDeserializationTest {
             assertEquals(expectedPermutations, permutations.permutations(), "Unexpected permutations for seventh source");
         }
     }
+
+    @Test
+    @DisplayName("Test paletted permutations separator round-trip")
+    void test_paletted_permutations_separator() throws IOException {
+        Atlas atlas = AtlasSerializer.INSTANCE.deserializeFromJsonString("{\"sources\":[{\"type\":\"minecraft:paletted_permutations\",\"textures\":[\"minecraft:trims/items/boots_trim/minecraft/sentry\"],\"palette_key\":\"minecraft:trims/color_palettes/trim_palette\",\"permutations\":{\"minecraft/redstone\":\"minecraft:trims/color_palettes/redstone\"},\"separator\":\"/\"}]}", Key.key("minecraft:items"));
+
+        AtlasSource source = atlas.sources().getFirst();
+        assertInstanceOf(PalettedPermutationsAtlasSource.class, source, "Source must be a paletted permutations atlas source");
+        assertEquals("/", ((PalettedPermutationsAtlasSource) source).separator(), "Separator must be kept as '/'");
+
+        assertTrue(AtlasSerializer.INSTANCE.serializeToJsonString(atlas).contains("\"separator\":\"/\""), "Serialized atlas must keep the separator");
+        assertFalse(
+                AtlasSerializer.INSTANCE.serializeToJsonString(Atlas.atlas(Key.key("minecraft:items"), AtlasSource.palettedPermutations(
+                        List.of(Key.key("trims/items/boots_trim")),
+                        Key.key("trims/color_palettes/trim_palette"),
+                        Map.of("redstone", Key.key("trims/color_palettes/redstone"))
+                ))).contains("separator"),
+                "Default separator must not be written"
+        );
+    }
 }
