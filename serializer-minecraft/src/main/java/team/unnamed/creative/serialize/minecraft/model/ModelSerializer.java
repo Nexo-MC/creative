@@ -30,6 +30,7 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.stream.JsonWriter;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.base.Axis3D;
 import team.unnamed.creative.base.CubeFace;
 import team.unnamed.creative.base.Vector2Float;
@@ -113,10 +114,19 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
                 if (rotation == null) continue;
                 writeLegacy = rotation.containsLegacyRotation(writeLegacy, minPackFormat);
             }
+
+            List<String> clampedUvs = shouldClampUv(packFormat) ? new ArrayList<>() : null;
             for (Element element : elements) {
-                writeElement(writer, element, writeLegacy);
+                writeElement(writer, element, writeLegacy, clampedUvs);
             }
             writer.endArray();
+
+            if (clampedUvs != null && !clampedUvs.isEmpty()) LOGGER.warning("""
+                Model %s has UV-mapping outside its texture on: %s.
+                Clamped to the 0-16 range since 26.1+ fails to bake such models,
+                fix the UV-mapping in the model to get rid of this warning
+                """.formatted(model.key(), String.join(", ", clampedUvs))
+            );
         }
 
         boolean ambientOcclusion = model.ambientOcclusion();
@@ -169,7 +179,7 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
         List<Element> elements = new ArrayList<>();
         if (objectNode.has("elements")) {
             for (JsonElement elementNode : objectNode.getAsJsonArray("elements")) {
-                elements.add(readElement(elementNode, packFormat, key));
+                elements.add(readElement(elementNode, packFormat));
             }
         }
 
@@ -204,7 +214,7 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
                 .build();
     }
 
-    private static void writeElement(JsonWriter writer, Element element, boolean writeLegacy) throws IOException {
+    private static void writeElement(JsonWriter writer, Element element, boolean writeLegacy, @Nullable List<String> clampedUvs) throws IOException {
         writer.beginObject().name("from");
         GsonUtil.writeVector3Float(writer, element.from());
         writer.name("to");
@@ -235,18 +245,22 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
 
             writer.name(type.name().toLowerCase(Locale.ROOT))
                     .beginObject();
-            if (face.uv() != null) {
-                TextureUV uv = face.uv();
-                TextureUV defaultUv = getDefaultUvForFace(type, element.from(), element.to());
-                if (uv != null && !uv.equals(defaultUv)) {
-                    writer.name("uv");
-                    writer.beginArray();
-                    writer.value(uv.from().x() * MINECRAFT_UV_UNIT);
-                    writer.value(uv.from().y() * MINECRAFT_UV_UNIT);
-                    writer.value(uv.to().x() * MINECRAFT_UV_UNIT);
-                    writer.value(uv.to().y() * MINECRAFT_UV_UNIT);
-                    writer.endArray();
-                }
+
+            // an omitted UV falls back to the one Minecraft derives from the element,
+            // which is just as out-of-bounds when the element itself is
+            TextureUV defaultUv = getDefaultUvForFace(type, element.from(), element.to());
+            TextureUV uv = face.uv() == null ? defaultUv : face.uv();
+            if (clampedUvs != null) {
+                uv = clampUv(uv, type, clampedUvs);
+            }
+            if (!uv.equals(defaultUv)) {
+                writer.name("uv");
+                writer.beginArray();
+                writer.value(uv.from().x() * MINECRAFT_UV_UNIT);
+                writer.value(uv.from().y() * MINECRAFT_UV_UNIT);
+                writer.value(uv.to().x() * MINECRAFT_UV_UNIT);
+                writer.value(uv.to().y() * MINECRAFT_UV_UNIT);
+                writer.endArray();
             }
             writer.name("texture").value(face.texture());
             if (face.cullFace() != null) {
@@ -263,6 +277,38 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
         writer.endObject().endObject();
     }
 
+    /**
+     * Determines whether UVs should be clamped for the given target pack format.
+     *
+     * <p>Minecraft 26.1+ refuses to bake a model when a face samples outside its
+     * texture, older versions just rendered whatever was next to it in the atlas.
+     * A major of zero means the target format is unknown, assume the newest behavior.</p>
+     */
+    private static boolean shouldClampUv(PackFormat packFormat) {
+        int max = packFormat.max().major();
+        return max == 0 || max >= FormatVersion.FORMAT_26_1;
+    }
+
+    private static TextureUV clampUv(TextureUV uv, CubeFace face, List<String> clampedUvs) {
+        Vector2Float from = uv.from();
+        Vector2Float to = uv.to();
+        Vector2Float clampedFrom = new Vector2Float(clamp01(from.x()), clamp01(from.y()));
+        Vector2Float clampedTo = new Vector2Float(clamp01(to.x()), clamp01(to.y()));
+
+        if (clampedFrom.equals(from) && clampedTo.equals(to)) return uv;
+
+        clampedUvs.add("%s [%s, %s, %s, %s]".formatted(
+                face.name().toLowerCase(Locale.ROOT),
+                from.x() * MINECRAFT_UV_UNIT, from.y() * MINECRAFT_UV_UNIT,
+                to.x() * MINECRAFT_UV_UNIT, to.y() * MINECRAFT_UV_UNIT
+        ));
+        return TextureUV.uv(clampedFrom, clampedTo);
+    }
+
+    private static float clamp01(float value) {
+        return Math.min(Math.max(value, 0F), 1F);
+    }
+
     private static TextureUV getDefaultUvForFace(CubeFace face, Vector3Float from, Vector3Float to) {
         from = from.divide(MINECRAFT_UV_UNIT);
         to = to.divide(MINECRAFT_UV_UNIT);
@@ -277,7 +323,7 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
         };
     }
 
-    private static Element readElement(JsonElement node, PackFormat packFormat, Key modelKey) {
+    private static Element readElement(JsonElement node, PackFormat packFormat) {
         JsonObject objectNode = node.getAsJsonObject();
         ElementRotation rotation = null;
 
@@ -297,14 +343,7 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
                 float u2 = array.get(2).getAsFloat();
                 float v2 = array.get(3).getAsFloat();
 
-                //boolean shouldCheckClamp = packFormat.isInRange(FormatVersion.of(FormatVersion.FORMAT_26_1));
-                //if (shouldCheckClamp) if (u1 < 0 || v1 < 0 || u2 < 0 || v2 < 0) throw new IllegalArgumentException("""
-                //    Negative UV found in model '%s' on face '%s': [%s,%s,%s,%s]
-                //    Minecraft 26.1+ rejects out-of-bounds UVs and the model will fail to load
-                //    Likely a Blockbench export rounding artifact, clamp negative values to 0
-                //    """.formatted(modelKey, face, u1, v1, u2, v2)
-                //);
-
+                // reading stays lenient, out-of-bounds UVs are clamped on write
                 uv = TextureUV.uv(
                     new Vector2Float(u1, v1).divide(MINECRAFT_UV_UNIT),
                     new Vector2Float(u2, v2).divide(MINECRAFT_UV_UNIT)
