@@ -75,7 +75,7 @@ public final class AtlasSerializer implements JsonResourceSerializer<Atlas>, Jso
                 .name(SOURCES_FIELD)
                 .beginArray();
         for (AtlasSource source : object.sources()) {
-            AtlasSourceSerializer.serialize(source, writer);
+            AtlasSourceSerializer.serialize(source, writer, packFormat);
         }
         writer.endArray().endObject();
     }
@@ -84,7 +84,7 @@ public final class AtlasSerializer implements JsonResourceSerializer<Atlas>, Jso
     public Atlas deserializeFromJson(JsonElement node, Key key, PackFormat packFormat) {
         List<AtlasSource> sources = new ArrayList<>();
         for (JsonElement sourceElement : node.getAsJsonObject().getAsJsonArray(SOURCES_FIELD)) {
-            sources.add(AtlasSourceSerializer.deserialize(sourceElement.getAsJsonObject()));
+            sources.add(AtlasSourceSerializer.deserialize(sourceElement.getAsJsonObject(), packFormat));
         }
         return Atlas.atlas()
                 .key(key)
