@@ -37,6 +37,7 @@ import team.unnamed.creative.atlas.SingleAtlasSource;
 import team.unnamed.creative.atlas.UnstitchAtlasSource;
 import team.unnamed.creative.base.KeyPattern;
 import team.unnamed.creative.base.Vector2Float;
+import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.serialize.minecraft.base.KeyPatternSerializer;
 import team.unnamed.creative.serialize.minecraft.base.KeySerializer;
 
@@ -96,7 +97,7 @@ final class AtlasSourceSerializer {
     //     "separator": <optional string = "_">
     // }
 
-    static void serialize(AtlasSource source, JsonWriter writer) throws IOException {
+    static void serialize(AtlasSource source, JsonWriter writer, PackFormat packFormat) throws IOException {
         writer.beginObject();
         switch (source) {
             case SingleAtlasSource singleSource -> {
@@ -150,10 +151,14 @@ final class AtlasSourceSerializer {
                     writer.value(KeySerializer.toString(texture));
                 }
                 writer.endArray();
-                writer.name("palette_key").value(KeySerializer.toString(ppSource.paletteKey()));
+                writer.name("palette_key").value(KeySerializer.toString(
+                        PaletteTextureIdSerializer.serialize(ppSource.paletteKey(), packFormat)
+                ));
                 writer.name("permutations").beginObject();
                 for (Map.Entry<String, Key> entry : ppSource.permutations().entrySet()) {
-                    writer.name(entry.getKey()).value(KeySerializer.toString(entry.getValue()));
+                    writer.name(entry.getKey()).value(KeySerializer.toString(
+                            PaletteTextureIdSerializer.serialize(entry.getValue(), packFormat)
+                    ));
                 }
                 writer.endObject();
                 String separator = ppSource.separator();
@@ -166,7 +171,7 @@ final class AtlasSourceSerializer {
         writer.endObject();
     }
 
-    static AtlasSource deserialize(JsonObject node) {
+    static AtlasSource deserialize(JsonObject node, PackFormat packFormat) {
         Key type = Key.key(node.get(TYPE_FIELD).getAsString());
         if (type.equals(SINGLE_TYPE)) {
             @Subst("minecraft:resource")
@@ -218,12 +223,15 @@ final class AtlasSourceSerializer {
             }
             @Subst("minecraft:resource")
             String paletteKeyStr = node.get("palette_key").getAsString();
-            Key paletteKey = Key.key(paletteKeyStr);
+            Key paletteKey = PaletteTextureIdSerializer.deserialize(Key.key(paletteKeyStr), packFormat);
             Map<String, Key> permutations = new LinkedHashMap<>();
             for (Map.Entry<String, JsonElement> entry : node.getAsJsonObject("permutations").entrySet()) {
                 @Subst("minecraft:resource")
                 String value = entry.getValue().getAsString();
-                permutations.put(entry.getKey(), Key.key(value));
+                permutations.put(
+                        entry.getKey(),
+                        PaletteTextureIdSerializer.deserialize(Key.key(value), packFormat)
+                );
             }
             String separator = node.has("separator")
                     ? node.get("separator").getAsString()

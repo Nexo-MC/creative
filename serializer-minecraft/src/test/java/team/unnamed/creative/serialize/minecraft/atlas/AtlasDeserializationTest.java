@@ -31,6 +31,9 @@ import team.unnamed.creative.atlas.AtlasSource;
 import team.unnamed.creative.atlas.DirectoryAtlasSource;
 import team.unnamed.creative.atlas.PalettedPermutationsAtlasSource;
 import team.unnamed.creative.atlas.SingleAtlasSource;
+import team.unnamed.creative.metadata.pack.FormatVersion;
+import team.unnamed.creative.metadata.pack.PackFormat;
+import team.unnamed.creative.serialize.minecraft.GsonUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,6 +45,10 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AtlasDeserializationTest {
+
+    private static final PackFormat FORMAT_26_2 = PackFormat.format(FormatVersion.of(FormatVersion.FORMAT_26_2));
+    private static final PackFormat FORMAT_26_3 = PackFormat.format(FormatVersion.of(FormatVersion.FORMAT_26_3));
+
     @Test
     @DisplayName("Test deserializing blocks.json atlas from Minecraft 1.20.2")
     void test_blocks_atlas_deserialization() throws IOException {
@@ -146,5 +153,94 @@ class AtlasDeserializationTest {
                 ))).contains("separator"),
                 "Default separator must not be written"
         );
+    }
+
+    @Test
+    @DisplayName("Test palette texture locations before Minecraft 26.3")
+    void test_legacy_palette_texture_locations() throws IOException {
+        Atlas atlas = painterAtlas();
+
+        String json = AtlasSerializer.INSTANCE.serializeToJsonString(atlas, FORMAT_26_2);
+
+        assertEquals("painter:palettes/stone_palette", GsonUtil.parseString(json)
+                .getAsJsonObject()
+                .getAsJsonArray("sources")
+                .get(0)
+                .getAsJsonObject()
+                .get("palette_key")
+                .getAsString());
+    }
+
+    @Test
+    @DisplayName("Test palette texture IDs in Minecraft 26.3")
+    void test_26_3_palette_texture_ids() throws IOException {
+        Atlas atlas = painterAtlas();
+
+        String json = AtlasSerializer.INSTANCE.serializeToJsonString(atlas, FORMAT_26_3);
+        var source = GsonUtil.parseString(json)
+                .getAsJsonObject()
+                .getAsJsonArray("sources")
+                .get(0)
+                .getAsJsonObject();
+
+        assertEquals("painter:stone_palette", source.get("palette_key").getAsString());
+        assertEquals("painter:stone_black", source
+                .getAsJsonObject("permutations")
+                .get("black")
+                .getAsString());
+    }
+
+    @Test
+    @DisplayName("Test Minecraft 26.3 palette texture IDs round-trip to canonical texture locations")
+    void test_26_3_palette_texture_ids_round_trip() throws IOException {
+        String json = "{\"sources\":[{\"type\":\"minecraft:paletted_permutations\","
+                + "\"textures\":[\"minecraft:block/stone\"],"
+                + "\"palette_key\":\"painter:stone_palette\","
+                + "\"permutations\":{\"black\":\"painter:stone_black\"}}]}";
+
+        Atlas atlas = AtlasSerializer.INSTANCE.deserializeFromJson(
+                GsonUtil.parseString(json),
+                Atlas.BLOCKS,
+                FORMAT_26_3
+        );
+        PalettedPermutationsAtlasSource source = (PalettedPermutationsAtlasSource) atlas.sources().getFirst();
+
+        assertEquals(Key.key("painter:palettes/stone_palette"), source.paletteKey());
+        assertEquals(Key.key("painter:palettes/stone_black"), source.permutations().get("black"));
+        var serializedSource = GsonUtil.parseString(
+                        AtlasSerializer.INSTANCE.serializeToJsonString(atlas, FORMAT_26_3)
+                )
+                .getAsJsonObject()
+                .getAsJsonArray("sources")
+                .get(0)
+                .getAsJsonObject();
+        assertEquals("painter:stone_palette", serializedSource.get("palette_key").getAsString());
+        assertEquals(
+                "painter:stone_black",
+                serializedSource.getAsJsonObject("permutations").get("black").getAsString()
+        );
+    }
+
+    @Test
+    @DisplayName("Reject palette textures outside textures/palettes in Minecraft 26.3")
+    void test_26_3_rejects_non_palette_texture_location() {
+        Atlas atlas = Atlas.atlas(Atlas.BLOCKS, AtlasSource.palettedPermutations(
+                List.of(Key.key("minecraft:block/stone")),
+                Key.key("painter:block/color_palettes/stone_palette"),
+                Map.of("black", Key.key("painter:block/color_palettes/stone_black"))
+        ));
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> AtlasSerializer.INSTANCE.serializeToJsonString(atlas, FORMAT_26_3)
+        );
+    }
+
+    private static Atlas painterAtlas() {
+        return Atlas.atlas(Atlas.BLOCKS, AtlasSource.palettedPermutations(
+                List.of(Key.key("minecraft:block/stone")),
+                Key.key("painter:palettes/stone_palette"),
+                Map.of("black", Key.key("painter:palettes/stone_black"))
+        ));
     }
 }
