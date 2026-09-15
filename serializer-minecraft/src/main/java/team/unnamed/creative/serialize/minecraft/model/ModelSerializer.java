@@ -222,6 +222,11 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
             writer.name("shade").value(shade);
         }
 
+        CubeFace shadeDirectionOverride = element.shadeDirectionOverride();
+        if (shadeDirectionOverride != null) {
+            writer.name("shade_direction_override").value(shadeDirectionOverride.name().toLowerCase(Locale.ROOT));
+        }
+
         int lightEmission = element.lightEmission();
         if (lightEmission != 0) {
             writer.name("light_emission").value(lightEmission);
@@ -337,6 +342,9 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
                 .to(GsonUtil.readVector3Float(objectNode.get("to")))
                 .rotation(rotation)
                 .shade(GsonUtil.getBoolean(objectNode, "shade", Element.DEFAULT_SHADE))
+                .shadeDirectionOverride(objectNode.has("shade_direction_override")
+                        ? CubeFace.valueOf(objectNode.get("shade_direction_override").getAsString().toUpperCase(Locale.ROOT))
+                        : null)
                 .lightEmission(GsonUtil.getInt(objectNode, "light_emission", 0))
                 .faces(faces)
                 .build();

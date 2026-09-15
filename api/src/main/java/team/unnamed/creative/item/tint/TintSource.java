@@ -120,7 +120,10 @@ public interface TintSource {
      * @since 1.8.0
      * @sinceMinecraft 1.21.4
      * @sincePackFormat 43
+     * @deprecated Removed in 26.3 (pack format 97) along with the {@code minecraft:map_color}
+     * component it reads, only usable when targeting older pack formats
      */
+    @Deprecated
     static @NotNull KeyedAndBackedTintSource mapColor(final int defaultTint) {
         return new KeyedAndBackedTintSourceImpl(KeyedAndBackedTintSourceImpl.MAP_COLOR, defaultTint);
     }

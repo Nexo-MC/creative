@@ -104,8 +104,22 @@ public interface Element {
      *
      * @return True to render shadows
      * @since 1.0.0
+     * @deprecated Removed from block model elements in 26.3 (pack format 97),
+     * use {@link #shadeDirectionOverride()} with {@link CubeFace#UP} for the old {@code shade: false} behavior
      */
+    @Deprecated
     boolean shade();
+
+    /**
+     * Returns the direction this element is shaded from, which overrides the
+     * directional shading of every face regardless of its orientation.
+     *
+     * @return The shade direction override, null if unset
+     * @since 1.15.0
+     * @sinceMinecraft 26.3
+     * @sincePackFormat 97
+     */
+    @Nullable CubeFace shadeDirectionOverride();
 
     /**
      * Returns an unmodifiable map of the element faces
@@ -193,9 +207,26 @@ public interface Element {
          * @param shade True to render shadows
          * @return This builder
          * @since 1.0.0
+         * @deprecated Removed from block model elements in 26.3 (pack format 97), use
+         * {@link #shadeDirectionOverride(CubeFace)} with {@link CubeFace#UP} for the old
+         * {@code shade: false} behavior
          */
+        @Deprecated
         @Contract("_ -> this")
         @NotNull Builder shade(final boolean shade);
+
+        /**
+         * Sets the direction this element is shaded from, overriding the directional
+         * shading of every face regardless of its orientation.
+         *
+         * @param shadeDirectionOverride The shade direction override, null to unset
+         * @return This builder
+         * @since 1.15.0
+         * @sinceMinecraft 26.3
+         * @sincePackFormat 97
+         */
+        @Contract("_ -> this")
+        @NotNull Builder shadeDirectionOverride(final @Nullable CubeFace shadeDirectionOverride);
 
         /**
          * Sets the element faces.

@@ -120,8 +120,7 @@ public interface Equipment extends ResourcePackPart, Keyed {
     }
 
     /**
-     * Creates a new equipment instance with the given key,
-     * layers and trim overrides.
+     * Creates a new equipment instance with the given key, layers and trim overrides
      *
      * @param key The key of the equipment
      * @param layers The layers of the equipment

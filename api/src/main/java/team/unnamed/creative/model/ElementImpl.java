@@ -38,8 +38,15 @@ import java.util.stream.Stream;
 import static java.util.Objects.requireNonNull;
 import static team.unnamed.creative.util.MoreCollections.immutableMapOf;
 
-record ElementImpl(Vector3Float from, Vector3Float to, ElementRotation rotation, boolean shade,
-                   Map<CubeFace, ElementFace> faces, int lightEmission) implements Element {
+record ElementImpl(
+        Vector3Float from,
+        Vector3Float to,
+        ElementRotation rotation,
+        boolean shade,
+        Map<CubeFace, ElementFace> faces,
+        int lightEmission,
+        CubeFace shadeDirectionOverride
+) implements Element {
 
     ElementImpl(
             final @NotNull Vector3Float from,
@@ -47,7 +54,8 @@ record ElementImpl(Vector3Float from, Vector3Float to, ElementRotation rotation,
             final @Nullable ElementRotation rotation,
             final boolean shade,
             final @NotNull Map<CubeFace, ElementFace> faces,
-            final int lightEmission
+            final int lightEmission,
+            final @Nullable CubeFace shadeDirectionOverride
     ) {
         this.from = requireNonNull(from, "from");
         this.to = requireNonNull(to, "to");
@@ -55,6 +63,7 @@ record ElementImpl(Vector3Float from, Vector3Float to, ElementRotation rotation,
         this.shade = shade;
         this.faces = immutableMapOf(requireNonNull(faces, "faces"));
         this.lightEmission = lightEmission;
+        this.shadeDirectionOverride = shadeDirectionOverride;
         validate();
     }
 
@@ -97,8 +106,13 @@ record ElementImpl(Vector3Float from, Vector3Float to, ElementRotation rotation,
     }
 
     @Override
+    public @Nullable CubeFace shadeDirectionOverride() {
+        return shadeDirectionOverride;
+    }
+
+    @Override
     public @NotNull String toString() {
-        return getClass().getSimpleName() + "{" + "from=" + from + ", to=" + to + ", rotation=" + rotation + ", shade=" + shade + ", faces=" + faces + ", light_emission=" + lightEmission + "}";
+        return getClass().getSimpleName() + "{" + "from=" + from + ", to=" + to + ", rotation=" + rotation + ", shade=" + shade + ", faces=" + faces + ", light_emission=" + lightEmission + ", shadeDirectionOverride=" + shadeDirectionOverride + "}";
     }
 
     @Override
@@ -111,12 +125,13 @@ record ElementImpl(Vector3Float from, Vector3Float to, ElementRotation rotation,
                 && Objects.equals(rotation, element.rotation)
                 && shade == element.shade
                 && faces.equals(element.faces)
-                && lightEmission == element.lightEmission;
+                && lightEmission == element.lightEmission
+                && shadeDirectionOverride == element.shadeDirectionOverride;
     }
 
     @Override
     public @NotNull Element.Builder toBuilder() {
-        return Element.element().from(from).to(to).rotation(rotation).shade(shade).faces(faces).lightEmission(lightEmission);
+        return Element.element().from(from).to(to).rotation(rotation).shade(shade).faces(faces).lightEmission(lightEmission).shadeDirectionOverride(shadeDirectionOverride);
     }
 
     static final class BuilderImpl implements Builder {
@@ -125,6 +140,7 @@ record ElementImpl(Vector3Float from, Vector3Float to, ElementRotation rotation,
         private Vector3Float to;
         private ElementRotation rotation = null;
         private boolean shade = DEFAULT_SHADE;
+        private CubeFace shadeDirectionOverride = null;
         private Map<CubeFace, ElementFace> faces = new LinkedHashMap<>();
         private int lightEmission = 0;
 
@@ -153,6 +169,12 @@ record ElementImpl(Vector3Float from, Vector3Float to, ElementRotation rotation,
         }
 
         @Override
+        public @NotNull Builder shadeDirectionOverride(final @Nullable CubeFace shadeDirectionOverride) {
+            this.shadeDirectionOverride = shadeDirectionOverride;
+            return this;
+        }
+
+        @Override
         public @NotNull Builder faces(final @NotNull Map<CubeFace, ElementFace> faces) {
             this.faces = new LinkedHashMap<>(requireNonNull(faces, "faces"));
             return this;
@@ -174,7 +196,7 @@ record ElementImpl(Vector3Float from, Vector3Float to, ElementRotation rotation,
 
         @Override
         public @NotNull Element build() {
-            return new ElementImpl(from, to, rotation, shade, faces, lightEmission);
+            return new ElementImpl(from, to, rotation, shade, faces, lightEmission, shadeDirectionOverride);
         }
     }
 }
