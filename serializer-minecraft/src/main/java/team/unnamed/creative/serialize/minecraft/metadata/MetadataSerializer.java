@@ -51,6 +51,7 @@ public class MetadataSerializer implements JsonResourceSerializer<Metadata> {
         registerCodec(OverlaysMetaCodec.INSTANCE);
         registerCodec(SodiumMetaCodec.INSTANCE);
         registerCodec(new GuiMetaCodec());
+        registerCodec(new TrimsMetaCodec());
     }
 
     @Override
