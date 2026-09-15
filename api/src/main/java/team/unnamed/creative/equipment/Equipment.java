@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.overlay.ResourceContainer;
 import team.unnamed.creative.part.ResourcePackPart;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -63,6 +64,18 @@ public interface Equipment extends ResourcePackPart, Keyed {
     @NotNull Map<EquipmentLayerType, List<EquipmentLayer>> layers();
 
     /**
+     * Returns the trim overrides of this equipment, which swap the texture or palette used
+     * when the equipment is trimmed with specific trim materials or patterns.
+     *
+     * <p>The first matching override is selected.</p>
+     *
+     * @return The trim overrides of this equipment
+     * @since 1.15.0
+     * @sinceMinecraft 26.3
+     */
+    @NotNull List<EquipmentTrimOverride> trimOverrides();
+
+    /**
      * Creates a new equipment instance with the given layers.
      *
      * @param layers The layers of the equipment
@@ -71,7 +84,20 @@ public interface Equipment extends ResourcePackPart, Keyed {
      */
     @Contract("_ -> new")
     default @NotNull Equipment layers(final @NotNull Map<EquipmentLayerType, List<EquipmentLayer>> layers) {
-        return equipment(key(), layers);
+        return equipment(key(), layers, trimOverrides());
+    }
+
+    /**
+     * Creates a new equipment instance with the given trim overrides.
+     *
+     * @param trimOverrides The trim overrides of the equipment
+     * @return The created equipment
+     * @since 1.15.0
+     * @sinceMinecraft 26.3
+     */
+    @Contract("_ -> new")
+    default @NotNull Equipment trimOverrides(final @NotNull List<EquipmentTrimOverride> trimOverrides) {
+        return equipment(key(), layers(), trimOverrides);
     }
 
     @Override
@@ -90,7 +116,23 @@ public interface Equipment extends ResourcePackPart, Keyed {
      */
     @Contract("_, _ -> new")
     static @NotNull Equipment equipment(final @NotNull Key key, final @NotNull Map<EquipmentLayerType, List<EquipmentLayer>> layers) {
-        return new EquipmentImpl(key, layers);
+        return new EquipmentImpl(key, layers, Collections.emptyList());
+    }
+
+    /**
+     * Creates a new equipment instance with the given key,
+     * layers and trim overrides.
+     *
+     * @param key The key of the equipment
+     * @param layers The layers of the equipment
+     * @param trimOverrides The trim overrides of the equipment
+     * @return The created equipment
+     * @since 1.15.0
+     * @sinceMinecraft 26.3
+     */
+    @Contract("_, _, _ -> new")
+    static @NotNull Equipment equipment(final @NotNull Key key, final @NotNull Map<EquipmentLayerType, List<EquipmentLayer>> layers, final @NotNull List<EquipmentTrimOverride> trimOverrides) {
+        return new EquipmentImpl(key, layers, trimOverrides);
     }
 
     /**
@@ -128,6 +170,20 @@ public interface Equipment extends ResourcePackPart, Keyed {
          */
         @Contract("_, _ -> this")
         @NotNull Builder addLayer(@NotNull EquipmentLayerType type, @NotNull EquipmentLayer layer);
+
+        /**
+         * Adds a trim override to the equipment.
+         *
+         * <p>Overrides are matched in insertion order, the first
+         * matching one is selected.</p>
+         *
+         * @param trimOverride The trim override to add
+         * @return This builder
+         * @since 1.15.0
+         * @sinceMinecraft 26.3
+         */
+        @Contract("_ -> this")
+        @NotNull Builder addTrimOverride(@NotNull EquipmentTrimOverride trimOverride);
 
         //#region Helpers
         /**

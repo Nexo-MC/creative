@@ -32,6 +32,7 @@ import team.unnamed.creative.equipment.Equipment;
 import team.unnamed.creative.equipment.EquipmentLayer;
 import team.unnamed.creative.equipment.EquipmentLayerDye;
 import team.unnamed.creative.equipment.EquipmentLayerType;
+import team.unnamed.creative.equipment.EquipmentTrimOverride;
 import team.unnamed.creative.metadata.pack.PackFormat;
 import team.unnamed.creative.serialize.minecraft.base.KeySerializer;
 import team.unnamed.creative.serialize.minecraft.io.JsonResourceDeserializer;
@@ -78,13 +79,34 @@ public final class EquipmentSerializer implements JsonResourceSerializer<Equipme
             }
             writer.endArray();
         }
-        writer.endObject()
-                .endObject();
+        writer.endObject();
+
+        final List<EquipmentTrimOverride> trimOverrides = equipment.trimOverrides();
+        if (!trimOverrides.isEmpty()) {
+            writer.name("trim_overrides").beginArray();
+            for (EquipmentTrimOverride trimOverride : trimOverrides) {
+                writer.beginObject();
+                final Key texture = trimOverride.texture();
+                if (texture != null) writer.name("texture").value(KeySerializer.toString(texture));
+                final Key palette = trimOverride.palette();
+                if (palette != null) writer.name("palette").value(KeySerializer.toString(palette));
+
+                writer.name("when").beginObject();
+                final Key material = trimOverride.material();
+                if (material != null) writer.name("material").value(KeySerializer.toString(material));
+                final Key pattern = trimOverride.pattern();
+                if (pattern != null) writer.name("pattern").value(KeySerializer.toString(pattern));
+                writer.endObject().endObject();
+            }
+            writer.endArray();
+        }
+        writer.endObject();
     }
 
     @Override
     public Equipment deserializeFromJson(JsonElement node, Key key, PackFormat packFormat) {
-        final JsonObject layers = node.getAsJsonObject().getAsJsonObject("layers");
+        final JsonObject root = node.getAsJsonObject();
+        final JsonObject layers = root.getAsJsonObject("layers");
         final Equipment.Builder builder = Equipment.equipment()
                 .key(key);
         for (Map.Entry<String, JsonElement> entry : layers.entrySet()) {
@@ -104,6 +126,22 @@ public final class EquipmentSerializer implements JsonResourceSerializer<Equipme
                 builder.addLayer(type, EquipmentLayer.layer(texture, dye, usePlayerTexture));
             }
         }
+        if (root.has("trim_overrides")) {
+            for (JsonElement element : root.getAsJsonArray("trim_overrides")) {
+                final JsonObject object = element.getAsJsonObject();
+                final JsonObject when = object.getAsJsonObject("when");
+                builder.addTrimOverride(EquipmentTrimOverride.trimOverride(
+                        keyOrNull(when, "material"),
+                        keyOrNull(when, "pattern"),
+                        keyOrNull(object, "texture"),
+                        keyOrNull(object, "palette")
+                ));
+            }
+        }
         return builder.build();
+    }
+
+    private static Key keyOrNull(JsonObject object, String name) {
+        return object.has(name) ? Key.key(object.get(name).getAsString()) : null;
     }
 }

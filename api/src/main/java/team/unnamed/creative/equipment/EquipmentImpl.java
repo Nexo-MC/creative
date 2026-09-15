@@ -34,10 +34,12 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
-record EquipmentImpl(Key key, Map<EquipmentLayerType, List<EquipmentLayer>> layers) implements Equipment {
-    EquipmentImpl(final @NotNull Key key, final @NotNull Map<EquipmentLayerType, List<EquipmentLayer>> layers) {
+record EquipmentImpl(Key key, Map<EquipmentLayerType, List<EquipmentLayer>> layers,
+                     List<EquipmentTrimOverride> trimOverrides) implements Equipment {
+    EquipmentImpl(final @NotNull Key key, final @NotNull Map<EquipmentLayerType, List<EquipmentLayer>> layers, final @NotNull List<EquipmentTrimOverride> trimOverrides) {
         this.key = requireNonNull(key, "key");
         this.layers = requireNonNull(layers, "layers");
+        this.trimOverrides = requireNonNull(trimOverrides, "trimOverrides");
     }
 
     @Override
@@ -51,13 +53,19 @@ record EquipmentImpl(Key key, Map<EquipmentLayerType, List<EquipmentLayer>> laye
     }
 
     @Override
+    public @NotNull List<EquipmentTrimOverride> trimOverrides() {
+        return trimOverrides;
+    }
+
+    @Override
     public @NotNull String toString() {
-        return getClass().getSimpleName() + "{" + "key=" + key + ", layers=" + layers + "}";
+        return getClass().getSimpleName() + "{" + "key=" + key + ", layers=" + layers + ", trimOverrides=" + trimOverrides + "}";
     }
 
     static final class BuilderImpl implements Builder {
         private Key key;
         private final Map<EquipmentLayerType, List<EquipmentLayer>> layers = new LinkedHashMap<>();
+        private final List<EquipmentTrimOverride> trimOverrides = new ArrayList<>();
 
         @Override
         public @NotNull Builder key(final @NotNull Key key) {
@@ -74,9 +82,15 @@ record EquipmentImpl(Key key, Map<EquipmentLayerType, List<EquipmentLayer>> laye
         }
 
         @Override
+        public @NotNull Builder addTrimOverride(final @NotNull EquipmentTrimOverride trimOverride) {
+            trimOverrides.add(requireNonNull(trimOverride, "trimOverride"));
+            return this;
+        }
+
+        @Override
         public @NotNull Equipment build() {
             requireNonNull(key, "key");
-            return new EquipmentImpl(key, layers);
+            return new EquipmentImpl(key, layers, trimOverrides);
         }
     }
 }

@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import team.unnamed.creative.equipment.Equipment;
 import team.unnamed.creative.equipment.EquipmentLayer;
 import team.unnamed.creative.equipment.EquipmentLayerType;
+import team.unnamed.creative.equipment.EquipmentTrimOverride;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,6 +45,33 @@ class EquipmentSerializationTest {
         String serialized = EquipmentSerializer.INSTANCE.serializeToJsonString(equipment);
 
         assertEquals("{\"layers\":{\"humanoid\":[{\"texture\":\"creative:layer\"}],\"horse_body\":[{\"texture\":\"creative:layer\",\"use_player_texture\":true}]}}", serialized);
+    }
+
+    @Test
+    void test_trim_overrides_serialization() throws Exception {
+        Equipment equipment = Equipment.equipment()
+                .key(Key.key("creative:equipment"))
+                .addHumanoidLayer(EquipmentLayer.layer(Key.key("minecraft:gold")))
+                .addTrimOverride(EquipmentTrimOverride.whenMaterial(Key.key("minecraft:gold"), null, Key.key("minecraft:trim/gold_darker")))
+                .build();
+
+        String serialized = EquipmentSerializer.INSTANCE.serializeToJsonString(equipment);
+
+        assertEquals("{\"layers\":{\"humanoid\":[{\"texture\":\"gold\"}]},\"trim_overrides\":[{\"palette\":\"trim/gold_darker\",\"when\":{\"material\":\"gold\"}}]}", serialized);
+    }
+
+    @Test
+    void test_trim_overrides_deserialization() throws Exception {
+        @Language("JSON") String serialized = "{\"layers\":{\"humanoid\":[{\"texture\":\"minecraft:gold\"}]},\"trim_overrides\":[{\"texture\":\"minecraft:custom\",\"when\":{\"pattern\":\"minecraft:coast\",\"material\":\"minecraft:gold\"}}]}";
+        Equipment deserialized = EquipmentSerializer.INSTANCE.deserializeFromJsonString(serialized, Key.key("creative:equipment"));
+
+        assertEquals(1, deserialized.trimOverrides().size());
+
+        EquipmentTrimOverride trimOverride = deserialized.trimOverrides().getFirst();
+        assertEquals("minecraft:gold", trimOverride.material().asString());
+        assertEquals("minecraft:coast", trimOverride.pattern().asString());
+        assertEquals("minecraft:custom", trimOverride.texture().asString());
+        assertNull(trimOverride.palette());
     }
 
     @Test
