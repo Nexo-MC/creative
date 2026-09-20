@@ -24,9 +24,12 @@
 package team.unnamed.creative.serialize.minecraft.item;
 
 import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonPrimitive;
 import net.kyori.adventure.key.Key;
 import org.intellij.lang.annotations.Language;
 import org.junit.jupiter.api.Test;
+import team.unnamed.creative.base.QuaternionFloat;
+import team.unnamed.creative.base.Vector3Float;
 import team.unnamed.creative.item.ConditionItemModel;
 import team.unnamed.creative.item.Item;
 import team.unnamed.creative.item.ItemModel;
@@ -36,7 +39,10 @@ import team.unnamed.creative.item.SelectItemModel;
 import team.unnamed.creative.item.Transformation;
 import team.unnamed.creative.item.property.ItemBooleanProperty;
 import team.unnamed.creative.item.property.ItemNumericProperty;
+import team.unnamed.creative.item.property.ItemStringProperty;
 import team.unnamed.creative.serialize.minecraft.GsonUtil;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -148,6 +154,21 @@ class ItemSerializationTest {
         assertEquals(Transformation.DEFAULT, ((SelectItemModel) itemModel).cases().getFirst().model().transformation());
     }
 
+    @Test
+    void test_select_transformation_serialization() throws Exception {
+        final Transformation transformation = new Transformation(new Vector3Float(1f, 2f, 3f), Vector3Float.ONE, QuaternionFloat.DEFAULT, QuaternionFloat.DEFAULT);
+        final Item item = Item.item(Key.key("minecraft", "air"), ItemModel.select(
+                ItemStringProperty.customModelData(),
+                List.of(SelectItemModel.Case._case(ItemModel.reference(Key.key("minecraft:item/air")), List.of(new JsonPrimitive("test")))),
+                null,
+                transformation
+        ));
+
+        final String serialized = ItemSerializer.INSTANCE.serializeToJsonString(item);
+
+        assertEquals(1, serialized.split("\"transformation\"", -1).length - 1);
+        assertTrue(serialized.contains("\"translation\":[1.0,2.0,3.0]"));
+    }
 
     @Test
     void test_air_deserialization() throws Exception {

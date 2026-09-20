@@ -587,11 +587,12 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
             }
             writer.name("model");
             serializeItemModel(_case.model(), writer, packFormat);
-            writer.endObject();
 
-            if (model.transformation() != null && model.transformation() != Transformation.DEFAULT) {
-                TransformationSerializer.writeToWriter(writer, model.transformation());
+            final Transformation caseTransformation = _case.transformation();
+            if (caseTransformation != null && caseTransformation != Transformation.DEFAULT) {
+                TransformationSerializer.writeToWriter(writer, caseTransformation);
             }
+            writer.endObject();
         }
         writer.endArray();
 
@@ -669,9 +670,9 @@ public final class ItemSerializer implements JsonResourceSerializer<Item>, JsonR
                 when.add(whenNode);
             }
 
-            final Transformation transformation = TransformationSerializer.readFromJson(node.get("transformation"));
+            final Transformation caseTransformation = TransformationSerializer.readFromJson(caseObject.get("transformation"));
 
-            cases.add(SelectItemModel.Case._case(deserializeItemModel(caseObject.get("model")), when, transformation));
+            cases.add(SelectItemModel.Case._case(deserializeItemModel(caseObject.get("model")), when, caseTransformation));
         }
 
         final ItemModel fallback = node.has("fallback")
