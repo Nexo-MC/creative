@@ -24,6 +24,7 @@
 package team.unnamed.creative.serialize.minecraft;
 
 import com.google.gson.stream.JsonWriter;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.ResourcePack;
@@ -36,6 +37,7 @@ import team.unnamed.creative.metadata.pack.PackMeta;
 import team.unnamed.creative.overlay.Overlay;
 import team.unnamed.creative.overlay.ResourceContainer;
 import team.unnamed.creative.part.ResourcePackPart;
+import team.unnamed.creative.serialize.minecraft.atlas.PaletteTextures;
 import team.unnamed.creative.serialize.minecraft.fs.FileTreeWriter;
 import team.unnamed.creative.serialize.minecraft.fs.ZipEntryLifecycleHandler;
 import team.unnamed.creative.serialize.minecraft.io.JsonResourceSerializer;
@@ -48,6 +50,8 @@ import team.unnamed.creative.texture.Texture;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,114 +88,126 @@ final class MinecraftResourcePackWriterImpl implements MinecraftResourcePackWrit
         return targetPackFormat;
     }
 
-    public <T extends Keyed & ResourcePackPart> void writeFullCategory(
-            final @NotNull String basePath,
-            final @NotNull ResourceContainer resourceContainer,
-            final @NotNull FileTreeWriter target,
-            final @NotNull ResourceCategory<T> category,
-            final PackFormat packFormat
-    ) {
-        for (T resource : category.lister().apply(resourceContainer)) {
-            String path = basePath + category.pathOf(resource, packFormat);
-            final ResourceSerializer<T> serializer = category.serializer();
-
-            if (serializer instanceof JsonResourceSerializer) {
-                // if it's a JSON serializer, we can use our own method, that will
-                // do some extra configuration
-                writeToJson(target, (JsonResourceSerializer<T>) serializer, resource, path, packFormat);
-            } else {
-                try (OutputStream output = target.openStream(path)) {
-                    category.serializer().serialize(resource, output, packFormat);
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-            }
-        }
-    }
-
-    private void writeWithBasePathAndTargetPackFormat(FileTreeWriter target, ResourceContainer container, String basePath, final PackFormat packFormat) {
-        // write resources from most categories
-        for (ResourceCategory<?> category : ResourceCategories.categories()) {
-            writeFullCategory(basePath, container, target, category, packFormat);
-        }
-
-        // write sound registries
-        for (SoundRegistry soundRegistry : container.soundRegistries()) {
-            writeToJson(target, SoundRegistrySerializer.INSTANCE, soundRegistry, basePath + MinecraftResourcePackStructure.pathOf(soundRegistry), packFormat);
-        }
-
-        // write textures
-        for (Texture texture : container.textures()) {
-            target.write(
-                    basePath + MinecraftResourcePackStructure.pathOf(texture),
-                    texture.data()
-            );
-
-            Metadata metadata = texture.meta();
-            if (!metadata.parts().isEmpty()) {
-                writeToJson(target, MetadataSerializer.INSTANCE, metadata, basePath + MinecraftResourcePackStructure.pathOfMeta(texture), packFormat);
-            }
-        }
-
-        // write unknown files
-        for (Map.Entry<String, Writable> entry : container.unknownFiles().entrySet()) {
-            target.write(basePath + entry.getKey(), entry.getValue());
-        }
-    }
-
     @Override
     public void write(final @NotNull FileTreeWriter target, final @NotNull ResourcePack resourcePack) {
-        // write icon
-        {
-            Writable icon = resourcePack.icon();
-            if (icon != null) {
-                target.write(PACK_ICON_FILE, icon);
+        new Write(target, resourcePack).write();
+    }
+
+    private final class Write {
+        private final FileTreeWriter target;
+        private final ResourcePack resourcePack;
+        private final PaletteTextures paletteTextures;
+
+        private Write(final FileTreeWriter target, final ResourcePack resourcePack) {
+            this.target = target;
+            this.resourcePack = resourcePack;
+            this.paletteTextures = PaletteTextures.of(resourcePack);
+        }
+
+        private void write() {
+            // write icon
+            {
+                Writable icon = resourcePack.icon();
+                if (icon != null) {
+                    target.write(PACK_ICON_FILE, icon);
+                }
+            }
+
+            // write metadata
+            {
+                Metadata metadata = resourcePack.metadata();
+                PackMeta packMeta = metadata.meta(PackMeta.class);
+                // todo: find a better way to log warnings
+                if (packMeta == null) {
+                    System.err.println("Resource pack does not contain PackMeta, won't be recognized by Minecraft");
+                } else if (targetPackFormat != PackFormat.UNKNOWN && !packMeta.formats().isInRange(targetPackFormat.min())) {
+                    System.err.println("Resource pack format mismatch, the resource pack specifies formats "
+                            + packMeta.formats() + " but the target format specified to the writer is " + targetPackFormat.min());
+                }
+                writeToJson(MetadataSerializer.INSTANCE, metadata, PACK_METADATA_FILE, targetPackFormat);
+            }
+
+            writeContainer(resourcePack, "", targetPackFormat);
+
+            // write from overlays
+            Map<String, PackFormat> overlayFormats = new HashMap<>();
+            {
+                OverlaysMeta overlaysMeta = resourcePack.metadata().meta(OverlaysMeta.class);
+                if (overlaysMeta != null) {
+                    for (OverlayEntry entry : overlaysMeta.entries()) {
+                        overlayFormats.put(entry.directory(), entry.formats());
+                    }
+                }
+            }
+
+            for (Overlay overlay : resourcePack.overlays()) {
+                String dir = overlay.directory();
+                PackFormat packFormat = overlayFormats.get(dir);
+                writeContainer(overlay, dir + '/', packFormat == null ? PackFormat.UNKNOWN : packFormat);
             }
         }
 
-        // write metadata
-        {
-            Metadata metadata = resourcePack.metadata();
-            PackMeta packMeta = metadata.meta(PackMeta.class);
-            // todo: find a better way to log warnings
-            if (packMeta == null) {
-                System.err.println("Resource pack does not contain PackMeta, won't be recognized by Minecraft");
-            } else if (targetPackFormat != PackFormat.UNKNOWN && !packMeta.formats().isInRange(targetPackFormat.min())) {
-                System.err.println("Resource pack format mismatch, the resource pack specifies formats "
-                        + packMeta.formats() + " but the target format specified to the writer is " + targetPackFormat.min());
+        private void writeContainer(final ResourceContainer container, final String basePath, final PackFormat packFormat) {
+            // write resources from most categories
+            for (ResourceCategory<?> category : ResourceCategories.categories()) {
+                writeFullCategory(container, basePath, category, packFormat);
             }
-            writeToJson(target, MetadataSerializer.INSTANCE, metadata, PACK_METADATA_FILE, targetPackFormat);
+
+            // write sound registries
+            for (SoundRegistry soundRegistry : container.soundRegistries()) {
+                writeToJson(SoundRegistrySerializer.INSTANCE, soundRegistry, basePath + MinecraftResourcePackStructure.pathOf(soundRegistry), packFormat);
+            }
+
+            // write textures
+            Map<Key, Collection<Key>> palettePlacements = paletteTextures.placements(container, packFormat);
+            for (Texture texture : container.textures()) {
+                for (Key key : palettePlacements.getOrDefault(texture.key(), Collections.singleton(texture.key()))) {
+                    target.write(
+                            basePath + MinecraftResourcePackStructure.pathOfTexture(key),
+                            texture.data()
+                    );
+
+                    Metadata metadata = texture.meta();
+                    if (!metadata.parts().isEmpty()) {
+                        writeToJson(MetadataSerializer.INSTANCE, metadata, basePath + MinecraftResourcePackStructure.pathOfTextureMeta(key), packFormat);
+                    }
+                }
+            }
+
+            // write unknown files
+            for (Map.Entry<String, Writable> entry : container.unknownFiles().entrySet()) {
+                target.write(basePath + entry.getKey(), entry.getValue());
+            }
         }
 
-        writeWithBasePathAndTargetPackFormat(target, resourcePack, "", targetPackFormat);
+        private <T extends Keyed & ResourcePackPart> void writeFullCategory(final ResourceContainer container, final String basePath, final ResourceCategory<T> category, final PackFormat packFormat) {
+            for (T resource : category.lister().apply(container)) {
+                String path = basePath + category.pathOf(resource, packFormat);
+                final ResourceSerializer<T> serializer = category.serializer();
 
-        // write from overlays
-        Map<String, PackFormat> overlayFormats = new HashMap<>();
-        {
-            OverlaysMeta overlaysMeta = resourcePack.metadata().meta(OverlaysMeta.class);
-            if (overlaysMeta != null) {
-                for (OverlayEntry entry : overlaysMeta.entries()) {
-                    overlayFormats.put(entry.directory(), entry.formats());
+                if (serializer instanceof JsonResourceSerializer) {
+                    // if it's a JSON serializer, we can use our own method, that will
+                    // do some extra configuration
+                    writeToJson((JsonResourceSerializer<T>) serializer, resource, path, packFormat);
+                } else {
+                    try (OutputStream output = target.openStream(path)) {
+                        serializer.serialize(resource, output, packFormat);
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
                 }
             }
         }
 
-        for (Overlay overlay : resourcePack.overlays()) {
-            String dir = overlay.directory();
-            PackFormat packFormat = overlayFormats.get(dir);
-            PackFormat overlayTargetPackFormat = packFormat == null ? PackFormat.UNKNOWN : packFormat;
-            writeWithBasePathAndTargetPackFormat(target, overlay, dir + '/', overlayTargetPackFormat);
-        }
-    }
-
-    private <T> void writeToJson(FileTreeWriter writer, JsonResourceSerializer<T> serializer, T object, String path, final PackFormat packFormat) {
-        try (JsonWriter jsonWriter = new JsonWriter(writer.openWriter(path))) {
-            if (prettyPrinting) {
-                jsonWriter.setIndent("  ");
+        private <T> void writeToJson(final JsonResourceSerializer<T> serializer, final T object, final String path, final PackFormat packFormat) {
+            try (JsonWriter jsonWriter = new JsonWriter(target.openWriter(path))) {
+                if (prettyPrinting) {
+                    jsonWriter.setIndent("  ");
+                }
+                serializer.serializeToJson(object, jsonWriter, packFormat);
+            } catch (IOException e) {
+                throw new UncheckedIOException("Failed to write to " + path, e);
             }
-            serializer.serializeToJson(object, jsonWriter, packFormat);
-        } catch (IOException e) {
-            throw new UncheckedIOException("Failed to write to " + path, e);
         }
     }
 

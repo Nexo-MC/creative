@@ -24,7 +24,6 @@
 package team.unnamed.creative.serialize.minecraft;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.adventure.key.Keyed;
 import org.jetbrains.annotations.ApiStatus;
 import team.unnamed.creative.sound.SoundRegistry;
 import team.unnamed.creative.texture.Texture;
@@ -101,14 +100,21 @@ public final class MinecraftResourcePackStructure {
     }
 
     public static String pathOf(Texture texture) {
-        Key key = texture.key();
+        return pathOfTexture(texture.key());
+    }
+
+    public static String pathOfTexture(Key key) {
         // assets/<namespace>/textures/<path>
         return path(ASSETS_FOLDER, key.namespace(), TEXTURES_FOLDER, key.value());
     }
 
     public static String pathOfMeta(Texture texture) {
+        return pathOfTextureMeta(texture.key());
+    }
+
+    public static String pathOfTextureMeta(Key key) {
         // assets/<namespace>/textures/<path>.png.mcmeta
-        return withCategory(TEXTURES_FOLDER, texture, METADATA_EXTENSION);
+        return path(ASSETS_FOLDER, key.namespace(), TEXTURES_FOLDER, key.value() + METADATA_EXTENSION);
     }
 
     public static Queue<String> tokenize(String path) {
@@ -129,13 +135,6 @@ public final class MinecraftResourcePackStructure {
             joiner.add(part);
         }
         return joiner.toString();
-    }
-
-    // helper methods
-    public static String withCategory(String categoryFolder, Keyed resource, String extension) {
-        Key key = resource.key();
-        // assets/<namespace>/<category>/<path>.<extension>
-        return path(ASSETS_FOLDER, key.namespace(), categoryFolder, key.value() + extension);
     }
 
 }

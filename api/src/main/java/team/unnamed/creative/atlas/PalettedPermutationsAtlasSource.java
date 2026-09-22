@@ -67,6 +67,11 @@ public interface PalettedPermutationsAtlasSource extends AtlasSource {
      * Gets the key of a color palette key file. This is used to define the set of key
      * pixel colors to swap out with the color palettes defined.
      *
+     * <p>The key resolves to {@code <namespace>:textures/<path>.png} before pack format
+     * {@link team.unnamed.creative.metadata.pack.FormatVersion#FORMAT_26_3} and to
+     * {@code <namespace>:textures/palettes/<path>.png} from it onwards, the writer places
+     * the palette texture at whichever locations the target pack format needs.</p>
+     *
      * @return The key of the color palette key file.
      * @sincePackFormat 13
      * @sinceMinecraft 1.19.4
@@ -85,6 +90,8 @@ public interface PalettedPermutationsAtlasSource extends AtlasSource {
      * matching, but in the resulting texture the alpha channel is multiplied with the color palette's
      * alpha channel. Pixels that do not match the {@link #paletteKey()} are copied over to the resulting
      * texture as-is.</p>
+     *
+     * <p>Palette keys resolve like {@link #paletteKey()} does.</p>
      *
      * @return The map of permutations from suffix to a key of a color palette file.
      * @sincePackFormat 13
