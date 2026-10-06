@@ -26,5 +26,8 @@ package team.unnamed.creative.resources;
 enum MergeStrategyImpl implements MergeStrategy {
     OVERRIDE,
     MERGE_AND_FAIL_ON_ERROR,
-    MERGE_AND_KEEP_FIRST_ON_ERROR
+    MERGE_AND_KEEP_FIRST_ON_ERROR,
+    MERGE_BOTH_AND_PRIORITIZE_FIRST_ON_ERROR,
+    MERGE_BOTH_AND_PRIORITIZE_SECOND_ON_ERROR,
+    ;
 }
