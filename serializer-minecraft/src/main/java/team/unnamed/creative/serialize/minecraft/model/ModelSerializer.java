@@ -540,6 +540,7 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
                 writer.value(KeySerializer.toString(texture.key()));
             }
             writer.name("force_translucent").value(texture.forceTranslucent());
+            writer.endObject();
         }
 
     }
