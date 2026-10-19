@@ -46,6 +46,16 @@ public final class GsonUtil {
     @SuppressWarnings("deprecation")
     private static final JsonParser JSON_PARSER = new JsonParser();
 
+    private static final float FLOAT_CACHE_SCALE = 16F;
+    private static final int FLOAT_CACHE_RANGE = 1024;
+    private static final String[] FLOAT_CACHE = new String[FLOAT_CACHE_RANGE * 2 + 1];
+
+    static {
+        for (int i = -FLOAT_CACHE_RANGE; i <= FLOAT_CACHE_RANGE; i++) {
+            FLOAT_CACHE[i + FLOAT_CACHE_RANGE] = Float.toString(i / FLOAT_CACHE_SCALE);
+        }
+    }
+
     @SuppressWarnings("deprecation")
     public static @NotNull JsonElement parseString(final @NotNull String string) {
         return JSON_PARSER.parse(string);
@@ -120,18 +130,35 @@ public final class GsonUtil {
         }
     }
 
+    /**
+     * Writes the same text as {@link JsonWriter#value(float)}.
+     * Multiples of 1/16 within [-64, 64] cover most model coordinates and come from a precomputed table.
+     * Only a plain JsonWriter takes the table path, since subclasses like Gson's JsonTreeWriter reject {@link JsonWriter#jsonValue(String)}
+     */
+    public static void writeFloat(JsonWriter writer, float value) throws IOException {
+        float scaled = value * FLOAT_CACHE_SCALE;
+        int index = (int) scaled;
+        if (index == scaled && index >= -FLOAT_CACHE_RANGE && index <= FLOAT_CACHE_RANGE
+                && (index != 0 || Float.floatToRawIntBits(value) == 0)
+                && writer.getClass() == JsonWriter.class) {
+            writer.jsonValue(FLOAT_CACHE[index + FLOAT_CACHE_RANGE]);
+        } else {
+            writer.value(value);
+        }
+    }
+
     public static void writeVector3Float(JsonWriter writer, Vector3Float vector) throws IOException {
         writer.beginArray();
-        writer.value(vector.x());
-        writer.value(vector.y());
-        writer.value(vector.z());
+        writeFloat(writer, vector.x());
+        writeFloat(writer, vector.y());
+        writeFloat(writer, vector.z());
         writer.endArray();
     }
 
     public static void writeVector2Float(JsonWriter writer, Vector2Float vector) throws IOException {
         writer.beginArray();
-        writer.value(vector.x());
-        writer.value(vector.y());
+        writeFloat(writer, vector.x());
+        writeFloat(writer, vector.y());
         writer.endArray();
     }
 

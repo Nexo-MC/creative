@@ -26,6 +26,7 @@ package team.unnamed.creative.serialize.minecraft.fs;
 import com.google.gson.stream.JsonWriter;
 import org.jetbrains.annotations.ApiStatus;
 import team.unnamed.creative.base.Writable;
+import team.unnamed.creative.serialize.minecraft.io.UnsynchronizedBufferedWriter;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -75,7 +76,7 @@ public interface FileTreeWriter extends AutoCloseable {
      * @since 1.0.0
      */
     default Writer openWriter(String path) {
-        return new OutputStreamWriter(openStream(path), StandardCharsets.UTF_8);
+        return new UnsynchronizedBufferedWriter(new OutputStreamWriter(openStream(path), StandardCharsets.UTF_8));
     }
 
     @Deprecated

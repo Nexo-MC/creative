@@ -40,7 +40,7 @@ public interface JsonResourceSerializer<T> extends ResourceSerializer<T> {
 
     @Override
     default void serialize(T object, OutputStream output, PackFormat packFormat) throws IOException {
-        try (JsonWriter writer = new JsonWriter(new OutputStreamWriter(output, StandardCharsets.UTF_8))) {
+        try (JsonWriter writer = new JsonWriter(new UnsynchronizedBufferedWriter(new OutputStreamWriter(output, StandardCharsets.UTF_8)))) {
             serializeToJson(object, writer, packFormat);
         }
     }

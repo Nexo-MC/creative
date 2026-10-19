@@ -67,6 +67,17 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
     private static final float MINECRAFT_UV_UNIT = 16F;
     private static final Logger LOGGER = Logger.getLogger(ModelSerializer.class.getName());
 
+    private static final String[] CUBE_FACE_NAMES = lowerCaseNames(CubeFace.values());
+    private static final String[] ITEM_TRANSFORM_NAMES = lowerCaseNames(ItemTransform.Type.values());
+    private static final String[] AXIS_NAMES = lowerCaseNames(Axis3D.values());
+    private static final String[] LAYER_NAMES = new String[16];
+
+    static {
+        for (int i = 0; i < LAYER_NAMES.length; i++) {
+            LAYER_NAMES[i] = "layer" + i;
+        }
+    }
+
     public static final ModelSerializer INSTANCE;
     public static final ResourceCategoryImpl<Model> CATEGORY;
 
@@ -95,7 +106,7 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
         if (!display.isEmpty()) {
             writer.name("display").beginObject();
             for (Map.Entry<ItemTransform.Type, ItemTransform> entry : display.entrySet()) {
-                writer.name(entry.getKey().name().toLowerCase(Locale.ROOT));
+                writer.name(ITEM_TRANSFORM_NAMES[entry.getKey().ordinal()]);
                 writeItemTransform(writer, entry.getValue());
             }
             writer.endObject();
@@ -224,7 +235,7 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
 
         CubeFace shadeDirectionOverride = element.shadeDirectionOverride();
         if (shadeDirectionOverride != null) {
-            writer.name("shade_direction_override").value(shadeDirectionOverride.name().toLowerCase(Locale.ROOT));
+            writer.name("shade_direction_override").value(CUBE_FACE_NAMES[shadeDirectionOverride.ordinal()]);
         }
 
         int lightEmission = element.lightEmission();
@@ -233,29 +244,29 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
         }
 
         // faces
+        Vector3Float from = element.from();
+        Vector3Float to = element.to();
         writer.name("faces").beginObject();
         for (Map.Entry<CubeFace, ElementFace> entry : element.faces().entrySet()) {
             CubeFace type = entry.getKey();
             ElementFace face = entry.getValue();
 
-            writer.name(type.name().toLowerCase(Locale.ROOT))
+            writer.name(CUBE_FACE_NAMES[type.ordinal()])
                     .beginObject();
-            if (face.uv() != null) {
-                TextureUV uv = face.uv();
-                TextureUV defaultUv = getDefaultUvForFace(type, element.from(), element.to());
-                if (uv != null && !uv.equals(defaultUv)) {
-                    writer.name("uv");
-                    writer.beginArray();
-                    writer.value(uv.from().x() * MINECRAFT_UV_UNIT);
-                    writer.value(uv.from().y() * MINECRAFT_UV_UNIT);
-                    writer.value(uv.to().x() * MINECRAFT_UV_UNIT);
-                    writer.value(uv.to().y() * MINECRAFT_UV_UNIT);
-                    writer.endArray();
-                }
+            TextureUV uv = face.uv();
+            if (uv != null && !isDefaultUvForFace(uv, type, from, to)) {
+                writer.name("uv");
+                writer.beginArray();
+                GsonUtil.writeFloat(writer, uv.from().x() * MINECRAFT_UV_UNIT);
+                GsonUtil.writeFloat(writer, uv.from().y() * MINECRAFT_UV_UNIT);
+                GsonUtil.writeFloat(writer, uv.to().x() * MINECRAFT_UV_UNIT);
+                GsonUtil.writeFloat(writer, uv.to().y() * MINECRAFT_UV_UNIT);
+                writer.endArray();
             }
             writer.name("texture").value(face.texture());
-            if (face.cullFace() != null) {
-                writer.name("cullface").value(face.cullFace().name().toLowerCase(Locale.ROOT));
+            CubeFace cullFace = face.cullFace();
+            if (cullFace != null) {
+                writer.name("cullface").value(CUBE_FACE_NAMES[cullFace.ordinal()]);
             }
             if (face.rotation() != ElementFace.DEFAULT_ROTATION) {
                 writer.name("rotation").value(face.rotation());
@@ -268,18 +279,28 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
         writer.endObject().endObject();
     }
 
-    private static TextureUV getDefaultUvForFace(CubeFace face, Vector3Float from, Vector3Float to) {
-        from = from.divide(MINECRAFT_UV_UNIT);
-        to = to.divide(MINECRAFT_UV_UNIT);
+    private static boolean isDefaultUvForFace(TextureUV uv, CubeFace face, Vector3Float from, Vector3Float to) {
+        float fromX = from.x() / MINECRAFT_UV_UNIT;
+        float fromY = from.y() / MINECRAFT_UV_UNIT;
+        float fromZ = from.z() / MINECRAFT_UV_UNIT;
+        float toX = to.x() / MINECRAFT_UV_UNIT;
+        float toY = to.y() / MINECRAFT_UV_UNIT;
+        float toZ = to.z() / MINECRAFT_UV_UNIT;
         return switch (face) {
-            case WEST -> TextureUV.uv(from.z(), 1F - to.y(), to.z(), 1F - from.y());
-            case EAST -> TextureUV.uv(1F - to.z(), 1F - to.y(), 1F - from.z(), 1F - from.y());
-            case DOWN -> TextureUV.uv(from.x(), 1F - to.z(), to.x(), 1F - from.z());
-            case UP -> TextureUV.uv(from.x(), from.z(), to.x(), to.z());
-            case NORTH -> TextureUV.uv(1F - to.x(), 1F - to.y(), 1F - from.x(), 1F - from.y());
-            case SOUTH -> TextureUV.uv(from.x(), 1F - to.y(), to.x(), 1F - from.y());
+            case WEST -> uvEquals(uv, fromZ, 1F - toY, toZ, 1F - fromY);
+            case EAST -> uvEquals(uv, 1F - toZ, 1F - toY, 1F - fromZ, 1F - fromY);
+            case DOWN -> uvEquals(uv, fromX, 1F - toZ, toX, 1F - fromZ);
+            case UP -> uvEquals(uv, fromX, fromZ, toX, toZ);
+            case NORTH -> uvEquals(uv, 1F - toX, 1F - toY, 1F - fromX, 1F - fromY);
+            case SOUTH -> uvEquals(uv, fromX, 1F - toY, toX, 1F - fromY);
             default -> throw new IllegalArgumentException("Unknown face: " + face);
         };
+    }
+
+    private static boolean uvEquals(TextureUV uv, float fromU, float fromV, float toU, float toV) {
+        Vector2Float uvFrom = uv.from();
+        Vector2Float uvTo = uv.to();
+        return uvFrom.x() == fromU && uvFrom.y() == fromV && uvTo.x() == toU && uvTo.y() == toV;
     }
 
     private static Element readElement(JsonElement node, PackFormat packFormat, Key modelKey) {
@@ -355,12 +376,13 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
         GsonUtil.writeVector3Float(writer, rotation.origin());
 
         if (!writeLegacy) {
-            writer.name("x").value(rotation.rotation().x())
-                    .name("y").value(rotation.rotation().y())
-                    .name("z").value(rotation.rotation().z());
+            Vector3Float angles = rotation.rotation();
+            GsonUtil.writeFloat(writer.name("x"), angles.x());
+            GsonUtil.writeFloat(writer.name("y"), angles.y());
+            GsonUtil.writeFloat(writer.name("z"), angles.z());
         } else {
-            writer.name("axis").value(rotation.axis().name().toLowerCase(Locale.ROOT))
-                    .name("angle").value(rotation.angle());
+            writer.name("axis").value(AXIS_NAMES[rotation.axis().ordinal()]);
+            GsonUtil.writeFloat(writer.name("angle"), rotation.angle());
         }
 
         boolean rescale = rotation.rescale();
@@ -508,7 +530,7 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
         writer.name("textures");
         writer.beginObject();
         for (int i = 0; i < layers.size(); i++) {
-            writer.name("layer" + i);
+            writer.name(i < LAYER_NAMES.length ? LAYER_NAMES[i] : "layer" + i);
             writeModelTexture(writer, layers.get(i));
         }
         for (Map.Entry<String, ModelTexture> variable : variables.entrySet()) {
@@ -543,6 +565,14 @@ public final class ModelSerializer implements JsonResourceSerializer<Model>, Jso
             writer.endObject();
         }
 
+    }
+
+    private static String[] lowerCaseNames(Enum<?>[] values) {
+        String[] names = new String[values.length];
+        for (Enum<?> value : values) {
+            names[value.ordinal()] = value.name().toLowerCase(Locale.ROOT);
+        }
+        return names;
     }
 
     private static ModelTextures readTextures(JsonElement node) {
