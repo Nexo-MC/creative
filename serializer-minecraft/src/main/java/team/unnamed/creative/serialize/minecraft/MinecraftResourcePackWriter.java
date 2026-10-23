@@ -212,6 +212,20 @@ public interface MinecraftResourcePackWriter extends ResourcePackWriter<FileTree
         @NotNull Builder targetPackFormat(final PackFormat packFormat);
 
         /**
+         * Sets whether the {@code pack.mcmeta} file should be skipped,
+         * that is, not written to the resource pack.
+         *
+         * <p>This may be useful when the {@code pack.mcmeta} file is
+         * provided by other means, for example, when merging resource
+         * packs or when writing a partial resource pack.</p>
+         *
+         * @param skipPackMcmeta Whether the {@code pack.mcmeta} file
+         *                       should be skipped
+         * @return This builder
+         */
+        @NotNull Builder skipPackMcmeta(final boolean skipPackMcmeta);
+
+        /**
          * Builds a new {@link MinecraftResourcePackWriter} instance.
          *
          * @return The built instance

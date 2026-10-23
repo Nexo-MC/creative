@@ -67,15 +67,18 @@ final class MinecraftResourcePackWriterImpl implements MinecraftResourcePackWrit
     private final ZipEntryLifecycleHandler zipEntryLifecycleHandler;
     private final boolean prettyPrinting;
     private final PackFormat targetPackFormat;
+    private final boolean skipPackMcmeta;
 
     private MinecraftResourcePackWriterImpl(
             final @NotNull ZipEntryLifecycleHandler zipEntryLifecycleHandler,
             final boolean prettyPrinting,
-            final PackFormat targetPackFormat
+            final PackFormat targetPackFormat,
+            final boolean skipPackMcmeta
     ) {
         this.zipEntryLifecycleHandler = zipEntryLifecycleHandler; // trust the caller (builder)
         this.prettyPrinting = prettyPrinting;
         this.targetPackFormat = targetPackFormat;
+        this.skipPackMcmeta = skipPackMcmeta;
     }
 
     @Override
@@ -114,7 +117,7 @@ final class MinecraftResourcePackWriterImpl implements MinecraftResourcePackWrit
             }
 
             // write metadata
-            {
+            if (!skipPackMcmeta) {
                 Metadata metadata = resourcePack.metadata();
                 PackMeta packMeta = metadata.meta(PackMeta.class);
                 // todo: find a better way to log warnings
@@ -215,6 +218,7 @@ final class MinecraftResourcePackWriterImpl implements MinecraftResourcePackWrit
         private ZipEntryLifecycleHandler zipEntryLifecycleHandler = ZipEntryLifecycleHandler.DEFAULT;
         private boolean prettyPrinting;
         private PackFormat targetPackFormat = PackFormat.UNKNOWN;
+        private boolean skipPackMcmeta;
 
         @Override
         public @NotNull Builder zipEntryLifecycleHandler(final @NotNull ZipEntryLifecycleHandler zipEntryLifecycleHandler) {
@@ -235,8 +239,14 @@ final class MinecraftResourcePackWriterImpl implements MinecraftResourcePackWrit
         }
 
         @Override
+        public @NotNull Builder skipPackMcmeta(boolean skipPackMcmeta) {
+            this.skipPackMcmeta = skipPackMcmeta;
+            return this;
+        }
+
+        @Override
         public @NotNull MinecraftResourcePackWriter build() {
-            return new MinecraftResourcePackWriterImpl(zipEntryLifecycleHandler, prettyPrinting, targetPackFormat);
+            return new MinecraftResourcePackWriterImpl(zipEntryLifecycleHandler, prettyPrinting, targetPackFormat, skipPackMcmeta);
         }
     }
 }
